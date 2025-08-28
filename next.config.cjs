@@ -1,4 +1,3 @@
-// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -13,7 +12,6 @@ const nextConfig = {
   output: 'export',
   basePath: '/finalVersion',
   assetPrefix: '/finalVersion/',
-  // Remove __dirname usage here
 }
 
-module.exports = nextConfig;
+export default nextConfig;
