@@ -4,6 +4,7 @@
   "private": true,
    "type": "module",
   "scripts": {
+
     "lint": "next lint",
     "export": "next export",
      "dev": "next dev",
