@@ -1,3 +1,4 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -9,10 +10,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  output: 'standalone',          // needed for Node.js deployment
-  experimental: {
-    outputFileTracingRoot: __dirname,
-  },
-};
+  output: 'export',
+  basePath: '/finalVersion',
+  assetPrefix: '/finalVersion/',
+  // Remove __dirname usage here
+}
 
-export default nextConfig;
+module.exports = nextConfig;
