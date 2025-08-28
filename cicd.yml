@@ -28,7 +28,7 @@ jobs:
           host: ${{ secrets.HOSTINGER_HOST_FV }}
           username: ${{ secrets.HOSTINGER_USER_FV }}
           key: ${{ secrets.HOSTINGER_KEY_FV }}
-           protocol: ftp                     # Change from 'ftp' to 'sftp'
+          protocol: ftp                     # Change from 'ftp' to 'sftp'
           port: 21   
           server-dir: /
-            pm2 restart all || pm2 start npm -- start
+          
