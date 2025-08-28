@@ -47,9 +47,9 @@ jobs:
       - name: Deploy to Hostinger via SSH
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.HOSTINGER_HOST }}
-          username: ${{ secrets.HOSTINGER_USER }}
-          key: ${{ secrets.HOSTINGER_KEY }}
+          host: ${{ secrets.HOSTINGER_HOST_FV }}
+          username: ${{ secrets.HOSTINGER_USER_FV }}
+          key: ${{ secrets.HOSTINGER_KEY_FV }}
           port: 22
           script: |
             cd public_html
