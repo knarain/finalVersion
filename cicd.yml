@@ -1,34 +1,50 @@
-name: Deploy to Hostinger via FTP
+name: Deploy Next.js Server to Hostinger with PM2
 
 on: 
   push:
     branches: [ main ]
 
-permissions:
-  contents: read  
-  pages: write      
-  id-token: write   
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source  
         uses: actions/checkout@v4
-      - name: Setup Node
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-            node-version: 20
-      - name: Install Dependencies
+          node-version: 20
+
+      - name: Install dependencies
         run: npm ci
-      - name: Build Project
-        run: npm run build      
-      - name: Deploy to Hostinger via FTP
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          host: ${{ secrets.HOSTINGER_HOST_FV }}
+          server: ${{ secrets.HOSTINGER_HOST_FV }}
           username: ${{ secrets.HOSTINGER_USER_FV }}
-          key: ${{ secrets.HOSTINGER_KEY_FV }}
-          protocol: ftp                     # Change from 'ftp' to 'sftp'
-          port: 21   
-          server-dir: /
-          
+          password: ${{ secrets.HOSTINGER_PASS_FV }}
+          protocol: ftp
+          port: 21
+          server-dir: /your-app-folder
+          local-dir: .
+          exclude: |
+            **/.git*
+            **/node_modules/**
+            **/cicd.yml
+            **/README.md
+
+      - name: Restart PM2 on Hostinger
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.HOSTINGER_HOST_FV }}
+          username: ${{ secrets.HOSTINGER_SSH_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: 22
+          script: |
+            cd /your-app-folder
+            pm2 restart all || pm2 start server.js --name myapp
