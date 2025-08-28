@@ -1,13 +1,17 @@
-const { createServer } = require("http");
-const next = require("next");
+import next from "next";
+import http from "http";
 
-const app = next({ dev: false });
+const dev = process.env.NODE_ENV !== "production";
+const app = next({ dev });
 const handle = app.getRequestHandler();
+const port = process.env.PORT || 3000;
 
-app.prepare().then(() => {
-  createServer((req, res) => {
-    handle(req, res);
-  }).listen(3000, () => {
-    console.log("Next.js server running on port 3000");
-  });
+await app.prepare();
+
+const server = http.createServer((req, res) => {
+  handle(req, res);
+});
+
+server.listen(port, () => {
+  console.log(`> Ready on http://localhost:${port}`);
 });
