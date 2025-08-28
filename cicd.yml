@@ -1,42 +1,58 @@
-name: Deploy to GitHub Pages
+name: Deploy to Hostinger
 
 on:
   push:
     branches: ["main"]   # or your deployment branch
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # Use the Node.js version you need
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
       - name: Build project
         run: npm run build
-          
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+
+      - name: Zip build for deployment
+        run: zip -r finalVersion.zip .next public node_modules package.json package-lock.json
+
+      - name: Upload ZIP as artifact (optional)
+        uses: actions/upload-artifact@v3
         with:
-          path: ./out   # ⚠️ Next.js exports static site into `out` (not `build`)
+          name: finalVersion
+          path: finalVersion.zip
 
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: finalVersion
+          path: .
+
+      - name: Deploy to Hostinger via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_KEY }}
+          port: 22
+          script: |
+            cd public_html
+            unzip -o ~/finalVersion.zip
+            # Optional: restart Node.js app using PM2
+            pm2 restart all || pm2 start npm -- start
