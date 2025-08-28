@@ -1,58 +1,34 @@
-name: Deploy to Hostinger
+name: Deploy to Hostinger via FTP
 
-on:
+on: 
   push:
-    branches: ["main"]   # or your deployment branchs
-  workflow_dispatch:
+    branches: [ main ]
 
+permissions:
+  contents: read  
+  pages: write      
+  id-token: write   
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout Source  
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Use the Node.js version you need
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Build project
-        run: npm run build
-
-      - name: Zip build for deployment
-        run: zip -r finalVersion.zip .next public node_modules package.json package-lock.json
-
-      - name: Upload ZIP as artifact (optional)
-        uses: actions/upload-artifact@v3
-        with:
-          name: finalVersion
-          path: finalVersion.zip
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: finalVersion
-          path: .
-
-      - name: Deploy to Hostinger via SSH
-        uses: appleboy/ssh-action@v0.1.7
+            node-version: 20
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build Project
+        run: npm run build      
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           host: ${{ secrets.HOSTINGER_HOST_FV }}
           username: ${{ secrets.HOSTINGER_USER_FV }}
           key: ${{ secrets.HOSTINGER_KEY_FV }}
-          port: 22
-          script: |
-            cd public_html
-            unzip -o ~/finalVersion.zip
-            # Optional: restart Node.js app using PM2
+           protocol: ftp                     # Change from 'ftp' to 'sftp'
+          port: 21   
+          server-dir: /
             pm2 restart all || pm2 start npm -- start
