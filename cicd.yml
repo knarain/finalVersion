@@ -22,5 +22,8 @@ jobs:
       - name: Upload to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
+          host: ${{ secrets.HOSTINGER_HOST_FV }}
+          server: ${{ secrets.HOSTINGER_HOST_FV }}
+          username: ${{ secrets.HOSTINGER_USER_FV }}
           local-dir: ./out
           server-dir: /public_html
