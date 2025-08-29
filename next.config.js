@@ -1,16 +1,10 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',     // 👈 Enables static export
-
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  output: "export", // 👈 enables static export
   images: {
-    unoptimized: true,  // 👈 Needed for static export, avoids next/image optimization server
+    unoptimized: true, // 👈 disables Next image optimizer (works for static hosting)
   },
 }
 
-export default nextConfig;
+export default nextConfig

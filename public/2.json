@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "album": {
+    "id": 2,
+    "coverImage": "/images/albums/2-cover.jpg",
+    "clientNames": "Alice & Bob",
+    "eventType": "Birthday",
+    "date": "January 20, 2025",
+    "category": "Birthday",
+    "isLocked": true,
+    "images": [
+      {
+        "id": 201,
+        "url": "/images/albums/2/photo1.jpg",
+        "title": "Cake Cutting",
+        "description": "Birthday celebration"
+      }
+    ]
+  }
+}

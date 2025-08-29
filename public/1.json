@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "album": {
+    "id": 1,
+    "coverImage": "/images/album1-cover.jpg",
+    "clientNames": "Alice & Bob",
+    "eventType": "Wedding",
+    "date": "January 15, 2025",
+    "category": "Wedding",
+    "isLocked": true,
+    "password": "alicebob2025",
+    "images": [
+      {
+        "id": 1,
+        "url": "/images/album1-1.jpg",
+        "title": "Ceremony",
+        "description": "The wedding vows"
+      },
+      {
+        "id": 2,
+        "url": "/images/album1-2.jpg",
+        "title": "Reception",
+        "description": "Dinner and dancing"
+      }
+    ]
+  }
+}
