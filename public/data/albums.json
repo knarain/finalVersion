@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "coverImage": "/images/album1.jpg",
+    "coverImage": "/images/album1/family-portrait-outdoor-session.png",
     "clientNames": "John & Jane",
     "eventType": "Wedding",
     "date": "August 12, 2023",
@@ -10,7 +10,7 @@
     "images": [
       {
         "id": 1,
-        "url": "/images/a1.jpg",
+        "url": "/images/album1/family-portrait-outdoor-session.png",
         "title": "Photo 1",
         "description": "Beautiful moment"
       },
@@ -44,5 +44,41 @@
         "description": "Friends having fun"
       }
     ]
+  },
+  {
+    "id": 3,
+    "coverImage": "/images/Akhil-Engagement/First.jpg",
+    "clientNames": "Akhil with Pooja",
+    "eventType": "engagement",
+    "date": "August 09, 2024",
+    "category": "engagement",
+    "isLocked": false,
+    "images": [
+      {
+        "id": 1,
+        "url": "/images/Akhil-Engagement/01a copy.jpg",
+        "title": "Engagement-1",
+        "description": "Enagegement"
+      },
+      {
+        "id": 2,
+        "url": "/images/Akhil-Engagement/02.jpg",
+        "title": "Engagement-2",
+        "description": "Enagegement"
+      },
+      {
+        "id": 3,
+        "url": "/images/Akhil-Engagement/03.jpg",
+        "title": "Engagement-3",
+        "description": "Enagegement"
+      },
+      {
+        "id": 4,
+        "url": "/images/Akhil-Engagement/04.jpg",
+        "title": "Engagement-4",
+        "description": "Enagegement"
+      }
+    ]
   }
+
 ]

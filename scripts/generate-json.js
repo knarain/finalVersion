@@ -5,14 +5,14 @@ import path from "path";
 const albums = [
   {
     id: 1,
-    coverImage: "/images/album1.jpg",
-    clientNames: "John & Jane",
+    coverImage: "/images/album1/a1.jpg",
+    clientNames: "Johny & Jane",
     eventType: "Wedding",
     date: "August 12, 2023",
     category: "wedding",
     isLocked: false,
     images: [
-      { id: 1, url: "/images/a1.jpg", title: "Photo 1", description: "Beautiful moment" },
+      { id: 1, url: "/images/album1/a1.jpg", title: "Photo 1", description: "Beautiful moment" },
       { id: 2, url: "/images/a2.jpg", title: "Photo 2", description: "Family portrait" },
     ],
   },
