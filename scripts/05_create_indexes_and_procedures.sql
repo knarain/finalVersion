@@ -1,11 +1,10 @@
--- Create additional indexes and stored procedures for better performance
 
--- Additional indexes for better query performance
 CREATE INDEX idx_albums_category_locked ON albums(category, is_locked);
 CREATE INDEX idx_album_access_email_album ON album_access(email, album_id);
 CREATE INDEX idx_access_logs_date ON access_logs(accessed_at DESC);
 
--- Stored procedure to authenticate album access
+CREATE INDEX idx_user_email ON users(email);
+
 DELIMITER //
 CREATE PROCEDURE AuthenticateAlbumAccess(
     IN p_album_id INT,
@@ -42,7 +41,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- Stored procedure to get album with images
 DELIMITER //
 CREATE PROCEDURE GetAlbumWithImages(IN p_album_id INT)
 BEGIN

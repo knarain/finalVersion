@@ -49,7 +49,6 @@ INSERT INTO album_images (album_id, image_url, image_title, sort_order) VALUES
 (9, '/forest-path-misty-morning.png', 'Dothi Ceremony', 1),
 (9, '/family-portrait-outdoor-session.png', 'Traditional Moment', 2);
 
--- Public Showcase Albums
 INSERT INTO album_images (album_id, image_url, image_title, sort_order) VALUES
 (10, '/wedding-couple-romantic-portrait.png', 'Wedding Sample 1', 1),
 (10, '/bride-portrait-natural-light.png', 'Wedding Sample 2', 2),
@@ -58,5 +57,11 @@ INSERT INTO album_images (album_id, image_url, image_title, sort_order) VALUES
 (11, '/bride-portrait-natural-light.png', 'Portrait Sample 1', 1),
 (11, '/coastal-cliffs-ocean-view.png', 'Portrait Sample 2', 2),
 
+-- Demo albums
+INSERT INTO album_images (album_id, image_url, image_title, sort_order) VALUES
+(1, '/images/wedding1.jpg', 'Ceremony moment', 5),
+(1, '/images/wedding2.jpg', 'Reception', 6),
+(2, '/images/engagement1.jpg', 'Beach walk', 1),
+(3, '/images/family1.jpg', 'Outdoor session', 1);
 (12, '/family-portrait-outdoor-session.png', 'Family Sample 1', 1),
 (12, '/mountain-landscape-golden-hour.png', 'Family Sample 2', 2);

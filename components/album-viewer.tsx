@@ -191,6 +191,26 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
 
+                  {/* Download Buttons on Hover */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <a
+                      href={image.url.replace(/\.webp$/, "-compressed.jpg")}
+                      download
+                      onClick={(e) => e.stopPropagation()}
+                      className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+                    >
+                      Download HQ
+                    </a>
+                    <a
+                      href={image.url}
+                      download
+                      onClick={(e) => e.stopPropagation()}
+                      className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
+                    >
+                      Download Mobile
+                    </a>
+                  </div>
+
                   {/* Image overlay info */}
                   {image.title && (
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -269,6 +289,24 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
               alt={album.images[currentImageIndex]?.title || `Image ${currentImageIndex + 1}`}
               className="max-w-full max-h-full object-contain"
             />
+          </div>
+
+          {/* Download Buttons in Lightbox */}
+          <div className="absolute bottom-20 flex gap-4">
+            <a
+              href={album.images[currentImageIndex]?.url.replace(/\.webp$/, "-compressed.jpg")}
+              download
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Download HQ
+            </a>
+            <a
+              href={album.images[currentImageIndex]?.url}
+              download
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Download Mobile
+            </a>
           </div>
 
           {/* Image Info */}

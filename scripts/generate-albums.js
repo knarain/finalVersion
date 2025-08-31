@@ -1,80 +1,67 @@
-// scripts/generate-albums.js
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
 
-const INPUT_DIR = path.join(process.cwd(), "public", "albums"); // raw albums
-const OUTPUT_DIR = path.join(process.cwd(), "public", "generated"); // compressed
-const DATA_FILE = path.join(process.cwd(), "public", "data", "albums.json");
+const INPUT_DIR = path.join(process.cwd(), "public", "images");
+const OUTPUT_DIR = path.join(process.cwd(), "public", "generated");
+const DATA_DIR = path.join(process.cwd(), "public", "data");
 
-function titleFromFilename(file) {
-  return path.basename(file, path.extname(file)).replace(/[-_]/g, " ");
-}
+if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
-async function processImage(albumName, file) {
-  const inputPath = path.join(INPUT_DIR, albumName, file);
-  const baseName = path.parse(file).name;
+const albums = [];
 
-  const albumOutputDir = path.join(OUTPUT_DIR, albumName);
-  if (!fs.existsSync(albumOutputDir)) fs.mkdirSync(albumOutputDir, { recursive: true });
+const generateAlbums = async () => {
+  const albumFolders = fs.readdirSync(INPUT_DIR);
 
-  const jpgFile = `${baseName}.jpg`;
-  const webpFile = `${baseName}.webp`;
-
-  const jpgOutput = path.join(albumOutputDir, jpgFile);
-  const webpOutput = path.join(albumOutputDir, webpFile);
-
-  // 70% JPG
-  await sharp(inputPath).jpeg({ quality: 70 }).toFile(jpgOutput);
-  // WebP
-  await sharp(inputPath).webp({ quality: 70 }).toFile(webpOutput);
-
-  return {
-    displayUrl: `/generated/${albumName}/${webpFile}`, // always display webp
-    download: {
-      high: `/generated/${albumName}/${jpgFile}`, // 70% jpg
-      mobile: `/generated/${albumName}/${webpFile}`, // webp
-    },
-    title: titleFromFilename(file),
-    description: `${titleFromFilename(file)} from ${albumName}`,
-  };
-}
-
-async function main() {
-  const albums = [];
-  let albumId = 1;
-
-  for (const albumName of fs.readdirSync(INPUT_DIR)) {
+  for (const [albumIndex, albumName] of albumFolders.entries()) {
     const albumPath = path.join(INPUT_DIR, albumName);
-    if (!fs.lstatSync(albumPath).isDirectory()) continue;
+    if (!fs.statSync(albumPath).isDirectory()) continue;
 
-    const files = fs.readdirSync(albumPath).filter(f => /\.(jpe?g|png)$/i.test(f));
+    const outputAlbumPath = path.join(OUTPUT_DIR, albumName);
+    if (!fs.existsSync(outputAlbumPath)) fs.mkdirSync(outputAlbumPath, { recursive: true });
+
+    const files = fs.readdirSync(albumPath).filter(f => /\.(jpg|jpeg|png)$/i.test(f));
+    if (files.length === 0) continue;
+
     const images = [];
 
-    for (let i = 0; i < files.length; i++) {
-      const processed = await processImage(albumName, files[i]);
-      images.push({ id: i + 1, ...processed });
+    for (const [imageIndex, file] of files.entries()) {
+      const inputFile = path.join(albumPath, file);
+      const baseName = path.parse(file).name;
+
+      const webpFile = path.join(outputAlbumPath, `${baseName}.webp`);
+      const compressedFile = path.join(outputAlbumPath, `${baseName}-compressed.jpg`);
+
+      // Generate WebP (mobile version)
+      await sharp(inputFile).webp({ quality: 70 }).toFile(webpFile);
+
+      // Generate compressed JPG (high quality download)
+      await sharp(inputFile).jpeg({ quality: 70 }).toFile(compressedFile);
+
+      // Push only WebP into JSON
+      images.push({
+        id: imageIndex + 1,
+        url: `/generated/${albumName}/${baseName}.webp`,
+        title: `${albumName} - ${imageIndex + 1}`,
+        description: albumName
+      });
     }
 
-    if (images.length === 0) continue;
-
     albums.push({
-      id: albumId++,
-      coverImage: images[0].displayUrl,
-      clientNames: albumName.replace(/[-_]/g, " "),
-      eventType: "event",
-      date: new Date().toDateString(),
-      category: "general",
+      id: albumIndex + 1,
+      coverImage: images[0].url, // First image as cover
+      clientNames: albumName,    // Album folder name as clientNames
+      eventType: albumName,      // Can be customized later
+      date: new Date().toDateString(), // Default to today
+      category: albumName.toLowerCase(),
       isLocked: false,
-      images,
+      images
     });
   }
 
-  const dataDir = path.dirname(DATA_FILE);
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(albums, null, 2));
+  fs.writeFileSync(path.join(DATA_DIR, "albums.json"), JSON.stringify(albums, null, 2));
+  console.log("✅ albums.json generated in /public/data/");
+};
 
-  console.log("✅ albums.json generated with compression + webp!");
-}
-
-main();
+generateAlbums();

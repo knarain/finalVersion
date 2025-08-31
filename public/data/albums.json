@@ -1,84 +1,60 @@
 [
   {
     "id": 1,
-    "coverImage": "/images/album1/family-portrait-outdoor-session.png",
-    "clientNames": "John & Jane",
-    "eventType": "Wedding",
-    "date": "August 12, 2023",
-    "category": "wedding",
+    "coverImage": "/generated/Akhil-Engagement/01a copy.webp",
+    "clientNames": "Akhil-Engagement",
+    "eventType": "Akhil-Engagement",
+    "date": "Fri Aug 29 2025",
+    "category": "akhil-engagement",
     "isLocked": false,
     "images": [
       {
         "id": 1,
-        "url": "/images/album1/family-portrait-outdoor-session.png",
-        "title": "Photo 1",
-        "description": "Beautiful moment"
+        "url": "/generated/Akhil-Engagement/01a copy.webp",
+        "title": "Akhil-Engagement - 1",
+        "description": "Akhil-Engagement"
       },
       {
         "id": 2,
-        "url": "/images/a2.jpg",
-        "title": "Photo 2",
-        "description": "Family portrait"
+        "url": "/generated/Akhil-Engagement/02 copy.webp",
+        "title": "Akhil-Engagement - 2",
+        "description": "Akhil-Engagement"
+      },
+      {
+        "id": 3,
+        "url": "/generated/Akhil-Engagement/03 copy.webp",
+        "title": "Akhil-Engagement - 3",
+        "description": "Akhil-Engagement"
+      },
+      {
+        "id": 4,
+        "url": "/generated/Akhil-Engagement/04 copy.webp",
+        "title": "Akhil-Engagement - 4",
+        "description": "Akhil-Engagement"
+      },
+      {
+        "id": 5,
+        "url": "/generated/Akhil-Engagement/First.webp",
+        "title": "Akhil-Engagement - 5",
+        "description": "Akhil-Engagement"
       }
     ]
   },
   {
     "id": 2,
-    "coverImage": "/images/album2.jpg",
-    "clientNames": "Alex & Mary",
-    "eventType": "Birthday",
-    "date": "May 5, 2023",
-    "category": "birthday",
+    "coverImage": "/generated/album1/family-portrait-outdoor-session.webp",
+    "clientNames": "album1",
+    "eventType": "album1",
+    "date": "Fri Aug 29 2025",
+    "category": "album1",
     "isLocked": false,
     "images": [
       {
         "id": 1,
-        "url": "/images/b1.jpg",
-        "title": "Cake",
-        "description": "Birthday cake"
-      },
-      {
-        "id": 2,
-        "url": "/images/b2.jpg",
-        "title": "Party",
-        "description": "Friends having fun"
-      }
-    ]
-  },
-  {
-    "id": 3,
-    "coverImage": "/images/Akhil-Engagement/First.jpg",
-    "clientNames": "Akhil with Pooja",
-    "eventType": "engagement",
-    "date": "August 09, 2024",
-    "category": "engagement",
-    "isLocked": false,
-    "images": [
-      {
-        "id": 1,
-        "url": "/images/Akhil-Engagement/01a copy.jpg",
-        "title": "Engagement-1",
-        "description": "Enagegement"
-      },
-      {
-        "id": 2,
-        "url": "/images/Akhil-Engagement/02.jpg",
-        "title": "Engagement-2",
-        "description": "Enagegement"
-      },
-      {
-        "id": 3,
-        "url": "/images/Akhil-Engagement/03.jpg",
-        "title": "Engagement-3",
-        "description": "Enagegement"
-      },
-      {
-        "id": 4,
-        "url": "/images/Akhil-Engagement/04.jpg",
-        "title": "Engagement-4",
-        "description": "Enagegement"
+        "url": "/generated/album1/family-portrait-outdoor-session.webp",
+        "title": "album1 - 1",
+        "description": "album1"
       }
     ]
   }
-
 ]

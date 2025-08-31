@@ -243,7 +243,7 @@ const mockAlbumImages: AlbumImage[] = [
   },
 ]
 
-const mockAlbumAccess: AlbumAccess[] = [
+export const mockAlbumAccess: AlbumAccess[] = [
   {
     id: 1,
     album_id: 1,
@@ -297,7 +297,9 @@ export async function getAlbumById(id: number): Promise<Album | null> {
   await delay(50)
   console.log("[v0] Getting album by ID:", id)
   const album = mockAlbums.find((album) => album.id === id)
-  return album || null
+  if (!album) return null;
+  // Only return Album type here
+  return album;
 }
 
 // Get album images
@@ -350,3 +352,4 @@ export async function hashPassword(password: string): Promise<string> {
 export async function closeDatabase(): Promise<void> {
   console.log("[v0] Database connection closed (mock)")
 }
+
