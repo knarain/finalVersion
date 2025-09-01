@@ -27,5 +27,5 @@ jobs:
           password: ${{ secrets.HOSTINGER_KEY_FV }}
           protocol: ftp   # or sftp if Hostinger supports it
           port: 21
-          local-dir: ./out
+          local-dir: ./out/
           server-dir: /staging/
