@@ -22,5 +22,10 @@ jobs:
       - name: Upload to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
-          local-dir: ./out
-          server-dir: /public_html
+        server:   ${{ HOSTINGER_HOST_FV }}
+        username: ${{ HOSTINGER_USER_FV }}
+        password: ${{ HOSTINGER_KEY_FV }}
+        protocol: ftp                     # Change from 'ftp' to 'sftp'
+        port: 21                            # SFTP default port
+        local-dir: ./out
+        server-dir: /
