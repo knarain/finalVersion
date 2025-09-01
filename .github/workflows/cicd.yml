@@ -17,7 +17,6 @@ jobs:
         run: |
           npm install
           npm run build
-          npm run export
 
       # Deploy via FTP to Hostinger
       - name: Upload to Hostinger
