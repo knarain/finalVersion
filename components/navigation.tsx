@@ -13,7 +13,7 @@ export function Navigation() {
     { name: "About", href: "#about" },
     { name: "Gallery", href: "#gallery" },
     { name: "Contact", href: "#contact" },
-    {name:"Login", href:"#login"}
+    {name:"Login", href:"#login"} 
   ]
 
   useEffect(() => {
