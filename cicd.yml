@@ -28,4 +28,4 @@ jobs:
         protocol: sftp                     # Change from 'ftp' to 'sftp'
         port: 21                            # SFTP default port
         local-dir: ./out
-        server-dir: /
+        server-dir: /staging/
