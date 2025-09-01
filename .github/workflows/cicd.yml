@@ -28,4 +28,4 @@ jobs:
           protocol: ftp   # or sftp if Hostinger supports it
           port: 21
           local-dir: ./out/
-          server-dir: /staging/
+          server-dir: /public_html/staging/
