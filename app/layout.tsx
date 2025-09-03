@@ -73,7 +73,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#f59e0b" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} dark antialiased`}>{children}</body>
+      <body className={`font-Morgan ${GeistSans.variable} ${GeistMono.variable} dark antialiased`}>{children}</body>
     </html>
   )
 }

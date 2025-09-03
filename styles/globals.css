@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-@custom-variant dark (&:is(.dark *));
+/* Removed invalid @custom-variant line */
 
 :root {
   --background: oklch(1 0 0);
@@ -120,4 +120,15 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@font-face {
+  font-family: 'Morgan';
+  src: url('/fonts/Morgan.ttf') format('truetype'); /* Change extension if needed */
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-morgan {
+  font-family: 'Morgan', sans-serif;
 }
