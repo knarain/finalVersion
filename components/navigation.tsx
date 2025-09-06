@@ -3,17 +3,40 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Camera } from "lucide-react"
+import { useRouter } from 'next/navigation'
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token')
+    const user = localStorage.getItem('user')
+    setIsLoggedIn(!!token && !!user)
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setIsLoggedIn(false)
+    router.push('/')
+  }
 
   const navItems = [
     { name: "Home", href: "#home" },
     { name: "About", href: "#about" },
     { name: "Gallery", href: "#gallery" },
     { name: "Contact", href: "#contact" },
-    {name:"Login", href:"#login"} 
+    ...(isLoggedIn 
+      ? [
+          { name: "Admin", href: "/admin" },
+          { name: "Logout", href: "#", onClick: handleLogout }
+        ]
+      : [{ name: "Login", href: "/login" }]
+    )
   ]
 
   useEffect(() => {
@@ -61,6 +84,10 @@ export function Navigation() {
                 <a
                   key={item.name}
                   href={item.href}
+                  onClick={item.onClick ? (e) => {
+                    e.preventDefault();
+                    item.onClick();
+                  } : undefined}
                   className="text-white hover:text-amber-400 px-3 py-2 text-sm font-medium transition-colors duration-200 relative group"
                 >
                   {item.name}

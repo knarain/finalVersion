@@ -41,7 +41,7 @@ const mockAlbums: Album[] = [
     event_type: "Wedding",
     event_date: "2024-12-15",
     category: "wedding",
-    cover_image: "/wedding-couple-romantic-portrait.png",
+    cover_image: "http://localhost/rashmi-backend/gallery/images/wedding-couple-romantic-portrait.png",
     is_locked: true,
     created_at: "2024-12-01T10:00:00Z",
     updated_at: "2024-12-01T10:00:00Z",
@@ -52,7 +52,7 @@ const mockAlbums: Album[] = [
     event_type: "Wedding",
     event_date: "2024-11-20",
     category: "wedding",
-    cover_image: "/bride-portrait-natural-light.png",
+    cover_image: "http://localhost/rashmi-backend/gallery/images/bride-portrait-natural-light.png",
     is_locked: true,
     created_at: "2024-11-15T10:00:00Z",
     updated_at: "2024-11-15T10:00:00Z",
@@ -63,7 +63,7 @@ const mockAlbums: Album[] = [
     event_type: "House Warming",
     event_date: "2025-08-07",
     category: "house warming",
-    cover_image: "/family-portrait-outdoor-session.png",
+    cover_image: "http://localhost/rashmi-backend/gallery/images/family-portrait-outdoor-session.png",
     is_locked: true,
     created_at: "2025-08-01T10:00:00Z",
     updated_at: "2025-08-01T10:00:00Z",
@@ -74,7 +74,7 @@ const mockAlbums: Album[] = [
     event_type: "Engagement",
     event_date: "2024-10-10",
     category: "engagement",
-    cover_image: "/wedding-ceremony-candid-moment.png",
+    cover_image: "http://localhost/rashmi-backend/gallery/images/wedding-ceremony-candid-moment.png",
     is_locked: false,
     created_at: "2024-10-05T10:00:00Z",
     updated_at: "2024-10-05T10:00:00Z",
@@ -85,7 +85,7 @@ const mockAlbums: Album[] = [
     event_type: "Portfolio",
     event_date: "2024-09-15",
     category: "photoshoot",
-    cover_image: "/mountain-landscape-golden-hour.png",
+    cover_image: "http://localhost/rashmi-backend/gallery/images/mountain-landscape-golden-hour.png",
     is_locked: false,
     created_at: "2024-09-10T10:00:00Z",
     updated_at: "2024-09-10T10:00:00Z",
@@ -96,7 +96,7 @@ const mockAlbums: Album[] = [
     event_type: "Birthday",
     event_date: "2024-08-25",
     category: "birthday",
-    cover_image: "/coastal-cliffs-ocean-view.png",
+    cover_image: "http://localhost/rashmi-backend/gallery/images/coastal-cliffs-ocean-view.png",
     is_locked: true,
     created_at: "2024-08-20T10:00:00Z",
     updated_at: "2024-08-20T10:00:00Z",
@@ -108,7 +108,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 1,
     album_id: 1,
-    image_url: "/wedding-couple-romantic-portrait.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/wedding-couple-romantic-portrait.png",
     image_title: "Romantic Portrait",
     image_description: "Beautiful couple portrait",
     sort_order: 1,
@@ -117,7 +117,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 2,
     album_id: 1,
-    image_url: "/wedding-ceremony-candid-moment.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/wedding-ceremony-candid-moment.png",
     image_title: "Ceremony Moment",
     image_description: "Candid ceremony shot",
     sort_order: 2,
@@ -126,7 +126,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 3,
     album_id: 1,
-    image_url: "/bride-portrait-natural-light.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/bride-portrait-natural-light.png",
     image_title: "Bride Portrait",
     image_description: "Natural light portrait",
     sort_order: 3,
@@ -137,7 +137,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 4,
     album_id: 2,
-    image_url: "/bride-portrait-natural-light.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/bride-portrait-natural-light.png",
     image_title: "Bridal Beauty",
     image_description: "Stunning bridal portrait",
     sort_order: 1,
@@ -146,7 +146,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 5,
     album_id: 2,
-    image_url: "/wedding-couple-romantic-portrait.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/wedding-couple-romantic-portrait.png",
     image_title: "Couple Goals",
     image_description: "Perfect couple moment",
     sort_order: 2,
@@ -157,7 +157,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 6,
     album_id: 3,
-    image_url: "/family-portrait-outdoor-session.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/family-portrait-outdoor-session.png",
     image_title: "Family Joy",
     image_description: "Happy family moment",
     sort_order: 1,
@@ -166,7 +166,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 7,
     album_id: 3,
-    image_url: "/coastal-cliffs-ocean-view.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/coastal-cliffs-ocean-view.png",
     image_title: "House Blessing",
     image_description: "Traditional ceremony",
     sort_order: 2,
@@ -177,7 +177,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 8,
     album_id: 4,
-    image_url: "/wedding-ceremony-candid-moment.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/wedding-ceremony-candid-moment.png",
     image_title: "Engagement Bliss",
     image_description: "Engagement ceremony",
     sort_order: 1,
@@ -186,7 +186,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 9,
     album_id: 4,
-    image_url: "/bride-portrait-natural-light.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/bride-portrait-natural-light.png",
     image_title: "Ring Ceremony",
     image_description: "Beautiful ring exchange",
     sort_order: 2,
@@ -197,7 +197,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 10,
     album_id: 5,
-    image_url: "/mountain-landscape-golden-hour.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/mountain-landscape-golden-hour.png",
     image_title: "Golden Mountains",
     image_description: "Sunset over mountains",
     sort_order: 1,
@@ -206,7 +206,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 11,
     album_id: 5,
-    image_url: "/coastal-cliffs-ocean-view.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/coastal-cliffs-ocean-view.png",
     image_title: "Ocean Cliffs",
     image_description: "Dramatic coastal view",
     sort_order: 2,
@@ -215,7 +215,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 12,
     album_id: 5,
-    image_url: "/forest-path-misty-morning.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/forest-path-misty-morning.png",
     image_title: "Misty Forest",
     image_description: "Morning mist in forest",
     sort_order: 3,
@@ -226,7 +226,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 13,
     album_id: 6,
-    image_url: "/coastal-cliffs-ocean-view.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/coastal-cliffs-ocean-view.png",
     image_title: "Birthday Celebration",
     image_description: "Happy birthday moment",
     sort_order: 1,
@@ -235,7 +235,7 @@ const mockAlbumImages: AlbumImage[] = [
   {
     id: 14,
     album_id: 6,
-    image_url: "/family-portrait-outdoor-session.png",
+    image_url: "http://localhost/rashmi-backend/gallery/images/family-portrait-outdoor-session.png",
     image_title: "Family Fun",
     image_description: "Family enjoying the party",
     sort_order: 2,
@@ -285,11 +285,85 @@ export const mockAlbumAccess: AlbumAccess[] = [
 // Simulate async delay for realistic API behavior
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-// Get all albums
-export async function getAllAlbums(): Promise<Album[]> {
+export interface AlbumFilters {
+  category?: string
+  search?: string
+  sortBy?: 'date' | 'name' | 'category'
+  sortOrder?: 'asc' | 'desc'
+  page?: number
+  limit?: number
+}
+
+// Get all albums with filtering, sorting, and pagination
+export async function getAllAlbums(filters: AlbumFilters = {}): Promise<{ 
+  albums: Album[]
+  total: number
+  page: number
+  totalPages: number
+}> {
   await delay(100) // Simulate network delay
-  console.log("[v0] Getting all albums from mock data")
-  return [...mockAlbums]
+  console.log("[v0] Getting albums with filters:", filters)
+  
+  let filteredAlbums = [...mockAlbums]
+  
+  // Apply category filter
+  if (filters.category && filters.category !== 'all') {
+    filteredAlbums = filteredAlbums.filter(
+      album => album.category.toLowerCase() === filters.category?.toLowerCase()
+    )
+  }
+  
+  // Apply search filter
+  if (filters.search) {
+    const searchTerm = filters.search.toLowerCase()
+    filteredAlbums = filteredAlbums.filter(album => 
+      album.client_names.toLowerCase().includes(searchTerm) ||
+      album.event_type.toLowerCase().includes(searchTerm) ||
+      album.category.toLowerCase().includes(searchTerm)
+    )
+  }
+  
+  // Apply sorting
+  if (filters.sortBy) {
+    filteredAlbums.sort((a, b) => {
+      let compareA, compareB
+      
+      switch (filters.sortBy) {
+        case 'date':
+          compareA = new Date(a.event_date || a.created_at).getTime()
+          compareB = new Date(b.event_date || b.created_at).getTime()
+          break
+        case 'name':
+          compareA = a.client_names.toLowerCase()
+          compareB = b.client_names.toLowerCase()
+          break
+        case 'category':
+          compareA = a.category.toLowerCase()
+          compareB = b.category.toLowerCase()
+          break
+        default:
+          return 0
+      }
+      
+      const sortOrder = filters.sortOrder === 'desc' ? -1 : 1
+      return (compareA > compareB ? 1 : -1) * sortOrder
+    })
+  }
+  
+  // Apply pagination
+  const page = filters.page || 1
+  const limit = filters.limit || 12
+  const total = filteredAlbums.length
+  const totalPages = Math.ceil(total / limit)
+  const start = (page - 1) * limit
+  const paginatedAlbums = filteredAlbums.slice(start, start + limit)
+  
+  return {
+    albums: paginatedAlbums,
+    total,
+    page,
+    totalPages
+  }
 }
 
 // Get album by ID

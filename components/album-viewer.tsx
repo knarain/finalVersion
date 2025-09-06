@@ -1,8 +1,10 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { fetchAlbumDetails, type AlbumWithImages } from "@/lib/api"
+import { fetchAlbumImages, authenticateAlbum, type AlbumImage } from "@/lib/api"
+import { Loader2, X, ZoomIn, ZoomOut } from "lucide-react"
+import { AlbumAuthModal } from "./album-auth-modal"
 
 interface AlbumViewerProps {
   albumId: number
@@ -11,27 +13,46 @@ interface AlbumViewerProps {
 }
 
 export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
-  const [album, setAlbum] = useState<AlbumWithImages | null>(null)
+  const [images, setImages] = useState<AlbumImage[]>([])
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const [imageLoadingStates, setImageLoadingStates] = useState<{ [key: number]: boolean }>({})
+  const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>({})
+  const [scale, setScale] = useState(1)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const dragStart = useRef({ x: 0, y: 0 })
 
-  // Load album data when viewer opens
+  // Preload adjacent images
   useEffect(() => {
-    if (isOpen && albumId) {
-      loadAlbum()
+    if (images.length > 0) {
+      const preloadImage = (index: number) => {
+        if (index >= 0 && index < images.length) {
+          const img = new Image()
+          img.src = images[index].src
+        }
+      }
+      
+      // Preload next and previous images
+      preloadImage(currentImageIndex - 1)
+      preloadImage(currentImageIndex + 1)
     }
-  }, [isOpen, albumId])
+  }, [currentImageIndex, images])
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (!isOpen || !album) return
+      if (!isOpen || images.length === 0) return
 
       switch (e.key) {
         case "Escape":
-          if (isLightboxOpen) {
+          if (scale > 1) {
+            e.preventDefault()
+            resetZoom()
+          } else if (isLightboxOpen) {
             setIsLightboxOpen(false)
           } else {
             onClose()
@@ -48,278 +69,359 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
         case " ":
         case "Enter":
           e.preventDefault()
-          setIsLightboxOpen(true)
+          setIsLightboxOpen(!isLightboxOpen)
+          break
+        case "+":
+        case "=":
+          e.preventDefault()
+          handleZoom("in")
+          break
+        case "-":
+        case "_":
+          e.preventDefault()
+          handleZoom("out")
+          break
+        case "0":
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault()
+            resetZoom()
+          }
           break
       }
     }
 
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyPress)
-      document.body.style.overflow = "hidden"
+    window.addEventListener("keydown", handleKeyPress)
+    return () => window.removeEventListener("keydown", handleKeyPress)
+  }, [isOpen, isLightboxOpen, currentImageIndex, images.length, scale])
+
+  // Check if album requires authentication
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      // Try to fetch album images first - if successful, we're already authenticated
+      try {
+        const result = await fetchAlbumImages(albumId)
+        if (result.success) {
+          setIsAuthenticated(true)
+          setImages(result.data || [])
+          const loadingStates = (result.data || []).reduce((acc, img) => ({ ...acc, [img.id]: true }), {})
+          setImageLoadingStates(loadingStates)
+        } else {
+          // If unauthorized, show auth modal
+          setShowAuthModal(true)
+        }
+      } catch (error) {
+        setShowAuthModal(true)
+      }
     }
 
+    if (isOpen && albumId) {
+      if (isAuthenticated) {
+        loadAlbumImages()
+      } else {
+        checkAuthStatus()
+      }
+    }
     return () => {
-      document.removeEventListener("keydown", handleKeyPress)
-      document.body.style.overflow = "unset"
+      // Cleanup
+      setImages([])
+      setCurrentImageIndex(0)
+      setError(null)
+      setIsAuthenticated(false)
     }
-  }, [isOpen, album, isLightboxOpen, currentImageIndex])
+  }, [isOpen, albumId, isAuthenticated])
 
-  const loadAlbum = async () => {
+  const loadAlbumImages = async () => {
     setIsLoading(true)
     setError(null)
-
-    const result = await fetchAlbumDetails(albumId)
-
-    if (result.success && result.data) {
-      setAlbum(result.data)
-      setCurrentImageIndex(0)
-    } else {
-      setError(result.error || "Failed to load album")
+    try {
+      const result = await fetchAlbumImages(albumId)
+      if (result.success && result.data) {
+        // Sort images by display_order if available
+        const sortedImages = [...result.data].sort((a, b) => 
+          (a.display_order || 0) - (b.display_order || 0)
+        )
+        setImages(sortedImages)
+        // Initialize loading states for all images
+        const loadingStates = sortedImages.reduce((acc, img) => ({ ...acc, [img.id]: true }), {})
+        setImageLoadingStates(loadingStates)
+        // Clear any existing errors
+        setImageErrors({})
+      } else {
+        setError(result.error || "Failed to load album images")
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred"
+      setError(errorMessage)
+      console.error("Error loading album images:", error)
     }
-
     setIsLoading(false)
   }
 
-  const navigateImage = useCallback(
-    (direction: "prev" | "next") => {
-      if (!album || album.images.length === 0) return
+  const navigateImage = useCallback((direction: "next" | "prev") => {
+    if (images.length === 0) return
 
-      setCurrentImageIndex((prev) => {
-        if (direction === "next") {
-          return prev === album.images.length - 1 ? 0 : prev + 1
-        } else {
-          return prev === 0 ? album.images.length - 1 : prev - 1
-        }
+    setCurrentImageIndex((prev) => {
+      if (direction === "next") {
+        return prev === images.length - 1 ? 0 : prev + 1
+      } else {
+        return prev === 0 ? images.length - 1 : prev - 1
+      }
+    })
+  }, [images.length])
+
+  const handleZoom = (direction: 'in' | 'out') => {
+    setScale(prev => {
+      const newScale = direction === 'in' ? prev * 1.2 : prev / 1.2
+      // Limit zoom between 0.5x and 3x
+      return Math.min(Math.max(newScale, 0.5), 3)
+    })
+  }
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault()
+      const delta = -Math.sign(e.deltaY)
+      const zoomFactor = 1.1
+      setScale(prev => {
+        const newScale = delta > 0 ? prev * zoomFactor : prev / zoomFactor
+        return Math.min(Math.max(newScale, 0.5), 3)
       })
-    },
-    [album],
-  )
-
-  const handleImageClick = (index: number) => {
-    setCurrentImageIndex(index)
-    setIsLightboxOpen(true)
+    }
   }
 
-  const handleClose = () => {
-    setIsLightboxOpen(false)
-    setCurrentImageIndex(0)
-    setAlbum(null)
-    setError(null)
-    onClose()
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scale > 1) {
+      setIsDragging(true)
+      dragStart.current = {
+        x: e.clientX - position.x,
+        y: e.clientY - position.y
+      }
+    }
   }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && scale > 1) {
+      setPosition({
+        x: e.clientX - dragStart.current.x,
+        y: e.clientY - dragStart.current.y
+      })
+    }
+  }
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1 && scale > 1) {
+      setIsDragging(true)
+      dragStart.current = {
+        x: e.touches[0].clientX - position.x,
+        y: e.touches[0].clientY - position.y
+      }
+    }
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (isDragging && scale > 1 && e.touches.length === 1) {
+      e.preventDefault()
+      setPosition({
+        x: e.touches[0].clientX - dragStart.current.x,
+        y: e.touches[0].clientY - dragStart.current.y
+      })
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  const resetZoom = () => {
+    setScale(1)
+    setPosition({ x: 0, y: 0 })
+  }
+
+  const handleImageLoad = (imageId: number) => {
+    setImageLoadingStates(prev => ({ ...prev, [imageId]: false }))
+    setImageErrors(prev => ({ ...prev, [imageId]: false }))
+  }
+
+  const handleImageError = (imageId: number) => {
+    setImageLoadingStates(prev => ({ ...prev, [imageId]: false }))
+    setImageErrors(prev => ({ ...prev, [imageId]: true }))
+  }
+
+  // Reset zoom and position when changing images
+  useEffect(() => {
+    resetZoom()
+  }, [currentImageIndex])
 
   if (!isOpen) return null
 
+  const handleAuthentication = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const result = await authenticateAlbum(albumId, email, password);
+      if (result.success) {
+        setIsAuthenticated(true);
+        setShowAuthModal(false);
+        return true;
+      }
+      console.error("Authentication failed:", result.error);
+      return false;
+    } catch (error) {
+      console.error("Authentication error:", error);
+      return false;
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-black">
+    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 overflow-hidden">
+      <AlbumAuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false)
+          onClose()
+        }}
+        onAuthenticate={handleAuthentication}
+        albumName={images[currentImageIndex]?.caption || 'Private Album'}
+      />
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-10 bg-gradient-to-b from-black/80 to-transparent p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            {album && (
-              <div>
-                <h1 className="text-2xl font-light text-white tracking-wide">{album.clientNames}</h1>
-                <p className="text-gray-300 font-light">{album.eventType}</p>
-              </div>
-            )}
-          </div>
-          <Button
-            onClick={handleClose}
-            variant="ghost"
-            size="sm"
-            className="text-white hover:bg-white/10 rounded-full w-10 h-10 p-0"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </Button>
+      <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10">
+        <div className="text-white">
+          <h2 className="text-xl font-semibold">
+            {images[currentImageIndex]?.caption || 'Photo Gallery'}
+          </h2>
+          <p className="text-sm opacity-75">
+            {`Image ${currentImageIndex + 1} of ${images.length}`}
+          </p>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-white/20"
+          onClick={onClose}
+        >
+          <X className="h-6 w-6" />
+        </Button>
       </div>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center justify-center h-full">
-          <div className="flex items-center gap-3 text-white">
-            <div className="w-8 h-8 border-2 border-amber-400/20 border-t-amber-400 rounded-full animate-spin" />
-            <span className="font-light">Loading album...</span>
+      {/* Main content */}
+      <div className="h-full flex items-center justify-center p-4">
+        {isLoading ? (
+          <div className="text-white flex items-center gap-2">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Loading images...</span>
           </div>
-        </div>
-      )}
-
-      {/* Error State */}
-      {error && (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <div className="text-red-400 mb-4">
-              <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
-              <p className="text-lg font-light text-white">{error}</p>
-            </div>
+        ) : error ? (
+          <div className="text-red-400 text-center">
+            <p>{error}</p>
             <Button
-              onClick={loadAlbum}
               variant="outline"
-              className="border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black px-6 py-2 rounded-full bg-transparent font-light"
+              className="mt-4 text-white border-white hover:bg-white/20"
+              onClick={loadAlbumImages}
             >
-              Try Again
+              Retry
             </Button>
           </div>
-        </div>
-      )}
+        ) : images.length > 0 ? (
+          <div className="relative w-full h-full max-w-6xl mx-auto flex items-center">
+            {/* Navigation buttons */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute left-4 text-white hover:bg-white/20"
+              onClick={() => navigateImage("prev")}
+            >
+              ←
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-4 text-white hover:bg-white/20"
+              onClick={() => navigateImage("next")}
+            >
+              →
+            </Button>
 
-      {/* Album Content */}
-      {album && album.images.length > 0 && (
-        <div className="h-full pt-20 pb-32">
-          {/* Main Image Grid */}
-          <div className="h-full overflow-y-auto px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-7xl mx-auto">
-              {album.images.map((image, index) => (
-                <div
-                  key={image.id}
-                  onClick={() => handleImageClick(index)}
-                  className="group relative aspect-square overflow-hidden rounded-lg cursor-pointer bg-gray-900 transition-all duration-300 hover:scale-105"
-                >
-                  <img
-                    src={image.url || "/placeholder.svg"}
-                    alt={image.title || `Image ${index + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
-
-                  {/* Download Buttons on Hover */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <a
-                      href={image.url.replace(/\.webp$/, "-compressed.jpg")}
-                      download
-                      onClick={(e) => e.stopPropagation()}
-                      className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+            {/* Current image */}
+            <div 
+              className="w-full h-full flex items-center justify-center overflow-hidden"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onWheel={handleWheel}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleMouseUp}
+              style={{ cursor: scale > 1 ? 'grab' : 'default' }}
+            >
+              {imageLoadingStates[images[currentImageIndex]?.id] && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-white" />
+                </div>
+              )}
+              <img
+                src={images[currentImageIndex]?.src}
+                alt={images[currentImageIndex]?.alt}
+                className={`max-h-full max-w-full object-contain transition-all duration-200 ${
+                  imageLoadingStates[images[currentImageIndex]?.id] ? 'opacity-0' : 'opacity-100'
+                }`}
+                style={{
+                  transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
+                  cursor: isDragging ? 'grabbing' : 'inherit'
+                }}
+                onLoad={() => handleImageLoad(images[currentImageIndex].id)}
+                onError={() => handleImageError(images[currentImageIndex].id)}
+              />
+              {imageErrors[images[currentImageIndex]?.id] && (
+                <div className="absolute inset-0 flex items-center justify-center text-red-400">
+                  Failed to load image
+                </div>
+              )}
+              
+              {/* Zoom controls */}
+              <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                <div className="bg-black/50 px-2 py-1 rounded text-white text-sm">
+                  {Math.round(scale * 100)}%
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white hover:bg-white/20"
+                    onClick={() => handleZoom('in')}
+                    disabled={scale >= 3}
+                    title="Zoom In (+)"
+                  >
+                    <ZoomIn className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white hover:bg-white/20"
+                    onClick={() => handleZoom('out')}
+                    disabled={scale <= 0.5}
+                    title="Zoom Out (-)"
+                  >
+                    <ZoomOut className="h-5 w-5" />
+                  </Button>
+                  {scale !== 1 && (
+                    <Button
+                      variant="ghost"
+                      className="text-white hover:bg-white/20 text-sm"
+                      onClick={resetZoom}
+                      title="Reset Zoom (Ctrl/⌘ + 0)"
                     >
-                      Download HQ
-                    </a>
-                    <a
-                      href={image.url}
-                      download
-                      onClick={(e) => e.stopPropagation()}
-                      className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
-                    >
-                      Download Mobile
-                    </a>
-                  </div>
-
-                  {/* Image overlay info */}
-                  {image.title && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <p className="text-white text-sm font-light">{image.title}</p>
-                    </div>
+                      Reset
+                    </Button>
                   )}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Empty State */}
-      {album && album.images.length === 0 && (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            <p className="text-gray-400 font-light">No images in this album yet.</p>
+        ) : (
+          <div className="text-white text-center">
+            <p>No images found in this album</p>
           </div>
-        </div>
-      )}
-
-      {/* Lightbox */}
-      {isLightboxOpen && album && album.images.length > 0 && (
-        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
-          {/* Close Button */}
-          <Button
-            onClick={() => setIsLightboxOpen(false)}
-            variant="ghost"
-            size="sm"
-            className="absolute top-6 right-6 text-white hover:bg-white/10 rounded-full w-12 h-12 p-0 z-10"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </Button>
-
-          {/* Navigation Buttons */}
-          {album.images.length > 1 && (
-            <>
-              <Button
-                onClick={() => navigateImage("prev")}
-                variant="ghost"
-                size="sm"
-                className="absolute left-6 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 rounded-full w-12 h-12 p-0 z-10"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </Button>
-              <Button
-                onClick={() => navigateImage("next")}
-                variant="ghost"
-                size="sm"
-                className="absolute right-6 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 rounded-full w-12 h-12 p-0 z-10"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Button>
-            </>
-          )}
-
-          {/* Main Image */}
-          <div className="max-w-7xl max-h-full mx-auto px-20 py-16">
-            <img
-              src={album.images[currentImageIndex]?.url || "/placeholder.svg"}
-              alt={album.images[currentImageIndex]?.title || `Image ${currentImageIndex + 1}`}
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
-
-          {/* Download Buttons in Lightbox */}
-          <div className="absolute bottom-20 flex gap-4">
-            <a
-              href={album.images[currentImageIndex]?.url.replace(/\.webp$/, "-compressed.jpg")}
-              download
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Download HQ
-            </a>
-            <a
-              href={album.images[currentImageIndex]?.url}
-              download
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-            >
-              Download Mobile
-            </a>
-          </div>
-
-          {/* Image Info */}
-          {album.images[currentImageIndex]?.title && (
-            <div className="absolute bottom-6 left-6 right-6 text-center">
-              <p className="text-white font-light">{album.images[currentImageIndex].title}</p>
-              <p className="text-gray-400 text-sm font-light mt-1">
-                {currentImageIndex + 1} of {album.images.length}
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
