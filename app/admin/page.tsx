@@ -1,16 +1,14 @@
 'use client';
 import { useState, useEffect } from 'react';
-import * as jwt_decode from 'jwt-decode'; // ✅ Fixed import
+import { jwtDecode, JwtPayload } from 'jwt-decode'; // ✅ Correct import
 
 interface Album {
   id: number;
   clientNames: string;
 }
 
-interface JwtPayload {
+interface MyJwtPayload extends JwtPayload {
   email: string;
-  exp: number;
-  iat: number;
 }
 
 export default function AdminPage() {
@@ -34,7 +32,7 @@ export default function AdminPage() {
       }
 
       try {
-        const decoded = (jwt_decode as any)<JwtPayload>(token); // ✅ cast as any
+        const decoded = jwtDecode<MyJwtPayload>(token);
         setUserEmail(decoded.email);
 
         const res = await fetch('http://localhost/rashmi-backend/admin/verify-token.php', {
