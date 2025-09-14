@@ -35,7 +35,7 @@ export function Navigation() {
           { name: "Admin", href: "/admin" },
           { name: "Logout", href: "#", onClick: handleLogout }
         ]
-      : [{ name: "Login", href: "/login/login" }]
+      : [{ name: "Login", href: "/login" }]
     )
   ]
 

@@ -7,7 +7,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     // Clear admin info from localStorage
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUsername');
-    window.location.href = '/login/login'; // redirect to login page
+    window.location.href = '/admin/login'; // redirect to login page
   };
 
   return (
