@@ -36,8 +36,6 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
           img.src = images[index].src
         }
       }
-      
-      // Preload next and previous images
       preloadImage(currentImageIndex - 1)
       preloadImage(currentImageIndex + 1)
     }
@@ -97,16 +95,23 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
   // Check if album requires authentication
   useEffect(() => {
     const checkAuthStatus = async () => {
-      // Try to fetch album images first - if successful, we're already authenticated
       try {
         const result = await fetchAlbumImages(albumId)
-        if (result.success) {
+        if (result.success && Array.isArray(result.data)) {
           setIsAuthenticated(true)
-          setImages(result.data || [])
-          const loadingStates = (result.data || []).reduce((acc, img) => ({ ...acc, [img.id]: true }), {})
+          setImages(result.data)
+
+          const loadingStates: { [key: number]: boolean } = result.data.reduce(
+            (acc: { [key: number]: boolean }, img: AlbumImage) => {
+              if (img.id !== undefined) {
+                acc[img.id] = true
+              }
+              return acc
+            },
+            {}
+          )
           setImageLoadingStates(loadingStates)
         } else {
-          // If unauthorized, show auth modal
           setShowAuthModal(true)
         }
       } catch (error) {
@@ -122,7 +127,6 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
       }
     }
     return () => {
-      // Cleanup
       setImages([])
       setCurrentImageIndex(0)
       setError(null)
@@ -135,16 +139,22 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
     setError(null)
     try {
       const result = await fetchAlbumImages(albumId)
-      if (result.success && result.data) {
-        // Sort images by display_order if available
-        const sortedImages = [...result.data].sort((a, b) => 
-          (a.display_order || 0) - (b.display_order || 0)
+      if (result.success && Array.isArray(result.data)) {
+        const sortedImages = [...result.data].sort(
+          (a, b) => (a.display_order || 0) - (b.display_order || 0)
         )
         setImages(sortedImages)
-        // Initialize loading states for all images
-        const loadingStates = sortedImages.reduce((acc, img) => ({ ...acc, [img.id]: true }), {})
+
+        const loadingStates: { [key: number]: boolean } = sortedImages.reduce(
+          (acc: { [key: number]: boolean }, img: AlbumImage) => {
+            if (img.id !== undefined) {
+              acc[img.id] = true
+            }
+            return acc
+          },
+          {}
+        )
         setImageLoadingStates(loadingStates)
-        // Clear any existing errors
         setImageErrors({})
       } else {
         setError(result.error || "Failed to load album images")
@@ -157,22 +167,24 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
     setIsLoading(false)
   }
 
-  const navigateImage = useCallback((direction: "next" | "prev") => {
-    if (images.length === 0) return
+  const navigateImage = useCallback(
+    (direction: "next" | "prev") => {
+      if (images.length === 0) return
 
-    setCurrentImageIndex((prev) => {
-      if (direction === "next") {
-        return prev === images.length - 1 ? 0 : prev + 1
-      } else {
-        return prev === 0 ? images.length - 1 : prev - 1
-      }
-    })
-  }, [images.length])
+      setCurrentImageIndex((prev) => {
+        if (direction === "next") {
+          return prev === images.length - 1 ? 0 : prev + 1
+        } else {
+          return prev === 0 ? images.length - 1 : prev - 1
+        }
+      })
+    },
+    [images.length]
+  )
 
-  const handleZoom = (direction: 'in' | 'out') => {
-    setScale(prev => {
-      const newScale = direction === 'in' ? prev * 1.2 : prev / 1.2
-      // Limit zoom between 0.5x and 3x
+  const handleZoom = (direction: "in" | "out") => {
+    setScale((prev) => {
+      const newScale = direction === "in" ? prev * 1.2 : prev / 1.2
       return Math.min(Math.max(newScale, 0.5), 3)
     })
   }
@@ -182,7 +194,7 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
       e.preventDefault()
       const delta = -Math.sign(e.deltaY)
       const zoomFactor = 1.1
-      setScale(prev => {
+      setScale((prev) => {
         const newScale = delta > 0 ? prev * zoomFactor : prev / zoomFactor
         return Math.min(Math.max(newScale, 0.5), 3)
       })
@@ -194,7 +206,7 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
       setIsDragging(true)
       dragStart.current = {
         x: e.clientX - position.x,
-        y: e.clientY - position.y
+        y: e.clientY - position.y,
       }
     }
   }
@@ -203,7 +215,7 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
     if (isDragging && scale > 1) {
       setPosition({
         x: e.clientX - dragStart.current.x,
-        y: e.clientY - dragStart.current.y
+        y: e.clientY - dragStart.current.y,
       })
     }
   }
@@ -213,7 +225,7 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
       setIsDragging(true)
       dragStart.current = {
         x: e.touches[0].clientX - position.x,
-        y: e.touches[0].clientY - position.y
+        y: e.touches[0].clientY - position.y,
       }
     }
   }
@@ -223,7 +235,7 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
       e.preventDefault()
       setPosition({
         x: e.touches[0].clientX - dragStart.current.x,
-        y: e.touches[0].clientY - dragStart.current.y
+        y: e.touches[0].clientY - dragStart.current.y,
       })
     }
   }
@@ -238,37 +250,36 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
   }
 
   const handleImageLoad = (imageId: number) => {
-    setImageLoadingStates(prev => ({ ...prev, [imageId]: false }))
-    setImageErrors(prev => ({ ...prev, [imageId]: false }))
+    setImageLoadingStates((prev) => ({ ...prev, [imageId]: false }))
+    setImageErrors((prev) => ({ ...prev, [imageId]: false }))
   }
 
   const handleImageError = (imageId: number) => {
-    setImageLoadingStates(prev => ({ ...prev, [imageId]: false }))
-    setImageErrors(prev => ({ ...prev, [imageId]: true }))
+    setImageLoadingStates((prev) => ({ ...prev, [imageId]: false }))
+    setImageErrors((prev) => ({ ...prev, [imageId]: true }))
   }
 
-  // Reset zoom and position when changing images
   useEffect(() => {
     resetZoom()
   }, [currentImageIndex])
 
-  if (!isOpen) return null
-
   const handleAuthentication = async (email: string, password: string): Promise<boolean> => {
     try {
-      const result = await authenticateAlbum(albumId, email, password);
+      const result = await authenticateAlbum(albumId, email, password)
       if (result.success) {
-        setIsAuthenticated(true);
-        setShowAuthModal(false);
-        return true;
+        setIsAuthenticated(true)
+        setShowAuthModal(false)
+        return true
       }
-      console.error("Authentication failed:", result.error);
-      return false;
+      console.error("Authentication failed:", result.error)
+      return false
     } catch (error) {
-      console.error("Authentication error:", error);
-      return false;
+      console.error("Authentication error:", error)
+      return false
     }
-  };
+  }
+
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 z-50 overflow-hidden">
@@ -279,13 +290,13 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
           onClose()
         }}
         onAuthenticate={handleAuthentication}
-        albumName={images[currentImageIndex]?.caption || 'Private Album'}
+        albumName={images[currentImageIndex]?.caption || "Private Album"}
       />
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10">
         <div className="text-white">
           <h2 className="text-xl font-semibold">
-            {images[currentImageIndex]?.caption || 'Photo Gallery'}
+            {images[currentImageIndex]?.caption || "Photo Gallery"}
           </h2>
           <p className="text-sm opacity-75">
             {`Image ${currentImageIndex + 1} of ${images.length}`}
@@ -321,7 +332,6 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
           </div>
         ) : images.length > 0 ? (
           <div className="relative w-full h-full max-w-6xl mx-auto flex items-center">
-            {/* Navigation buttons */}
             <Button
               variant="ghost"
               size="icon"
@@ -336,11 +346,10 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
               className="absolute right-4 text-white hover:bg-white/20"
               onClick={() => navigateImage("next")}
             >
-              →
+              → 
             </Button>
 
-            {/* Current image */}
-            <div 
+            <div
               className="w-full h-full flex items-center justify-center overflow-hidden"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
@@ -350,7 +359,7 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleMouseUp}
-              style={{ cursor: scale > 1 ? 'grab' : 'default' }}
+              style={{ cursor: scale > 1 ? "grab" : "default" }}
             >
               {imageLoadingStates[images[currentImageIndex]?.id] && (
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -361,11 +370,13 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
                 src={images[currentImageIndex]?.src}
                 alt={images[currentImageIndex]?.alt}
                 className={`max-h-full max-w-full object-contain transition-all duration-200 ${
-                  imageLoadingStates[images[currentImageIndex]?.id] ? 'opacity-0' : 'opacity-100'
+                  imageLoadingStates[images[currentImageIndex]?.id]
+                    ? "opacity-0"
+                    : "opacity-100"
                 }`}
                 style={{
                   transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
-                  cursor: isDragging ? 'grabbing' : 'inherit'
+                  cursor: isDragging ? "grabbing" : "inherit",
                 }}
                 onLoad={() => handleImageLoad(images[currentImageIndex].id)}
                 onError={() => handleImageError(images[currentImageIndex].id)}
@@ -375,7 +386,7 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
                   Failed to load image
                 </div>
               )}
-              
+
               {/* Zoom controls */}
               <div className="absolute bottom-4 right-4 flex items-center gap-2">
                 <div className="bg-black/50 px-2 py-1 rounded text-white text-sm">
@@ -386,7 +397,7 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
                     variant="ghost"
                     size="icon"
                     className="text-white hover:bg-white/20"
-                    onClick={() => handleZoom('in')}
+                    onClick={() => handleZoom("in")}
                     disabled={scale >= 3}
                     title="Zoom In (+)"
                   >
@@ -396,7 +407,7 @@ export function AlbumViewer({ albumId, isOpen, onClose }: AlbumViewerProps) {
                     variant="ghost"
                     size="icon"
                     className="text-white hover:bg-white/20"
-                    onClick={() => handleZoom('out')}
+                    onClick={() => handleZoom("out")}
                     disabled={scale <= 0.5}
                     title="Zoom Out (-)"
                   >

@@ -2,17 +2,18 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { AlbumAuthModal } from "./album-auth-modal"
 import { AlbumViewer } from "./album-viewer"
-import { 
-  fetchAlbums, 
-  fetchAlbumImages, 
-  authenticateAlbum, 
-  type Album, 
-  type AlbumImage, 
-  type AlbumQueryParams 
-} from "@/lib/api"
+import axios from "axios"
+
+export interface Album {
+  id: number
+  clientNames: string
+  eventType: string
+  date?: string
+  coverImage?: string
+  isLocked: boolean
+}
 
 const categories = [
   { id: "all", name: "All" },
@@ -30,7 +31,6 @@ const categories = [
 ]
 
 export function Gallery() {
-  // State
   const [activeCategory, setActiveCategory] = useState("all")
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null)
@@ -42,101 +42,98 @@ export function Gallery() {
   const [viewingAlbumId, setViewingAlbumId] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  // Handlers
 
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page)
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }, [])
-
-  const handleCategoryChange = useCallback((category: string) => {
-    setActiveCategory(category)
-    setCurrentPage(1) // Reset to first page when changing category
-  }, [])
-
-  const handleAlbumClick = useCallback(async (album: Album) => {
-    // If album is locked and not authenticated, show auth modal first
-    if (album.isLocked && !authenticatedAlbums.has(album.id)) {
-      setSelectedAlbum(album)
-      setIsAuthModalOpen(true)
-      return
-    }
-    
-    // For unlocked albums or already authenticated albums, try to fetch images
+  // 🔹 Fetch Albums
+  const loadAlbums = useCallback(async () => {
+    setIsLoading(true)
+    setError(null)
     try {
-      const result = await fetchAlbumImages(album.id)
-      if (result.success && result.data) {
-        setViewingAlbumId(album.id)
-        setIsAlbumViewerOpen(true)
-      } else {
-        console.error("Failed to load album images:", result.error)
-      }
-    } catch (error) {
-      console.error("Error loading album images:", error)
-    }
-  }, [authenticatedAlbums])
-
-  const handleAuthenticate = useCallback(async (email: string, password: string): Promise<boolean> => {
-    if (!selectedAlbum) return false
-
-    try {
-      const result = await authenticateAlbum(selectedAlbum.id, email, password)
-      if (result.success) {
-        setAuthenticatedAlbums(prev => new Set([...prev, selectedAlbum.id]))
-        setIsAuthModalOpen(false)
-        setViewingAlbumId(selectedAlbum.id)
-        setIsAlbumViewerOpen(true)
-        return true
-      }
-      return false
-    } catch (error) {
-      console.error("Authentication error:", error)
-      return false
-    }
-  }, [selectedAlbum])
-
-  // Load albums effect
-  useEffect(() => {
-    let isMounted = true
-
-    const loadAlbums = async () => {
-      setIsLoading(true)
-      setError(null)
-
-      try {
-        const result = await fetchAlbums({
+      const res = await axios.get("http://localhost:8080/api/albums", {
+        params: {
           category: activeCategory === "all" ? undefined : activeCategory,
           page: currentPage,
-          limit: 12 // Show 12 albums per page
-        })
+          limit: 12,
+        },
+      })
 
-        if (!isMounted) return
-
-        if (result.success && result.data) {
-          setAlbums(result.data.items)
-          setTotalPages(result.data.totalPages)
-        } else {
-          setError(result.error || "Failed to load albums")
-          console.error("Failed to fetch albums:", result.error)
-        }
-      } catch (err) {
-        if (!isMounted) return
-        setError("An unexpected error occurred while loading albums")
-        console.error("Gallery load error:", err)
-      } finally {
-        if (isMounted) {
-          setIsLoading(false)
-        }
+      if (res.data.success && res.data.data) {
+        setAlbums(res.data.data.items)
+        setTotalPages(res.data.data.totalPages)
+      } else {
+        setError(res.data.error || "Failed to load albums")
       }
-    }
-
-    loadAlbums()
-
-    return () => {
-      isMounted = false
+    } catch (err) {
+      setError("An unexpected error occurred while loading albums")
+      console.error(err)
+    } finally {
+      setIsLoading(false)
     }
   }, [activeCategory, currentPage])
 
+  useEffect(() => {
+    loadAlbums()
+  }, [loadAlbums])
+
+  // 🔹 Fetch Album Images
+  const handleAlbumClick = useCallback(
+    async (album: Album) => {
+      if (album.isLocked && !authenticatedAlbums.has(album.id)) {
+        setSelectedAlbum(album)
+        setIsAuthModalOpen(true)
+        return
+      }
+      try {
+        const res = await axios.get(`http://localhost:8080/api/albums/${album.id}/images`)
+        if (res.data.success) {
+          setViewingAlbumId(album.id)
+          setIsAlbumViewerOpen(true)
+        } else {
+          console.error("Failed to load album images:", res.data.error)
+        }
+      } catch (error) {
+        console.error("Error loading album images:", error)
+      }
+    },
+    [authenticatedAlbums]
+  )
+
+  // 🔹 Authenticate Album
+  const handleAuthenticate = useCallback(
+    async (email: string, password: string): Promise<boolean> => {
+      if (!selectedAlbum) return false
+      try {
+        const res = await axios.post(`http://localhost:8080/api/albums/${selectedAlbum.id}/authenticate`, {
+          email,
+          password,
+        })
+
+        if (res.data.success && res.data.data?.token) {
+          setAuthenticatedAlbums((prev) => new Set([...prev, selectedAlbum.id]))
+          setIsAuthModalOpen(false)
+          setViewingAlbumId(selectedAlbum.id)
+          setIsAlbumViewerOpen(true)
+          return true
+        }
+        return false
+      } catch (error) {
+        console.error("Authentication error:", error)
+        return false
+      }
+    },
+    [selectedAlbum]
+  )
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category)
+    setCurrentPage(1)
+  }
+
+  // ================== JSX Rendering ==================
   if (isLoading) {
     return (
       <div className="space-y-12">
@@ -162,20 +159,13 @@ export function Gallery() {
         <div className="text-center py-20">
           <div className="text-red-400 mb-4">
             <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
             <p className="text-lg font-light">{error}</p>
           </div>
-          <Button
-            onClick={() => window.location.reload()}
-            variant="outline"
-            className="border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black px-6 py-2 rounded-full bg-transparent font-light"
-          >
+          <Button onClick={() => window.location.reload()} variant="outline"
+            className="border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black px-6 py-2 rounded-full bg-transparent font-light">
             Try Again
           </Button>
         </div>
@@ -193,22 +183,17 @@ export function Gallery() {
       <div className="overflow-x-auto">
         <div className="flex gap-8 pb-4 min-w-max justify-center">
           {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => handleCategoryChange(category.id)}
+            <button key={category.id} onClick={() => handleCategoryChange(category.id)}
               className={`text-sm font-light tracking-wide transition-all duration-300 whitespace-nowrap pb-2 border-b-2 ${
                 activeCategory === category.id
                   ? "text-amber-400 border-amber-400"
                   : "text-gray-400 border-transparent hover:text-amber-400 hover:border-amber-400/50"
-              }`}
-            >
+              }`}>
               {category.name}
             </button>
           ))}
         </div>
       </div>
-
-
 
       {/* Albums Display */}
       {!albums || albums.length === 0 ? (
@@ -220,30 +205,20 @@ export function Gallery() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
           {albums.map((album) => (
-            <div
-              key={album.id}
-              onClick={() => handleAlbumClick(album)}
+            <div key={album.id} onClick={() => handleAlbumClick(album)}
               className="group relative overflow-hidden rounded-lg bg-gray-900 cursor-pointer transition-all duration-300 hover:scale-105 w-full hover:shadow-xl"
-              style={{
-                aspectRatio: "3/4"
-              }}
-            >
-              <img
-                src={album.coverImage || "/placeholder.svg"}
+              style={{ aspectRatio: "3/4" }}>
+              <img src={album.coverImage || "/placeholder.svg"}
                 alt={`${album.clientNames} - ${album.eventType}`}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-300" />
 
+              {/* Lock/Unlock Icons */}
               {album.isLocked && !authenticatedAlbums.has(album.id) && (
                 <div className="absolute top-4 left-4 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center">
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
               )}
@@ -259,18 +234,10 @@ export function Gallery() {
               {!album.isLocked && (
                 <div className="absolute top-4 left-4 w-8 h-8 bg-amber-400/80 rounded-full flex items-center justify-center">
                   <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
                 </div>
               )}
@@ -284,35 +251,22 @@ export function Gallery() {
         </div>
       )}
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-8">
-          <Button
-            variant="outline"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-4 py-2"
-          >
+          <Button variant="outline" onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1} className="px-4 py-2">
             Previous
           </Button>
           {[...Array(totalPages)].map((_, i) => (
-            <Button
-              key={i}
-              variant={currentPage === i + 1 ? "default" : "outline"}
+            <Button key={i} variant={currentPage === i + 1 ? "default" : "outline"}
               onClick={() => handlePageChange(i + 1)}
-              className={`px-4 py-2 ${
-                currentPage === i + 1 ? "bg-amber-400 text-black" : ""
-              }`}
-            >
+              className={`px-4 py-2 ${currentPage === i + 1 ? "bg-amber-400 text-black" : ""}`}>
               {i + 1}
             </Button>
           ))}
-          <Button
-            variant="outline"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2"
-          >
+          <Button variant="outline" onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages} className="px-4 py-2">
             Next
           </Button>
         </div>
