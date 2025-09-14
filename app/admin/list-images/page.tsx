@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-export default function ListImages({ albumId }: { albumId: number }) {
+export function ListImages({ albumId }: { albumId: number }) {
   const [images, setImages] = useState<any[]>([]);
 
   useEffect(() => {
