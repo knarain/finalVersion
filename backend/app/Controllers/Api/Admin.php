@@ -60,31 +60,31 @@ class Admin extends BaseController {
      * Body: { "username": "...", "password": "..." }
      * Requires Authorization: Bearer <token>
      */
-    public function addAdmin() {
-        $json = $this->request->getJSON(true);
-        $username = $json['username'] ?? null;
-        $password = $json['password'] ?? null;
+    // public function addAdmin() {
+    //     $json = $this->request->getJSON(true);
+    //     $username = $json['username'] ?? null;
+    //     $password = $json['password'] ?? null;
 
-        if (!$username || !$password) {
-            return $this->fail('Username and password are required', 400);
-        }
+    //     if (!$username || !$password) {
+    //         return $this->fail('Username and password are required', 400);
+    //     }
 
-        // Check if username exists
-        if ($this->adminModel->where('username', $username)->first()) {
-            return $this->fail('Username already exists', 400);
-        }
+    //     // Check if username exists
+    //     if ($this->adminModel->where('username', $username)->first()) {
+    //         return $this->fail('Username already exists', 400);
+    //     }
 
-        $adminId = $this->adminModel->insert([
-            'username' => $username,
-            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+    //     $adminId = $this->adminModel->insert([
+    //         'username' => $username,
+    //         'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+    //         'created_at' => date('Y-m-d H:i:s')
+    //     ]);
 
-        return $this->respond([
-            'success' => true,
-            'adminId' => $adminId
-        ]);
-    }
+    //     return $this->respond([
+    //         'success' => true,
+    //         'adminId' => $adminId
+    //     ]);
+    // }
     /**
      * Validate JWT token
      */
