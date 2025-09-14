@@ -20,7 +20,7 @@ export default function AdminLogin() {
       if (res.data.success && res.data.token) {
         localStorage.setItem('adminToken', res.data.token);
         localStorage.setItem('adminUsername', res.data.admin.username);
-        window.location.href = '/admin/dashboard';
+  window.location.href = '/admin/admin-dashboard';
       } else {
         setError(res.data.message || 'Invalid credentials');
       }
