@@ -12,7 +12,7 @@ export default function AdminLogin() {
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:8080/api/admin/login', {
+      const res = await axios.post('https://stg.rashmiphotography.com/backend/api/admin/login', {
         username,
         password,
       });
