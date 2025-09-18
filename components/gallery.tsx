@@ -48,7 +48,7 @@ export function Gallery() {
     setIsLoading(true)
     setError(null)
     try {
-      const res = await axios.get("http://localhost:8080/api/albums", {
+      const res = await axios.get("https://stg.rashmiphotography.com/backend/api/albums", {
         params: {
           category: activeCategory === "all" ? undefined : activeCategory,
           page: currentPage,

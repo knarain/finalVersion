@@ -63,7 +63,7 @@ export interface ApiResponse<T> {
 
 // ------------------ Config ------------------
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://stg.rashmiphotography.com/backend/api"
 
 // Helper to build query string
 function buildQueryString(params: AlbumQueryParams): string {
