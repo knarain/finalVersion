@@ -1,5 +1,14 @@
-// app/albums/[albumId]/album-images/page.tsx
-import AlbumImagesClient from './AlbumImagesClient'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import axios from 'axios'
+
+interface Image {
+  id: number
+  filename: string
+  caption?: string
+}
 
 interface PageProps {
   params: {
@@ -7,16 +16,78 @@ interface PageProps {
   }
 }
 
-// This function tells Next.js which album pages to pre-render
-export async function generateStaticParams() {
-  const res = await fetch('http://localhost:8080/api/albums') // fetch all albums
-  const data = await res.json()
-
-  return data.items.map((album: any) => ({
-    albumId: album.id.toString()
-  }))
-}
-
 export default function Page({ params }: PageProps) {
-  return <AlbumImagesClient albumId={params.albumId} />
+  const { albumId } = params
+  const [images, setImages] = useState<Image[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const router = useRouter()
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/api/albums/${albumId}/images`)
+        setImages(res.data.data || [])
+      } catch (err: any) {
+        console.error(err)
+        setError('Failed to fetch images')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchImages()
+  }, [albumId])
+
+  if (loading) return <p className="text-white p-6">Loading images...</p>
+  if (error) return <p className="text-red-500 p-6">{error}</p>
+
+  return (
+    <div className="p-6 bg-gray-900 min-h-screen text-white">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Album {albumId} - Images</h1>
+        <button
+          onClick={() => router.push(`/albums/${albumId}/album-images/add`)}
+          className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg font-semibold transition-colors"
+        >
+          + Add Images
+        </button>
+      </div>
+
+      {images.length === 0 ? (
+        <p>No images found for this album.</p>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {images.map((img) => (
+            <div
+              key={img.id}
+              className="bg-gray-800 rounded-lg overflow-hidden shadow hover:shadow-lg transition"
+            >
+              <img
+                src={`http://localhost:8080/uploads/albums/${albumId}/${img.filename}`}
+                alt={img.caption || 'Album Image'}
+                className="w-full h-40 object-cover"
+              />
+              <div className="p-2 text-sm text-gray-300">
+                {img.caption || 'No caption'}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
+
+// Optional: pre-generate album pages
+// export async function generateStaticParams() {
+//   try {
+//     const res = await fetch('http://localhost:8080/api/albums')
+//     const data = await res.json()
+//     return data.data.map((album: any) => ({
+//       albumId: album.id.toString()
+//     }))
+//   } catch (err) {
+//     console.error('Failed to fetch albums', err)
+//     return []
+//   }
+// }

@@ -92,4 +92,23 @@ class AlbumsAdmin extends BaseController {
             'uploaded' => $uploaded
         ]);
     }
+
+    public function images($albumId = null)
+    {
+        if (!$albumId) {
+            return $this->response
+                        ->setJSON(['status' => 'error', 'message' => 'Album ID is required'])
+                        ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
+        }
+
+        $model = new AlbumImageModel();
+        $images = $model->where('album_id', $albumId)
+                        ->orderBy('created_at', 'DESC')
+                        ->findAll();
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data' => $images
+        ]);
+    }
 }
