@@ -1,31 +1,40 @@
 'use client';
 import { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
-      const res = await axios.post('https://stg.rashmiphotography.com/backend/api/admin/login', {
+      const res = await axios.post('http://localhost:8080/api/admin/login', {
         username,
         password,
       });
 
       if (res.data.success && res.data.token) {
+        // ✅ Save credentials
         localStorage.setItem('adminToken', res.data.token);
         localStorage.setItem('adminUsername', res.data.admin.username);
-  window.location.href = '/admin/admin-dashboard';
+
+        // ✅ Redirect to /admin (this will automatically send to dashboard)
+        router.push('/admin');
       } else {
         setError(res.data.message || 'Invalid credentials');
       }
     } catch (err) {
       setError('Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -33,10 +42,12 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-black text-white p-6">
       <div className="max-w-md w-full bg-gray-900 rounded-2xl shadow-xl p-8 border border-gray-800">
         <h1 className="text-3xl font-extrabold mb-6 text-center">Admin Login</h1>
+
         {error && <div className="bg-red-900 px-4 py-3 rounded mb-4">{error}</div>}
+
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label>Username</label>
+            <label className="block mb-1">Username</label>
             <input
               type="text"
               value={username}
@@ -46,7 +57,7 @@ export default function AdminLogin() {
             />
           </div>
           <div>
-            <label>Password</label>
+            <label className="block mb-1">Password</label>
             <input
               type="password"
               value={password}
@@ -57,9 +68,10 @@ export default function AdminLogin() {
           </div>
           <button
             type="submit"
-            className="w-full py-2 bg-yellow-500 text-black font-bold rounded-xl hover:bg-yellow-600 transition"
+            disabled={loading}
+            className="w-full py-2 bg-yellow-500 text-black font-bold rounded-xl hover:bg-yellow-600 transition disabled:opacity-50"
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>
