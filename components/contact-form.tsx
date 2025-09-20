@@ -1,8 +1,7 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
+import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -41,44 +40,43 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmissionState({ isSubmitting: true, isSuccess: false, error: null })
 
-    setSubmissionState({
-      isSubmitting: true,
-      isSuccess: false,
-      error: null,
-    })
+    try {
+      const res = await axios.post("http://localhost:8080/api/enquiries", formData)
 
-    // Simulate form submission delay
-    setTimeout(() => {
+      if (res.data.success) {
+        setSubmissionState({ isSubmitting: false, isSuccess: true, error: null })
+        setFormData({ name: "", email: "", phone: "", eventType: "", eventDate: "", message: "" })
+
+        // Hide success message after 5 seconds
+        setTimeout(() => setSubmissionState(prev => ({ ...prev, isSuccess: false })), 5000)
+      } else {
+        setSubmissionState({
+          isSubmitting: false,
+          isSuccess: false,
+          error: res.data.message || "Submission failed",
+        })
+      }
+    } catch (err: any) {
+      // Handle backend validation errors
+      const backendError =
+        err.response?.data?.messages ||
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Submission failed"
+
       setSubmissionState({
         isSubmitting: false,
-        isSuccess: true,
-        error: null,
+        isSuccess: false,
+        error: typeof backendError === "object" ? Object.values(backendError).join(", ") : backendError,
       })
-
-      // Reset form on success
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        eventType: "",
-        eventDate: "",
-        message: "",
-      })
-
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        setSubmissionState((prev) => ({ ...prev, isSuccess: false }))
-      }, 5000)
-    }, 2000)
+    }
   }
 
   const handleChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    // Clear error when user starts typing
-    if (submissionState.error) {
-      setSubmissionState((prev) => ({ ...prev, error: null }))
-    }
+    setFormData(prev => ({ ...prev, [field]: value }))
+    if (submissionState.error) setSubmissionState(prev => ({ ...prev, error: null }))
   }
 
   if (submissionState.isSuccess) {
@@ -90,9 +88,9 @@ export function ContactForm() {
           </svg>
         </div>
         <h3 className="text-xl font-semibold text-white mb-2">Message Sent Successfully!</h3>
-        <p className="text-gray-300 mb-6">Thank you for reaching out. I'll get back to you within 24 hours.</p>
+        <p className="text-gray-300 mb-6">Thank you for reaching out. We'll get back to you within 24 hours.</p>
         <Button
-          onClick={() => setSubmissionState((prev) => ({ ...prev, isSuccess: false }))}
+          onClick={() => setSubmissionState(prev => ({ ...prev, isSuccess: false }))}
           variant="outline"
           className="border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black"
         >
@@ -121,6 +119,7 @@ export function ContactForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Name & Email */}
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label htmlFor="name" className="text-sm font-medium text-gray-300">
@@ -131,12 +130,11 @@ export function ContactForm() {
               type="text"
               required
               value={formData.name}
-              onChange={(e) => handleChange("name", e.target.value)}
-              className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-400 focus:ring-amber-400"
+              onChange={e => handleChange("name", e.target.value)}
               placeholder="Your full name"
+              className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-400 focus:ring-amber-400"
             />
           </div>
-
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium text-gray-300">
               Email Address *
@@ -146,13 +144,14 @@ export function ContactForm() {
               type="email"
               required
               value={formData.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-              className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-400 focus:ring-amber-400"
+              onChange={e => handleChange("email", e.target.value)}
               placeholder="your.email@example.com"
+              className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-400 focus:ring-amber-400"
             />
           </div>
         </div>
 
+        {/* Phone & Event Type */}
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label htmlFor="phone" className="text-sm font-medium text-gray-300">
@@ -162,17 +161,16 @@ export function ContactForm() {
               id="phone"
               type="tel"
               value={formData.phone}
-              onChange={(e) => handleChange("phone", e.target.value)}
-              className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-400 focus:ring-amber-400"
+              onChange={e => handleChange("phone", e.target.value)}
               placeholder="+91 98765 43210"
+              className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-400 focus:ring-amber-400"
             />
           </div>
-
           <div className="space-y-2">
             <label htmlFor="eventType" className="text-sm font-medium text-gray-300">
               Event Type *
             </label>
-            <Select value={formData.eventType} onValueChange={(value) => handleChange("eventType", value)}>
+            <Select value={formData.eventType} onValueChange={value => handleChange("eventType", value)}>
               <SelectTrigger className="bg-gray-800 border-gray-700 text-white focus:border-amber-400 focus:ring-amber-400">
                 <SelectValue placeholder="Select event type" />
               </SelectTrigger>
@@ -188,6 +186,7 @@ export function ContactForm() {
           </div>
         </div>
 
+        {/* Event Date */}
         <div className="space-y-2">
           <label htmlFor="eventDate" className="text-sm font-medium text-gray-300">
             Event Date
@@ -196,11 +195,12 @@ export function ContactForm() {
             id="eventDate"
             type="date"
             value={formData.eventDate}
-            onChange={(e) => handleChange("eventDate", e.target.value)}
+            onChange={e => handleChange("eventDate", e.target.value)}
             className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-400 focus:ring-amber-400"
           />
         </div>
 
+        {/* Message */}
         <div className="space-y-2">
           <label htmlFor="message" className="text-sm font-medium text-gray-300">
             Message *
@@ -210,9 +210,9 @@ export function ContactForm() {
             required
             rows={6}
             value={formData.message}
-            onChange={(e) => handleChange("message", e.target.value)}
-            className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-400 focus:ring-amber-400 resize-none"
+            onChange={e => handleChange("message", e.target.value)}
             placeholder="Tell me about your event, vision, and any specific requirements..."
+            className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-400 focus:ring-amber-400 resize-none"
           />
         </div>
 
@@ -221,31 +221,7 @@ export function ContactForm() {
           disabled={submissionState.isSubmitting}
           className="w-full bg-amber-400 text-black hover:bg-amber-300 font-semibold py-3 rounded-full transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {submissionState.isSubmitting ? (
-            <span className="flex items-center gap-2">
-              <svg className="animate-spin w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              Sending Message...
-            </span>
-          ) : (
-            <span className="flex items-center gap-2">
-              Send Message
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                />
-              </svg>
-            </span>
-          )}
+          {submissionState.isSubmitting ? "Sending..." : "Send Message"}
         </Button>
       </form>
     </div>

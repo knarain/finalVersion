@@ -8,10 +8,10 @@ interface Enquiry {
   name: string
   email: string
   phone: string
-  event_type: string
-  event_date: string
+  eventType: string
+  eventDate: string
   message: string
-  created_at: string
+  createdAt: string
 }
 
 export default function EnquiriesPage() {
@@ -50,21 +50,10 @@ export default function EnquiriesPage() {
             <p><strong>Name:</strong> {enquiry.name}</p>
             <p><strong>Email:</strong> {enquiry.email}</p>
             <p><strong>Phone:</strong> {enquiry.phone || "-"}</p>
-            <p><strong>Event Type:</strong> {enquiry.event_type}</p>
-            <p><strong>Event Date:</strong> {enquiry.event_date || "-"}</p>
+            <p><strong>Event Type:</strong> {enquiry.eventType}</p>
+            <p><strong>Event Date:</strong> {enquiry.eventDate || "-"}</p>
             <p><strong>Message:</strong> {enquiry.message}</p>
-            <p className="text-gray-400 text-sm mt-2">
-              <strong>Submitted At:</strong> {new Date(enquiry.created_at).toLocaleString()}
-            </p>
-            <div className="mt-4 flex gap-2">
-              <Button
-                onClick={() => alert("Feature not implemented: Reply to enquiry")}
-                variant="outline"
-                className="border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black"
-              >
-                Reply
-              </Button>
-            </div>
+            <p className="text-gray-400 text-sm mt-2"><strong>Submitted At:</strong> {new Date(enquiry.createdAt).toLocaleString()}</p>
           </div>
         ))}
       </div>
