@@ -1,14 +1,20 @@
 import AddImages from './AddImages'
 import { generateStaticParams as staticParams } from './generateStaticParams'
 
-// Props from Next.js App Router
-interface AddImagesPageProps {
-  params: { albumId: string }
-}
-
-// Pre-generate static album pages
+// ✅ Re-export generateStaticParams
 export { staticParams as generateStaticParams }
 
-export default function AddImagesPage({ params }: AddImagesPageProps) {
-  return <AddImages albumId={params.albumId} />
+// ✅ Correct typing for params
+export default function AddImagesPage({
+  params,
+}: {
+  params: Promise<{ albumId: string }>; // Adjusted to match the expected Promise type
+}) {
+  return (
+    <>
+      {params.then(({ albumId }) => (
+        <AddImages albumId={albumId} />
+      ))}
+    </>
+  );
 }
