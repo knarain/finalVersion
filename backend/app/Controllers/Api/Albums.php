@@ -10,10 +10,10 @@ use CodeIgniter\API\ResponseTrait;
 class Albums extends BaseController {
     use ResponseTrait;
 
-    protected $albumModel;
-    protected $imageModel;
-    protected $credModel;
-    protected $tokenModel;
+    protected AlbumModel $albumModel;
+    protected AlbumImageModel $imageModel;
+    protected AlbumAuthCredentialModel $credModel;
+    protected AlbumAuthTokenModel $tokenModel;
 
     public function __construct() {
         $this->albumModel = new AlbumModel();
@@ -24,35 +24,35 @@ class Albums extends BaseController {
 
     /**
      * GET /api/albums?category=&page=&limit=
+     * Returns paginated albums, filtered by category if given.
      */
     public function index() {
         $category = $this->request->getGet('category');
-        $page = (int) ($this->request->getGet('page') ?? 1);
+        $page = max(1, (int) ($this->request->getGet('page') ?? 1));
         $limit = (int) ($this->request->getGet('limit') ?? 12);
-        if ($page < 1) $page = 1;
 
         $builder = $this->albumModel;
         if ($category) {
-            // match event_type or category case-insensitively
-            $builder = $builder->like('event_type', $category);
+            // Case-insensitive category/event_type filter
+            $builder = $builder->like('LOWER(event_type)', strtolower($category), 'both', null, true);
         }
 
-        $total = $builder->countAllResults(false); // false -> don't reset query
+        // Count total matching albums without resetting builder
+        $total = $builder->countAllResults(false);
         $totalPages = max(1, (int) ceil($total / $limit));
-
         $offset = ($page - 1) * $limit;
-        $albums = $builder
-            ->orderBy('date', 'DESC')
-            ->findAll($limit, $offset);
 
-        // Map DB fields to frontend names used in React
-        $items = array_map(function($a){
+        // Fetch page of albums ordered by date descending
+        $albums = $builder->orderBy('date', 'DESC')->findAll($limit, $offset);
+
+        // Map DB fields to frontend keys
+        $items = array_map(function($a) {
             return [
                 'id' => (int)$a['id'],
                 'clientNames' => $a['client_names'],
                 'eventType' => $a['event_type'],
                 'date' => $a['date'],
-                'coverImage' => $a['cover_image'],
+                'coverImage' => $a['cover_image'], // full URL or accessible path expected
                 'isLocked' => (bool)$a['is_locked'],
             ];
         }, $albums);
@@ -70,7 +70,9 @@ class Albums extends BaseController {
 
     /**
      * GET /api/albums/{id}/images
-     * If album is locked, requires token (Authorization: Bearer <token> or ?token=)
+     * Returns images in album; requires token if album is locked.
+     *
+     * @param int|null $id Album id
      */
     public function images($id = null) {
         if (!$id) return $this->failNotFound('Album id required');
@@ -79,7 +81,7 @@ class Albums extends BaseController {
         if (!$album) return $this->failNotFound('Album not found');
 
         if ((int)$album['is_locked'] === 1) {
-            // check token
+            // Check token validity via header or query param
             $token = $this->getBearerToken() ?? $this->request->getGet('token');
             if (!$token || !$this->isTokenValid($id, $token)) {
                 return $this->respond([
@@ -89,14 +91,14 @@ class Albums extends BaseController {
             }
         }
 
-        $images = $this->imageModel->where('album_id', $id)->orderBy('id','ASC')->findAll();
-        $data = array_map(function($img){
+        $images = $this->imageModel->where('album_id', $id)->orderBy('id', 'ASC')->findAll();
+        $data = array_map(function($img) {
             return [
                 'id' => (int)$img['id'],
                 'albumId' => (int)$img['album_id'],
                 'fileName' => $img['filename'],
-                'fileUrl' => $img['file_url'],
-                'caption' => $img['caption']
+                'fileUrl' => $img['file_url'], // must be accessible publicly
+                'caption' => $img['caption'],
             ];
         }, $images);
 
@@ -105,8 +107,9 @@ class Albums extends BaseController {
 
     /**
      * POST /api/albums/{id}/authenticate
-     * Body: { email, password }
-     * Returns { success: true, token: "...", expiresAt: "ISO" }
+     * Authenticates email/password for locked album; returns token
+     *
+     * @param int|null $id Album id
      */
     public function authenticate($id = null) {
         if (!$id) return $this->failNotFound('Album id required');
@@ -125,15 +128,11 @@ class Albums extends BaseController {
         }
 
         $cred = $this->credModel->where(['album_id' => $id, 'email' => $email])->first();
-        if (!$cred) {
+        if (!$cred || !password_verify($password, $cred['password_hash'])) {
             return $this->respond(['success' => false, 'error' => 'Invalid credentials'], 401);
         }
 
-        if (!password_verify($password, $cred['password_hash'])) {
-            return $this->respond(['success' => false, 'error' => 'Invalid credentials'], 401);
-        }
-
-        // generate token and save with expiry (e.g., 6 hours)
+        // Create token with 6-hr expiry
         $token = bin2hex(random_bytes(24));
         $expiresAt = date('Y-m-d H:i:s', time() + 6 * 3600);
 
@@ -152,7 +151,10 @@ class Albums extends BaseController {
         ]);
     }
 
-    // Helper: get bearer token from Authorization header
+    /**
+     * Helper to get bearer token from Authorization header
+     * @return string|null
+     */
     protected function getBearerToken() {
         $auth = $this->request->getServer('HTTP_AUTHORIZATION') ?? $this->request->getServer('Authorization');
         if (!$auth) return null;
@@ -162,13 +164,18 @@ class Albums extends BaseController {
         return null;
     }
 
-    // Helper: checks token validity
+    /**
+     * Helper to validate token belongs to album and is not expired
+     * @param int $albumId
+     * @param string $token
+     * @return bool
+     */
     protected function isTokenValid($albumId, $token) {
         if (!$token) return false;
         $row = $this->tokenModel->where(['album_id' => $albumId, 'token' => $token])->first();
         if (!$row) return false;
         if (strtotime($row['expires_at']) < time()) {
-            // optionally delete expired token
+            // Delete expired token
             $this->tokenModel->delete($row['id']);
             return false;
         }

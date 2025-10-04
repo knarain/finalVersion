@@ -66,7 +66,7 @@ export default function ListAlbums() {
 
             {/* Action Buttons */}
             <div className="flex gap-2">
-             <button
+              <button
                 onClick={() => router.push(`/admin/albums/${album.id}/album-images`)}
                 className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg font-semibold transition-colors cursor-pointer"
               >
@@ -78,6 +78,13 @@ export default function ListAlbums() {
                 className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg font-semibold transition-colors"
               >
                 Edit
+              </button>
+
+              <button
+                onClick={() => router.push(`/admin/albums/${album.id}`)}
+                className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg font-semibold transition-colors"
+              >
+                Auth Credentials
               </button>
             </div>
           </div>
