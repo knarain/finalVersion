@@ -20,15 +20,29 @@ export default function AddAlbum() {
     }
 
     try {
-      const formData = new FormData();
-      formData.append('client_names', clientNames);
-      formData.append('event_type', eventType);
-      if (date) formData.append('date', date);
-      if (coverImage) formData.append('cover_image', coverImage);
-      formData.append('is_locked', isLocked ? '1' : '0');
+      let coverImageBase64 = null;
+      if (coverImage) {
+        coverImageBase64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(coverImage);
+        });
+      }
 
-      const res = await axios.post('http://localhost:8080/api/admin/add-album.php', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const payload = {
+        clientNames,
+        eventType,
+        date,
+        isLocked: isLocked ? 1 : 0,
+        coverImage: coverImageBase64,
+      };
+      const token = localStorage.getItem('adminToken');
+  const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/albums`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
 
       if (res.data.success) {

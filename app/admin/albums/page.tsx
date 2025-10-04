@@ -9,7 +9,7 @@ export default function ListAlbums() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8080/api/albums')
+      .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/albums`)
       .then((res) => {
         setAlbums(res.data.data?.items || [])
         console.log(res.data)
@@ -67,7 +67,7 @@ export default function ListAlbums() {
             {/* Action Buttons */}
             <div className="flex gap-2">
              <button
-                onClick={() => router.push(`/albums/${album.id}/album-images`)}
+                onClick={() => router.push(`/admin/albums/${album.id}/album-images`)}
                 className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg font-semibold transition-colors cursor-pointer"
               >
                 View Images

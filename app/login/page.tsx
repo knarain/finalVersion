@@ -16,7 +16,7 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:8080/api/admin/login', {
+  const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/login`, {
         username,
         password,
       });

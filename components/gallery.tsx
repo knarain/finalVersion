@@ -48,7 +48,7 @@ export function Gallery() {
     setIsLoading(true)
     setError(null)
     try {
-      const res = await axios.get("http://localhost:8080/api/albums", {
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/albums`, {
         params: {
           category: activeCategory === "all" ? undefined : activeCategory,
           page: currentPage,
@@ -83,7 +83,7 @@ export function Gallery() {
         return
       }
       try {
-        const res = await axios.get(`http://localhost:8080/api/albums/${album.id}/images`)
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/albums/${album.id}/images`)
         if (res.data.success) {
           setViewingAlbumId(album.id)
           setIsAlbumViewerOpen(true)
@@ -102,7 +102,7 @@ export function Gallery() {
     async (email: string, password: string): Promise<boolean> => {
       if (!selectedAlbum) return false
       try {
-        const res = await axios.post(`http://localhost:8080/api/albums/${selectedAlbum.id}/authenticate`, {
+  const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/albums/${selectedAlbum.id}/authenticate`, {
           email,
           password,
         })

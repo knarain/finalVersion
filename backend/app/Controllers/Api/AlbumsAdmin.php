@@ -5,6 +5,8 @@ use App\Models\AlbumModel;
 use App\Models\AlbumImageModel;
 use CodeIgniter\API\ResponseTrait;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class AlbumsAdmin extends BaseController {
     use ResponseTrait;
@@ -18,29 +20,39 @@ class AlbumsAdmin extends BaseController {
         $this->imageModel = new AlbumImageModel();
     }
 
+    /**
+     * Decode JWT token and return admin payload
+     */
     protected function getAdmin() {
         $authHeader = $this->request->getServer('HTTP_AUTHORIZATION');
         if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) return false;
+
         $token = $matches[1];
+
         try {
-            $decoded = JWT::decode($token, $this->jwtKey, ['HS256']);
+            // ✅ Updated for firebase/php-jwt v6+
+            $decoded = JWT::decode($token, new Key($this->jwtKey, 'HS256'));
             return (array)$decoded;
         } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
             return false;
         }
     }
 
-    // Add new album
+    /**
+     * Create new album
+     */
     public function create() {
         $admin = $this->getAdmin();
         if (!$admin) return $this->failUnauthorized('Unauthorized');
 
         $json = $this->request->getJSON(true);
+
         $clientNames = $json['clientNames'] ?? null;
-        $eventType = $json['eventType'] ?? null;
-        $date = $json['date'] ?? null;
-        $isLocked = $json['isLocked'] ?? 0;
-        $coverImage = $json['coverImage'] ?? null; // expect base64 or URL
+        $eventType   = $json['eventType'] ?? null;
+        $date        = $json['date'] ?? null;
+        $isLocked    = $json['isLocked'] ?? 0;
+        $coverImage  = $json['coverImage'] ?? null; // base64 or URL
 
         if (!$clientNames || !$eventType || !$date || !$coverImage) {
             return $this->fail('All fields are required', 400);
@@ -48,10 +60,10 @@ class AlbumsAdmin extends BaseController {
 
         $albumId = $this->albumModel->insert([
             'client_names' => $clientNames,
-            'event_type' => $eventType,
-            'date' => $date,
-            'cover_image' => $coverImage,
-            'is_locked' => $isLocked,
+            'event_type'   => $eventType,
+            'date'         => $date,
+            'cover_image'  => $coverImage,
+            'is_locked'    => $isLocked,
         ]);
 
         return $this->respond([
@@ -60,7 +72,9 @@ class AlbumsAdmin extends BaseController {
         ]);
     }
 
-    // Upload album images
+    /**
+     * Upload images to an album
+     */
     public function uploadImages($albumId) {
         $admin = $this->getAdmin();
         if (!$admin) return $this->failUnauthorized('Unauthorized');
@@ -72,15 +86,15 @@ class AlbumsAdmin extends BaseController {
         foreach ($files['images'] ?? [] as $file) {
             if ($file->isValid() && !$file->hasMoved()) {
                 $newName = $file->getRandomName();
-                $file->move(WRITEPATH.'uploads', $newName);
+                $file->move(WRITEPATH.'uploads/albums/'.$albumId, $newName);
 
-                $fileUrl = base_url('writable/uploads/'.$newName);
+                $fileUrl = base_url('writable/uploads/albums/'.$albumId.'/'.$newName);
 
                 $imageId = $this->imageModel->insert([
                     'album_id' => $albumId,
                     'filename' => $newName,
                     'file_url' => $fileUrl,
-                    'caption' => '',
+                    'caption'  => '',
                 ]);
 
                 $uploaded[] = $fileUrl;
@@ -93,22 +107,24 @@ class AlbumsAdmin extends BaseController {
         ]);
     }
 
-    public function images($albumId = null)
-    {
+    /**
+     * Get all images for an album
+     */
+    public function images($albumId = null) {
         if (!$albumId) {
             return $this->response
                         ->setJSON(['status' => 'error', 'message' => 'Album ID is required'])
                         ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
 
-        $model = new AlbumImageModel();
-        $images = $model->where('album_id', $albumId)
-                        ->orderBy('created_at', 'DESC')
-                        ->findAll();
+        $images = $this->imageModel
+                       ->where('album_id', $albumId)
+                       ->orderBy('created_at', 'DESC')
+                       ->findAll();
 
         return $this->response->setJSON([
             'status' => 'success',
-            'data' => $images
+            'data'   => $images
         ]);
     }
 }

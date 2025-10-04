@@ -1,0 +1,81 @@
+ERROR - 2025-10-04 13:10:18 --> Error connecting to the database: mysqli_sql_exception: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', 'root', '', 'rsphotography', 3306, '', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#5 E:\finalVersion\backend\app\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+#6 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+#7 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+#8 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#10 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#13 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#2 E:\finalVersion\backend\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#3 E:\finalVersion\backend\system\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#4 E:\finalVersion\backend\app\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+#5 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+#6 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+#7 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#9 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#12 {main}
+CRITICAL - 2025-10-04 13:10:18 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: No connection could be made because the target machine actively refused it
+[Method: GET, Route: api/albums]
+in SYSTEMPATH\Database\BaseConnection.php on line 467.
+ 1 SYSTEMPATH\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `albums`', [], false)
+ 3 SYSTEMPATH\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 4 APPPATH\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2025-10-04 13:18:17 --> Error: Firebase\JWT\JWT::decode(): Argument #3 ($headers) cannot be passed by reference
+[Method: POST, Route: api/admin/albums]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 26.
+ 1 APPPATH\Controllers\Api\AlbumsAdmin.php(35): App\Controllers\Api\AlbumsAdmin->getAdmin()
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->create()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2025-10-04 13:20:25 --> Error: Firebase\JWT\JWT::decode(): Argument #3 ($headers) cannot be passed by reference
+[Method: POST, Route: api/admin/albums]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 26.
+ 1 APPPATH\Controllers\Api\AlbumsAdmin.php(35): App\Controllers\Api\AlbumsAdmin->getAdmin()
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->create()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2025-10-04 13:20:31 --> Error: Firebase\JWT\JWT::decode(): Argument #3 ($headers) cannot be passed by reference
+[Method: POST, Route: api/admin/albums]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 26.
+ 1 APPPATH\Controllers\Api\AlbumsAdmin.php(35): App\Controllers\Api\AlbumsAdmin->getAdmin()
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->create()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')

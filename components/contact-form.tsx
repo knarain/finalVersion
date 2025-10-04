@@ -43,7 +43,7 @@ export function ContactForm() {
     setSubmissionState({ isSubmitting: true, isSuccess: false, error: null })
 
     try {
-      const res = await axios.post("http://localhost:8080/api/enquiries", formData)
+  const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/enquiries`, formData)
 
       if (res.data.success) {
         setSubmissionState({ isSubmitting: false, isSuccess: true, error: null })
