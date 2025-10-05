@@ -126,3 +126,95 @@ ERROR - 2025-10-05 21:00:53 --> Token validation failed: Token not provided. Alb
 ERROR - 2025-10-05 21:00:53 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
 ERROR - 2025-10-05 21:00:54 --> Token validation failed: Token not provided. AlbumID: 4
 ERROR - 2025-10-05 21:00:54 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
+ERROR - 2025-10-05 21:24:35 --> Token validation failed: Token not provided. AlbumID: 4
+ERROR - 2025-10-05 21:24:35 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
+ERROR - 2025-10-05 21:24:35 --> Token validation failed: Token not provided. AlbumID: 4
+ERROR - 2025-10-05 21:24:35 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
+ERROR - 2025-10-05 21:25:27 --> Token validation failed: Token not provided. AlbumID: 4
+ERROR - 2025-10-05 21:25:27 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
+ERROR - 2025-10-05 21:25:27 --> Token validation failed: Token not provided. AlbumID: 4
+ERROR - 2025-10-05 21:25:27 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
+ERROR - 2025-10-05 21:25:34 --> mysqli_sql_exception: Unknown column 'updated_at' in 'field list' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('UPDATE `album_a...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `album_a...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `album_a...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `album_a...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+#5 E:\finalVersion\backend\system\BaseModel.php(1031): CodeIgniter\Model->doUpdate(Array, Array)
+#6 E:\finalVersion\backend\system\Model.php(863): CodeIgniter\BaseModel->update(Array, Array)
+#7 E:\finalVersion\backend\app\Controllers\AlbumsController.php(69): CodeIgniter\Model->update('28', Array)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumsController->authenticate('4')
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumsController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+CRITICAL - 2025-10-05 21:25:34 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'updated_at' in 'field list'
+[Method: POST, Route: api/user/albums/4/authenticate]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `album_auth_tokens` SET `expires_at` = :expires_at:, `updated_at` = :updated_at:
+WHERE `album_auth_tokens`.`id` IN :album_auth_tokens.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+ 3 SYSTEMPATH\BaseModel.php(1031): CodeIgniter\Model->doUpdate([...], [...])
+ 4 SYSTEMPATH\Model.php(863): CodeIgniter\BaseModel->update([...], [...])
+ 5 APPPATH\Controllers\AlbumsController.php(69): CodeIgniter\Model->update('28', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumsController->authenticate('4')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumsController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2025-10-05 21:25:34 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'updated_at' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `album_auth_tokens` SET `expires_at` = \'2025-10-06 04:55:34\', `updated_at` = \'2025-10-05 21:25:34\'
+WHERE `album_auth_tokens`.`id` IN (\'28\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `album_auth_tokens` SET `expires_at` = \'2025-10-06 04:55:34\', `updated_at` = \'2025-10-05 21:25:34\'
+WHERE `album_auth_tokens`.`id` IN (\'28\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `album_auth_tokens` SET `expires_at` = :expires_at:, `updated_at` = :updated_at:
+WHERE `album_auth_tokens`.`id` IN :album_auth_tokens.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+ 5 SYSTEMPATH\BaseModel.php(1031): CodeIgniter\Model->doUpdate([...], [...])
+ 6 SYSTEMPATH\Model.php(863): CodeIgniter\BaseModel->update([...], [...])
+ 7 APPPATH\Controllers\AlbumsController.php(69): CodeIgniter\Model->update('28', [...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumsController->authenticate('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumsController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2025-10-05 21:25:34 --> [Caused by] mysqli_sql_exception: Unknown column 'updated_at' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('UPDATE `album_auth_tokens` SET `expires_at` = \'2025-10-06 04:55:34\', `updated_at` = \'2025-10-05 21:25:34\'
+WHERE `album_auth_tokens`.`id` IN (\'28\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `album_auth_tokens` SET `expires_at` = \'2025-10-06 04:55:34\', `updated_at` = \'2025-10-05 21:25:34\'
+WHERE `album_auth_tokens`.`id` IN (\'28\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `album_auth_tokens` SET `expires_at` = \'2025-10-06 04:55:34\', `updated_at` = \'2025-10-05 21:25:34\'
+WHERE `album_auth_tokens`.`id` IN (\'28\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `album_auth_tokens` SET `expires_at` = :expires_at:, `updated_at` = :updated_at:
+WHERE `album_auth_tokens`.`id` IN :album_auth_tokens.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+ 6 SYSTEMPATH\BaseModel.php(1031): CodeIgniter\Model->doUpdate([...], [...])
+ 7 SYSTEMPATH\Model.php(863): CodeIgniter\BaseModel->update([...], [...])
+ 8 APPPATH\Controllers\AlbumsController.php(69): CodeIgniter\Model->update('28', [...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumsController->authenticate('4')
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumsController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2025-10-05 21:28:36 --> Token validation failed: Token not provided. AlbumID: 4
+ERROR - 2025-10-05 21:28:36 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
+ERROR - 2025-10-05 21:28:46 --> Token validation failed: Token not provided. AlbumID: 4
+ERROR - 2025-10-05 21:28:46 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
+ERROR - 2025-10-05 21:28:47 --> Token validation failed: Token not provided. AlbumID: 4
+ERROR - 2025-10-05 21:28:47 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
+ERROR - 2025-10-05 21:29:01 --> Token validation failed: Token not provided. AlbumID: 4
+ERROR - 2025-10-05 21:29:01 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
+ERROR - 2025-10-05 21:29:02 --> Token validation failed: Token not provided. AlbumID: 4
+ERROR - 2025-10-05 21:29:02 --> Access denied: Token invalid or expired. AlbumID: 4, Token: 
