@@ -33,26 +33,22 @@ class Albums extends BaseController {
 
         $builder = $this->albumModel;
         if ($category) {
-            // Case-insensitive category/event_type filter
             $builder = $builder->like('LOWER(event_type)', strtolower($category), 'both', null, true);
         }
 
-        // Count total matching albums without resetting builder
         $total = $builder->countAllResults(false);
         $totalPages = max(1, (int) ceil($total / $limit));
         $offset = ($page - 1) * $limit;
 
-        // Fetch page of albums ordered by date descending
         $albums = $builder->orderBy('date', 'DESC')->findAll($limit, $offset);
 
-        // Map DB fields to frontend keys
         $items = array_map(function($a) {
             return [
                 'id' => (int)$a['id'],
                 'clientNames' => $a['client_names'],
                 'eventType' => $a['event_type'],
                 'date' => $a['date'],
-                'coverImage' => $a['cover_image'], // full URL or accessible path expected
+                'coverImage' => $a['cover_image'],
                 'isLocked' => (bool)$a['is_locked'],
             ];
         }, $albums);
@@ -71,8 +67,6 @@ class Albums extends BaseController {
     /**
      * GET /api/albums/{id}/images
      * Returns images in album; requires token if album is locked.
-     *
-     * @param int|null $id Album id
      */
     public function images($id = null) {
         if (!$id) return $this->failNotFound('Album id required');
@@ -81,9 +75,8 @@ class Albums extends BaseController {
         if (!$album) return $this->failNotFound('Album not found');
 
         if ((int)$album['is_locked'] === 1) {
-            // Check token validity via header or query param
             $token = $this->getBearerToken() ?? $this->request->getGet('token');
-            if (!$token || !$this->isTokenValid($id, $token)) {
+            if (!$this->isTokenValid($id, $token)) {
                 return $this->respond([
                     'success' => false,
                     'error' => 'Album is locked. Authentication required.'
@@ -97,7 +90,7 @@ class Albums extends BaseController {
                 'id' => (int)$img['id'],
                 'albumId' => (int)$img['album_id'],
                 'fileName' => $img['filename'],
-                'fileUrl' => $img['file_url'], // must be accessible publicly
+                'fileUrl' => $img['file_url'],
                 'caption' => $img['caption'],
             ];
         }, $images);
@@ -108,8 +101,6 @@ class Albums extends BaseController {
     /**
      * POST /api/albums/{id}/authenticate
      * Authenticates email/password for locked album; returns token
-     *
-     * @param int|null $id Album id
      */
     public function authenticate($id = null) {
         if (!$id) return $this->failNotFound('Album id required');
@@ -120,10 +111,11 @@ class Albums extends BaseController {
         $json = $this->request->getJSON(true);
         $email = $json['email'] ?? null;
         $password = $json['password'] ?? null;
+
         if (!$email || !$password) {
             return $this->respond([
                 'success' => false,
-                'error' => 'email and password are required'
+                'error' => 'Email and password are required'
             ], 400);
         }
 
@@ -132,7 +124,7 @@ class Albums extends BaseController {
             return $this->respond(['success' => false, 'error' => 'Invalid credentials'], 401);
         }
 
-        // Create token with 6-hr expiry
+        // Create token with 6-hour expiry
         $token = bin2hex(random_bytes(24));
         $expiresAt = date('Y-m-d H:i:s', time() + 6 * 3600);
 
@@ -152,10 +144,9 @@ class Albums extends BaseController {
     }
 
     /**
-     * Helper to get bearer token from Authorization header
-     * @return string|null
+     * Helper: get bearer token from Authorization header
      */
-    protected function getBearerToken() {
+    protected function getBearerToken(): ?string {
         $auth = $this->request->getServer('HTTP_AUTHORIZATION') ?? $this->request->getServer('Authorization');
         if (!$auth) return null;
         if (strpos($auth, 'Bearer ') === 0) {
@@ -165,17 +156,15 @@ class Albums extends BaseController {
     }
 
     /**
-     * Helper to validate token belongs to album and is not expired
-     * @param int $albumId
-     * @param string $token
-     * @return bool
+     * Helper: validate token belongs to album and is not expired
      */
-    protected function isTokenValid($albumId, $token) {
+    protected function isTokenValid(int $albumId, ?string $token): bool {
         if (!$token) return false;
         $row = $this->tokenModel->where(['album_id' => $albumId, 'token' => $token])->first();
         if (!$row) return false;
+
         if (strtotime($row['expires_at']) < time()) {
-            // Delete expired token
+            // Remove expired token
             $this->tokenModel->delete($row['id']);
             return false;
         }

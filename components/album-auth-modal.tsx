@@ -17,24 +17,32 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
+    setError(null)
     setIsLoading(true)
 
     try {
+      // Calls the parent provided function—should return true on success
       const success = await onAuthenticate(email, password)
+
       if (success) {
-        onClose()
         setEmail("")
         setPassword("")
+        setError(null)
+        onClose()
       } else {
         setError("Invalid email or password. Please try again.")
       }
-    } catch (err) {
-      setError("An error occurred. Please try again.")
+    } catch (err: any) {
+      // Show API error message if available (backend returns .error in response)
+      setError(
+        err?.response?.data?.error ||
+        err?.message ||
+        "Authentication failed. Please try again."
+      )
     } finally {
       setIsLoading(false)
     }
@@ -43,7 +51,7 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
   const handleClose = () => {
     setEmail("")
     setPassword("")
-    setError("")
+    setError(null)
     onClose()
   }
 
@@ -56,7 +64,7 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
 
       {/* Modal */}
       <div className="relative bg-gray-900 border border-gray-800 rounded-lg p-8 w-full max-w-md mx-4 shadow-2xl">
-        {/* Close Button */}
+        {/* Close */}
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
@@ -96,6 +104,7 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoFocus
               className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-amber-400 focus:ring-amber-400/20"
               placeholder="Enter your email"
             />
@@ -148,7 +157,6 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
           </div>
         </form>
 
-        {/* Help Text */}
         <div className="mt-6 pt-6 border-t border-gray-800">
           <p className="text-gray-500 text-sm font-light text-center">
             Don't have access? Contact us for your album credentials.
