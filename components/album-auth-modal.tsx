@@ -25,9 +25,7 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
     setIsLoading(true)
 
     try {
-      // Calls the parent provided function—should return true on success
       const success = await onAuthenticate(email, password)
-
       if (success) {
         setEmail("")
         setPassword("")
@@ -37,7 +35,6 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
         setError("Invalid email or password. Please try again.")
       }
     } catch (err: any) {
-      // Show API error message if available (backend returns .error in response)
       setError(
         err?.response?.data?.error ||
         err?.message ||
@@ -73,7 +70,6 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-
         {/* Header */}
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-amber-400/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -91,7 +87,6 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
             Enter your credentials to view <span className="text-amber-400">{albumName}</span>
           </p>
         </div>
-
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
@@ -109,7 +104,6 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
               placeholder="Enter your email"
             />
           </div>
-
           <div className="space-y-2">
             <Label htmlFor="password" className="text-gray-300 font-light">
               Password
@@ -124,13 +118,11 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
               placeholder="Enter your password"
             />
           </div>
-
           {error && (
             <div className="text-red-400 text-sm font-light bg-red-400/10 border border-red-400/20 rounded-md p-3">
               {error}
             </div>
           )}
-
           <div className="flex gap-3 pt-4">
             <Button
               type="button"
@@ -156,7 +148,6 @@ export function AlbumAuthModal({ isOpen, onClose, onAuthenticate, albumName }: A
             </Button>
           </div>
         </form>
-
         <div className="mt-6 pt-6 border-t border-gray-800">
           <p className="text-gray-500 text-sm font-light text-center">
             Don't have access? Contact us for your album credentials.

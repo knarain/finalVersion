@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { AlbumAuthModal } from "./album-auth-modal"
 import { AlbumViewer } from "./album-viewer"
-import axios from "axios"
 
 export interface Album {
   id: number
@@ -47,6 +47,7 @@ export function Gallery() {
   const [viewingAlbumId, setViewingAlbumId] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [albumViewerToken, setAlbumViewerToken] = useState<string | null>(null)
 
   // Load tokens from localStorage on mount
   useEffect(() => {
@@ -104,61 +105,32 @@ export function Gallery() {
     loadAlbums()
   }, [loadAlbums])
 
-  // Album click handler (fetch images or prompt auth)
+  // Album click handler (open viewer, or prompt auth)
   const handleAlbumClick = useCallback(
     async (album: Album) => {
-      // Check token validity and expiry before sending
       const storedToken = authenticatedAlbums.get(album.id)
-      if (album.isLocked && (!storedToken || new Date(storedToken.expiresAt).getTime() <= Date.now())) {
+      const hasValidToken =
+        storedToken && new Date(storedToken.expiresAt).getTime() > Date.now()
+
+      if (album.isLocked && !hasValidToken) {
         setSelectedAlbum(album)
         setIsAuthModalOpen(true)
         return
       }
 
-      try {
-        const config = storedToken
-          ? { headers: { Authorization: `Bearer ${storedToken.token}` } }
-          : {}
-
-        // Backend expects /api/albums/{albumId}/images, but supporting user prefix
-        const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/albums/${album.id}/images`,
-          config
-        )
-
-        if (res.data?.success) {
-          setViewingAlbumId(album.id)
-          setIsAlbumViewerOpen(true)
-        } else {
-          alert(res.data?.error || "Failed to load album images")
-          console.error("Failed to load album images:", res.data?.error)
-        }
-      } catch (error: any) {
-        if (axios.isAxiosError(error)) {
-          if (error.response) {
-            alert(
-              `Error loading images: ${error.response.data?.error || error.response.statusText || "Unknown error"}`
-            )
-          } else if (error.request) {
-            alert("Network error: Could not reach server.")
-          } else {
-            alert(`Request error: ${error.message}`)
-          }
-        } else {
-          alert("Unexpected error occurred.")
-        }
-        console.error("Error loading album images:", error)
-      }
+      // If open (token exists for locked, or not locked)
+      setViewingAlbumId(album.id)
+      setAlbumViewerToken(hasValidToken ? storedToken!.token : null)
+      setIsAlbumViewerOpen(true)
     },
     [authenticatedAlbums]
   )
 
-  // Handle authentication modal submit
+  // Called after successful login in modal
   const handleAuthenticate = useCallback(
     async (email: string, password: string): Promise<boolean> => {
       if (!selectedAlbum) return false
       try {
-        // Backend expects /api/albums/{albumId}/authenticate call with user prefix support
         const res = await axios.post(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/albums/${selectedAlbum.id}/authenticate`,
           { email, password }
@@ -174,16 +146,16 @@ export function Gallery() {
             updated.set(selectedAlbum.id, newToken)
             return updated
           })
+
+          // Set for viewer
           setIsAuthModalOpen(false)
           setViewingAlbumId(selectedAlbum.id)
+          setAlbumViewerToken(res.data.data.token)
           setIsAlbumViewerOpen(true)
           return true
         }
-        alert("Authentication failed. Please check your credentials.")
         return false
       } catch (error) {
-        console.error("Authentication error:", error)
-        alert("An error occurred during authentication.")
         return false
       }
     },
@@ -198,54 +170,6 @@ export function Gallery() {
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category)
     setCurrentPage(1)
-  }
-
-  // --- Render states ---
-
-  if (isLoading) {
-    return (
-      <div className="space-y-12">
-        <div className="text-center">
-          <h2 className="text-4xl md:text-5xl font-light text-amber-400 tracking-wider">CLIENT GALLERY</h2>
-        </div>
-        <div className="flex justify-center items-center py-20">
-          <div className="flex items-center gap-3 text-gray-400">
-            <div className="w-6 h-6 border-2 border-amber-400/20 border-t-amber-400 rounded-full animate-spin" />
-            <span className="font-light">Loading albums...</span>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="space-y-12">
-        <div className="text-center">
-          <h2 className="text-4xl md:text-5xl font-light text-amber-400 tracking-wider">CLIENT GALLERY</h2>
-        </div>
-        <div className="text-center py-20">
-          <div className="text-red-400 mb-4">
-            <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
-              />
-            </svg>
-            <p className="text-lg font-light">{error}</p>
-          </div>
-          <Button
-            onClick={() => window.location.reload()}
-            variant="outline"
-            className="border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black px-6 py-2 rounded-full bg-transparent font-light"
-          >
-            Try Again
-          </Button>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -296,8 +220,6 @@ export function Gallery() {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-300" />
-
-                {/* Lock/Unlock icons */}
                 {album.isLocked && !isAuthed && (
                   <div className="absolute top-4 left-4 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center">
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,7 +232,6 @@ export function Gallery() {
                     </svg>
                   </div>
                 )}
-
                 {album.isLocked && isAuthed && (
                   <div className="absolute top-4 left-4 w-8 h-8 bg-green-600/80 rounded-full flex items-center justify-center">
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,7 +239,6 @@ export function Gallery() {
                     </svg>
                   </div>
                 )}
-
                 {!album.isLocked && (
                   <div className="absolute top-4 left-4 w-8 h-8 bg-amber-400/80 rounded-full flex items-center justify-center">
                     <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -332,7 +252,6 @@ export function Gallery() {
                     </svg>
                   </div>
                 )}
-
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <h3 className="text-white font-light text-lg tracking-wide mb-1">{album.clientNames}</h3>
                   {album.date && <p className="text-gray-300 text-sm font-light">{album.date}</p>}
@@ -391,9 +310,11 @@ export function Gallery() {
         <AlbumViewer
           albumId={viewingAlbumId}
           isOpen={isAlbumViewerOpen}
+          token={albumViewerToken}
           onClose={() => {
             setIsAlbumViewerOpen(false)
             setViewingAlbumId(null)
+            setAlbumViewerToken(null)
           }}
         />
       )}
