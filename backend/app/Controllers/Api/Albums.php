@@ -14,7 +14,7 @@ class Albums extends BaseController {
     protected AlbumImageModel $imageModel;
     protected AlbumAuthCredentialModel $credModel;
     protected AlbumAuthTokenModel $tokenModel;
-
+   protected $uploadPath = WRITEPATH . '../public/uploads/albums/';
     public function __construct() {
         $this->albumModel = new AlbumModel();
         $this->imageModel = new AlbumImageModel();
@@ -26,7 +26,8 @@ class Albums extends BaseController {
      * GET /api/albums?category=&page=&limit=
      * Returns paginated albums, filtered by category if given.
      */
-    public function index() {
+     public function index()
+    {
         $category = $this->request->getGet('category');
         $page = max(1, (int) ($this->request->getGet('page') ?? 1));
         $limit = (int) ($this->request->getGet('limit') ?? 12);
@@ -42,7 +43,7 @@ class Albums extends BaseController {
 
         $albums = $builder->orderBy('date', 'DESC')->findAll($limit, $offset);
 
-        $items = array_map(function($a) {
+        $items = array_map(function ($a) {
             return [
                 'id' => (int)$a['id'],
                 'clientNames' => $a['client_names'],
@@ -62,6 +63,104 @@ class Albums extends BaseController {
                 'limit' => $limit,
             ]
         ]);
+    }
+
+    /**
+     * Create new album and process cover image
+     */
+    public function store()
+    {
+        helper(['filesystem', 'text']);
+
+        $data = [
+            'client_names' => $this->request->getPost('clientNames'),
+            'event_type'   => $this->request->getPost('eventType'),
+            'date'         => $this->request->getPost('date'),
+            'is_locked'    => $this->request->getPost('isLocked') ?? 0,
+        ];
+
+        $file = $this->request->getFile('coverImage');
+        if (!$file || !$file->isValid()) {
+            return $this->respond(['success' => false, 'message' => 'Invalid or missing cover image'], 400);
+        }
+
+        // Insert album to get ID
+        $albumId = $this->albumModel->insert($data);
+        if (!$albumId) {
+            return $this->respond(['success' => false, 'message' => 'Failed to create album'], 500);
+        }
+
+        // Create album folder
+        $albumFolder = $this->uploadPath . $albumId . '/';
+        if (!is_dir($albumFolder)) {
+            mkdir($albumFolder, 0777, true);
+        }
+
+        // Process cover image
+        $fileExt = strtolower($file->getExtension());
+        $originalName = $file->getName();
+        $newFileName = '';
+
+        if ($fileExt === 'webp') {
+            // Directly move webp file
+            $newFileName = 'cover.webp';
+            $file->move($albumFolder, $newFileName);
+        } else {
+            // Convert to WebP
+            $tempPath = $file->getTempName();
+            $newFileName = 'cover.webp';
+            $destination = $albumFolder . $newFileName;
+
+            $this->convertToWebp($tempPath, $destination, $fileExt);
+        }
+
+        // Store relative path
+        $relativePath = 'uploads/albums/' . $albumId . '/' . $newFileName;
+
+        // Update album with cover image path
+        $this->albumModel->update($albumId, ['cover_image' => $relativePath]);
+
+        return $this->respond([
+            'success' => true,
+            'message' => 'Album created successfully',
+            'data' => [
+                'id' => $albumId,
+                'coverImage' => base_url($relativePath),
+            ]
+        ]);
+    }
+
+    /**
+     * Convert image to WebP
+     */
+    private function convertToWebp(string $sourcePath, string $destination, string $ext)
+    {
+        $image = null;
+
+        switch ($ext) {
+            case 'jpg':
+            case 'jpeg':
+                $image = imagecreatefromjpeg($sourcePath);
+                break;
+            case 'png':
+                $image = imagecreatefrompng($sourcePath);
+                // preserve transparency
+                imagepalettetotruecolor($image);
+                imagealphablending($image, true);
+                imagesavealpha($image, true);
+                break;
+            default:
+                log_message('error', "Unsupported image type for conversion: $ext");
+                return false;
+        }
+
+        if ($image) {
+            imagewebp($image, $destination, 85);
+            imagedestroy($image);
+            return true;
+        }
+
+        return false;
     }
 
     /**
