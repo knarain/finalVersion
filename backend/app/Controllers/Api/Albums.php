@@ -68,100 +68,99 @@ class Albums extends BaseController {
     /**
      * Create new album and process cover image
      */
-    public function store()
-    {
-        helper(['filesystem', 'text']);
+public function store()
+{
+    helper(['filesystem', 'text']);
 
-        $data = [
-            'client_names' => $this->request->getPost('clientNames'),
-            'event_type'   => $this->request->getPost('eventType'),
-            'date'         => $this->request->getPost('date'),
-            'is_locked'    => $this->request->getPost('isLocked') ?? 0,
-        ];
+    $data = [
+        'client_names' => $this->request->getPost('clientNames'),
+        'event_type'   => $this->request->getPost('eventType'),
+        'date'         => $this->request->getPost('date'),
+        'is_locked'    => $this->request->getPost('isLocked') ?? 0,
+    ];
 
-        $file = $this->request->getFile('coverImage');
-        if (!$file || !$file->isValid()) {
-            return $this->respond(['success' => false, 'message' => 'Invalid or missing cover image'], 400);
-        }
-
-        // Insert album to get ID
-        $albumId = $this->albumModel->insert($data);
-        if (!$albumId) {
-            return $this->respond(['success' => false, 'message' => 'Failed to create album'], 500);
-        }
-
-        // Create album folder
-        $albumFolder = $this->uploadPath . $albumId . '/';
-        if (!is_dir($albumFolder)) {
-            mkdir($albumFolder, 0777, true);
-        }
-
-        // Process cover image
-        $fileExt = strtolower($file->getExtension());
-        $originalName = $file->getName();
-        $newFileName = '';
-
-        if ($fileExt === 'webp') {
-            // Directly move webp file
-            $newFileName = 'cover.webp';
-            $file->move($albumFolder, $newFileName);
-        } else {
-            // Convert to WebP
-            $tempPath = $file->getTempName();
-            $newFileName = 'cover.webp';
-            $destination = $albumFolder . $newFileName;
-
-            $this->convertToWebp($tempPath, $destination, $fileExt);
-        }
-
-        // Store relative path
-        $relativePath = 'uploads/albums/' . $albumId . '/' . $newFileName;
-
-        // Update album with cover image path
-        $this->albumModel->update($albumId, ['cover_image' => $relativePath]);
-
-        return $this->respond([
-            'success' => true,
-            'message' => 'Album created successfully',
-            'data' => [
-                'id' => $albumId,
-                'coverImage' => base_url($relativePath),
-            ]
-        ]);
+    $file = $this->request->getFile('coverImage');
+    if (!$file || !$file->isValid()) {
+        return $this->respond(['success' => false, 'message' => 'Invalid or missing cover image'], 400);
     }
 
-    /**
-     * Convert image to WebP
-     */
-    private function convertToWebp(string $sourcePath, string $destination, string $ext)
-    {
-        $image = null;
-
-        switch ($ext) {
-            case 'jpg':
-            case 'jpeg':
-                $image = imagecreatefromjpeg($sourcePath);
-                break;
-            case 'png':
-                $image = imagecreatefrompng($sourcePath);
-                // preserve transparency
-                imagepalettetotruecolor($image);
-                imagealphablending($image, true);
-                imagesavealpha($image, true);
-                break;
-            default:
-                log_message('error', "Unsupported image type for conversion: $ext");
-                return false;
-        }
-
-        if ($image) {
-            imagewebp($image, $destination, 85);
-            imagedestroy($image);
-            return true;
-        }
-
-        return false;
+    // Insert album to get ID
+    $albumId = $this->albumModel->insert($data);
+    if (!$albumId) {
+        return $this->respond(['success' => false, 'message' => 'Failed to create album'], 500);
     }
+
+    // Create album folder inside "public/uploads/albums/"
+    $albumFolder = FCPATH . 'uploads/albums/' . $albumId . '/';
+    if (!is_dir($albumFolder)) {
+        mkdir($albumFolder, 0777, true);
+    }
+
+    // Process cover image
+    $fileExt = strtolower($file->getExtension());
+    $newFileName = 'cover.webp'; // Always store as webp
+    $destination = $albumFolder . $newFileName;
+
+    if ($fileExt === 'webp') {
+        // Directly move webp file
+        $file->move($albumFolder, $newFileName);
+    } else {
+        // Convert to WebP
+        $tempPath = $file->getTempName();
+        $this->convertToWebp($tempPath, $destination, $fileExt);
+    }
+
+    // Store relative path (from public/)
+    $relativePath = 'uploads/albums/' . $albumId . '/' . $newFileName;
+
+    // Update album with cover image path
+    $this->albumModel->update($albumId, ['cover_image' => $relativePath]);
+
+    return $this->respond([
+        'success' => true,
+        'message' => 'Album created successfully',
+        'data' => [
+            'id' => $albumId,
+            'coverImage' => base_url($relativePath),
+        ]
+    ]);
+}
+
+/**
+ * Convert image to WebP
+ */
+private function convertToWebp(string $sourcePath, string $destination, string $ext)
+{
+    $image = null;
+
+    switch ($ext) {
+        case 'jpg':
+        case 'jpeg':
+            $image = imagecreatefromjpeg($sourcePath);
+            break;
+        case 'png':
+            $image = imagecreatefrompng($sourcePath);
+            // Preserve transparency
+            imagepalettetotruecolor($image);
+            imagealphablending($image, true);
+            imagesavealpha($image, true);
+            break;
+        case 'gif':
+            $image = imagecreatefromgif($sourcePath);
+            break;
+        default:
+            log_message('error', "Unsupported image type for conversion: $ext");
+            return false;
+    }
+
+    if ($image) {
+        imagewebp($image, $destination, 85);
+        imagedestroy($image);
+        return true;
+    }
+
+    return false;
+}
 
     /**
      * GET /api/albums/{id}/images

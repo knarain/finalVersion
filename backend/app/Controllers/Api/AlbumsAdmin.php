@@ -75,37 +75,108 @@ class AlbumsAdmin extends BaseController {
     /**
      * Upload images to an album
      */
-    public function uploadImages($albumId) {
-        $admin = $this->getAdmin();
-        if (!$admin) return $this->failUnauthorized('Unauthorized');
+public function uploadImages($albumId)
+{
+    $admin = $this->getAdmin();
+    if (!$admin) return $this->failUnauthorized('Unauthorized');
 
-        $files = $this->request->getFiles();
-        if (!$files) return $this->fail('No files uploaded', 400);
-
-        $uploaded = [];
-        foreach ($files['images'] ?? [] as $file) {
-            if ($file->isValid() && !$file->hasMoved()) {
-                $newName = $file->getRandomName();
-                $file->move(WRITEPATH.'uploads/albums/'.$albumId, $newName);
-
-                $fileUrl = base_url('writable/uploads/albums/'.$albumId.'/'.$newName);
-
-                $imageId = $this->imageModel->insert([
-                    'album_id' => $albumId,
-                    'filename' => $newName,
-                    'file_url' => $fileUrl,
-                    'caption'  => '',
-                ]);
-
-                $uploaded[] = $fileUrl;
-            }
-        }
-
-        return $this->respond([
-            'success' => true,
-            'uploaded' => $uploaded
-        ]);
+    $files = $this->request->getFiles();
+    if (empty($files['images'])) {
+        return $this->fail('No files uploaded', 400);
     }
+
+    $images = $files['images'];
+    $totalFiles = count($images);
+
+    if ($totalFiles > 10) {
+        return $this->fail('Maximum 10 images allowed per upload', 400);
+    }
+
+    // Store inside public folder
+    $uploadPath = FCPATH . 'uploads/albums/' . $albumId . '/';
+    if (!is_dir($uploadPath)) {
+        mkdir($uploadPath, 0777, true);
+    }
+
+    $uploaded = [];
+
+    foreach ($images as $file) {
+        if ($file->isValid() && !$file->hasMoved()) {
+            $ext = strtolower($file->getExtension());
+            $newName = uniqid('img_', true) . '.webp'; // store all as .webp
+            $destination = $uploadPath . $newName;
+
+            // Convert to WebP if needed
+            if ($ext === 'webp') {
+                $file->move($uploadPath, $newName);
+            } else {
+                $this->convertToWebp($file->getTempName(), $destination, $ext);
+            }
+
+            // Store relative path (for DB)
+            $relativePath = 'uploads/albums/' . $albumId . '/' . $newName;
+
+            // Insert record into DB
+            $this->imageModel->insert([
+                'album_id' => $albumId,
+                'filename' => $newName,
+                'file_url' => $relativePath, // relative from public/
+                'caption'  => '',
+            ]);
+
+            $uploaded[] = base_url($relativePath);
+        }
+    }
+
+    return $this->respond([
+        'success'  => true,
+        'uploaded' => $uploaded, // return full URLs
+    ]);
+}
+
+/**
+ * Convert image to WebP
+ */
+private function convertToWebp(string $sourcePath, string $destination, string $ext)
+{
+    // Check GD availability
+    if (!function_exists('imagewebp')) {
+        log_message('error', 'GD extension not enabled — WebP conversion skipped');
+        return false;
+    }
+
+    $image = null;
+
+    switch ($ext) {
+        case 'jpg':
+        case 'jpeg':
+            $image = @imagecreatefromjpeg($sourcePath);
+            break;
+        case 'png':
+            $image = @imagecreatefrompng($sourcePath);
+            if ($image) {
+                imagepalettetotruecolor($image);
+                imagealphablending($image, true);
+                imagesavealpha($image, true);
+            }
+            break;
+        case 'gif':
+            $image = @imagecreatefromgif($sourcePath);
+            break;
+        default:
+            log_message('error', "Unsupported image type for conversion: $ext");
+            return false;
+    }
+
+    if ($image) {
+        imagewebp($image, $destination, 85);
+        imagedestroy($image);
+        return true;
+    }
+
+    return false;
+}
+
 
     /**
      * Get all images for an album

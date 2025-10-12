@@ -72,11 +72,11 @@ class Enquiries extends BaseController
         $email = \Config\Services::email();
 
         // Configure email (you can also set this in app/Config/Email.php)
-        $email->setFrom('no-reply@yourdomain.com', 'RSPhotography');  // change to your email
-        $email->setTo('rsphotography@gmail.com');                     // admin or studio email
+        $email->setFrom('contactus@rashmiphotography.com', 'RashmiPhotography');  // change to your email
+        $email->setTo('sumithbandela@gmail.com');                     // admin or studio email
         $email->setReplyTo($data['email'] ?? '', $data['name'] ?? '');
 
-        $subject = 'New Enquiry Received - RSPhotography';
+        $subject = 'New Enquiry Received - RashmiPhotography';
         $message = "
             <h2>New Enquiry Details</h2>
             <p><strong>Name:</strong> {$data['name']}</p>

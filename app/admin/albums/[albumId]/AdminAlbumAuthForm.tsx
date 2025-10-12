@@ -15,7 +15,7 @@ export function AdminAlbumAuthForm({ albumId }: Props) {
 
   const handleAddCredential = async () => {
     try {
-      const res = await axios.post("http://localhost:8080/admin/album-credentials", {
+      const res = await axios.post("https://stg.rashmiphotography.com/backend/admin/album-credentials", {
         album_id: albumId,
         email,
         password,

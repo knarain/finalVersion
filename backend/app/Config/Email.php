@@ -28,22 +28,22 @@ class Email extends BaseConfig
     /**
      * SMTP Server Hostname
      */
-    public string $SMTPHost = 'smtp.gmail.com';
+    public string $SMTPHost = 'smtp.hostinger.com';
 
     /**
      * SMTP Username
      */
-    public string $SMTPUser = 'bandhelasumith@gmail.com';
+    public string $SMTPUser = 'contactus@rashmiphotography.com';
 
     /**
      * SMTP Password
      */
-    public string $SMTPPass = 'sqfl yfre vvwh bwsk';
+    public string $SMTPPass = 'Luxoft@123';
 
     /**
      * SMTP Port
      */
-    public int $SMTPPort = 587;
+    public int $SMTPPort = 465;
 
     /**
      * SMTP Timeout (in seconds)
@@ -62,7 +62,7 @@ class Email extends BaseConfig
      *             to the server. 'ssl' means implicit SSL. Connection on port
      *             465 should set this to ''.
      */
-    public string $SMTPCrypto = 'tls';
+    public string $SMTPCrypto = 'SSL';
 
     /**
      * Enable word-wrap

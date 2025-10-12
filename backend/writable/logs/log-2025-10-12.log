@@ -1,0 +1,343 @@
+CRITICAL - 2025-10-12 16:09:06 --> Error: Call to undefined function App\Controllers\Api\imagecreatefromjpeg()
+[Method: POST, Route: api/admin/albums/5/images]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 146.
+ 1 APPPATH\Controllers\Api\AlbumsAdmin.php(112): App\Controllers\Api\AlbumsAdmin->convertToWebp('C:\\xampp\\tmp\\phpF109.tmp', 'E:\\finalVersion\\backend\\writable\\uploads/albums/5/img_68ebd2a29510a2.09523433.webp', 'jpg')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('5')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2025-10-12 16:12:53 --> Error: Call to undefined function App\Controllers\Api\imagecreatefromjpeg()
+[Method: POST, Route: api/admin/albums/5/images]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 146.
+ 1 APPPATH\Controllers\Api\AlbumsAdmin.php(112): App\Controllers\Api\AlbumsAdmin->convertToWebp('C:\\xampp\\tmp\\php67A6.tmp', 'E:\\finalVersion\\backend\\writable\\uploads/albums/5/img_68ebd3854f4bd0.78844456.webp', 'jpg')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('5')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2025-10-12 16:13:20 --> Error connecting to the database: mysqli_sql_exception: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', 'root', '', 'rsphotography', 3306, '', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#5 E:\finalVersion\backend\app\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+#6 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+#7 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+#8 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#10 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#13 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#2 E:\finalVersion\backend\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#3 E:\finalVersion\backend\system\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#4 E:\finalVersion\backend\app\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+#5 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+#6 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+#7 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#9 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#12 {main}
+CRITICAL - 2025-10-12 16:13:20 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: No connection could be made because the target machine actively refused it
+[Method: GET, Route: api/albums]
+in SYSTEMPATH\Database\BaseConnection.php on line 467.
+ 1 SYSTEMPATH\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `albums`', [], false)
+ 3 SYSTEMPATH\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 4 APPPATH\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2025-10-12 16:13:25 --> Error connecting to the database: mysqli_sql_exception: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', 'root', '', 'rsphotography', 3306, '', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#5 E:\finalVersion\backend\app\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+#6 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+#7 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+#8 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#10 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#13 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#2 E:\finalVersion\backend\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#3 E:\finalVersion\backend\system\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#4 E:\finalVersion\backend\app\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+#5 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+#6 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+#7 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#9 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#12 {main}
+CRITICAL - 2025-10-12 16:13:25 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: No connection could be made because the target machine actively refused it
+[Method: GET, Route: api/albums]
+in SYSTEMPATH\Database\BaseConnection.php on line 467.
+ 1 SYSTEMPATH\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `albums`', [], false)
+ 3 SYSTEMPATH\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 4 APPPATH\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2025-10-12 16:13:36 --> Error connecting to the database: ErrorException: mysqli::real_connect(): Error while reading greeting packet. PID=16724 in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'mysqli::real_co...', 'E:\\finalVersion...', 202)
+#1 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', 'root', '', 'rsphotography', 3306, '', 0)
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#3 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#4 E:\finalVersion\backend\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#5 E:\finalVersion\backend\system\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#6 E:\finalVersion\backend\app\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+#7 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+#8 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+#9 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#14 {main}
+
+Next mysqli_sql_exception: MySQL server has gone away in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', 'root', '', 'rsphotography', 3306, '', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#5 E:\finalVersion\backend\app\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+#6 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+#7 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+#8 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#10 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#13 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: MySQL server has gone away in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#2 E:\finalVersion\backend\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#3 E:\finalVersion\backend\system\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#4 E:\finalVersion\backend\app\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+#5 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+#6 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+#7 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#9 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#12 {main}
+CRITICAL - 2025-10-12 16:13:36 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: MySQL server has gone away
+[Method: GET, Route: api/albums]
+in SYSTEMPATH\Database\BaseConnection.php on line 467.
+ 1 SYSTEMPATH\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `albums`', [], false)
+ 3 SYSTEMPATH\Model.php(676): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 4 APPPATH\Controllers\Api\Albums.php(40): CodeIgniter\Model->countAllResults(false)
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Albums->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Albums))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2025-10-12 16:24:08 --> Error connecting to the database: mysqli_sql_exception: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', 'root', '', 'rsphotography', 3306, '', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `al...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 E:\finalVersion\backend\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 E:\finalVersion\backend\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 E:\finalVersion\backend\app\Controllers\AlbumAuthController.php(35): CodeIgniter\Model->insert(Array)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#2 E:\finalVersion\backend\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `al...', Array, false)
+#3 E:\finalVersion\backend\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#4 E:\finalVersion\backend\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#5 E:\finalVersion\backend\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#6 E:\finalVersion\backend\app\Controllers\AlbumAuthController.php(35): CodeIgniter\Model->insert(Array)
+#7 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+#8 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+#9 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#14 {main}
+CRITICAL - 2025-10-12 16:24:08 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: No connection could be made because the target machine actively refused it
+[Method: POST, Route: admin/album-credentials]
+in SYSTEMPATH\Database\BaseConnection.php on line 467.
+ 1 SYSTEMPATH\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_auth_credentials` (`album_id`, `email`, `password_hash`) VALUES (:album_id:, :email:, :password_hash:)', [...], false)
+ 3 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 4 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 5 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 6 APPPATH\Controllers\AlbumAuthController.php(35): CodeIgniter\Model->insert([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2025-10-12 16:24:22 --> Error connecting to the database: mysqli_sql_exception: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', 'root', '', 'rsphotography', 3306, '', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `al...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 E:\finalVersion\backend\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 E:\finalVersion\backend\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 E:\finalVersion\backend\app\Controllers\AlbumAuthController.php(35): CodeIgniter\Model->insert(Array)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#2 E:\finalVersion\backend\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `al...', Array, false)
+#3 E:\finalVersion\backend\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#4 E:\finalVersion\backend\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#5 E:\finalVersion\backend\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#6 E:\finalVersion\backend\app\Controllers\AlbumAuthController.php(35): CodeIgniter\Model->insert(Array)
+#7 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+#8 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+#9 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#14 {main}
+CRITICAL - 2025-10-12 16:24:22 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: No connection could be made because the target machine actively refused it
+[Method: POST, Route: admin/album-credentials]
+in SYSTEMPATH\Database\BaseConnection.php on line 467.
+ 1 SYSTEMPATH\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_auth_credentials` (`album_id`, `email`, `password_hash`) VALUES (:album_id:, :email:, :password_hash:)', [...], false)
+ 3 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 4 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 5 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 6 APPPATH\Controllers\AlbumAuthController.php(35): CodeIgniter\Model->insert([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2025-10-12 16:24:46 --> Error connecting to the database: mysqli_sql_exception: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:202
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(202): mysqli->real_connect('localhost', 'root', '', 'rsphotography', 3306, '', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `al...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 E:\finalVersion\backend\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 E:\finalVersion\backend\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 E:\finalVersion\backend\app\Controllers\AlbumAuthController.php(35): CodeIgniter\Model->insert(Array)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: No connection could be made because the target machine actively refused it in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\BaseConnection.php(421): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+#2 E:\finalVersion\backend\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `al...', Array, false)
+#3 E:\finalVersion\backend\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#4 E:\finalVersion\backend\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#5 E:\finalVersion\backend\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#6 E:\finalVersion\backend\app\Controllers\AlbumAuthController.php(35): CodeIgniter\Model->insert(Array)
+#7 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+#8 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+#9 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#14 {main}
+CRITICAL - 2025-10-12 16:24:46 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: No connection could be made because the target machine actively refused it
+[Method: POST, Route: admin/album-credentials]
+in SYSTEMPATH\Database\BaseConnection.php on line 467.
+ 1 SYSTEMPATH\Database\BaseConnection.php(620): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_auth_credentials` (`album_id`, `email`, `password_hash`) VALUES (:album_id:, :email:, :password_hash:)', [...], false)
+ 3 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 4 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 5 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 6 APPPATH\Controllers\AlbumAuthController.php(35): CodeIgniter\Model->insert([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')

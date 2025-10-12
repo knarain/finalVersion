@@ -199,9 +199,8 @@ export default function HomePage() {
             </h2>
             <div className="w-16 sm:w-24 h-1 bg-amber-400 mx-auto mb-6 rounded-full"></div>
             <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto text-balance">
-              Ready to capture your special moments? 
-              <p>Get in touch and let's create something beautiful together.</p>
-            </p>
+              Ready to capture your special moments?</p>
+            <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto text-balance">Get in touch and let's create something beautiful together.</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">

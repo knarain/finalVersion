@@ -175,7 +175,7 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
             </Button>
             {/* Big image */}
             <img
-              src={images[currentImageIndex].fileUrl}
+              src={`https://stg.rashmiphotography.com/backend/${images[currentImageIndex].fileUrl}`}
               alt={images[currentImageIndex].caption}
               onLoad={() => handleImageLoad(images[currentImageIndex].id)}
               onError={() => handleImageError(images[currentImageIndex].id)}
