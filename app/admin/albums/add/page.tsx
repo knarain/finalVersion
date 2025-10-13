@@ -28,37 +28,27 @@ export default function AddAlbum() {
     e.preventDefault();
     setMessage('');
 
-    if (!clientNames || !eventType) {
-      setMessage('Please fill all required fields.');
+    if (!clientNames || !eventType || !coverImage) {
+      setMessage('Please fill all required fields, including cover image.');
       return;
     }
 
     try {
-      let coverImageBase64 = null;
-      if (coverImage) {
-        coverImageBase64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(coverImage);
-        });
-      }
-
-      const payload = {
-        clientNames,
-        eventType,
-        date,
-        isLocked: isLocked ? 1 : 0,
-        coverImage: coverImageBase64,
-      };
+      // Use FormData for image upload
+      const formData = new FormData();
+      formData.append('clientNames', clientNames);
+      formData.append('eventType', eventType);
+      formData.append('date', date);
+      formData.append('isLocked', isLocked ? '1' : '0');
+      formData.append('coverImage', coverImage);
 
       const token = localStorage.getItem('adminToken');
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/albums`,
-        payload,
+        formData,
         {
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         }
@@ -128,12 +118,13 @@ export default function AddAlbum() {
 
         {/* Cover Image */}
         <div>
-          <label className="block mb-1 text-gray-300">Cover Image</label>
+          <label className="block mb-1 text-gray-300">Cover Image *</label>
           <input
             type="file"
             accept="image/*"
             onChange={(e) => setCoverImage(e.target.files?.[0] ?? null)}
             className="w-full text-gray-300"
+            required
           />
         </div>
 

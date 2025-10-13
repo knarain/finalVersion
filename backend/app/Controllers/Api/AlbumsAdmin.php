@@ -30,7 +30,6 @@ class AlbumsAdmin extends BaseController {
         $token = $matches[1];
 
         try {
-            // ✅ Updated for firebase/php-jwt v6+
             $decoded = JWT::decode($token, new Key($this->jwtKey, 'HS256'));
             return (array)$decoded;
         } catch (\Exception $e) {
@@ -40,143 +39,166 @@ class AlbumsAdmin extends BaseController {
     }
 
     /**
-     * Create new album
+     * Create new album (form-data POST)
      */
-    public function create() {
-        $admin = $this->getAdmin();
-        if (!$admin) return $this->failUnauthorized('Unauthorized');
+    public function create()
+    {
+        helper(['filesystem', 'text']);
 
-        $json = $this->request->getJSON(true);
+        $data = [
+            'client_names' => $this->request->getPost('clientNames'),
+            'event_type'   => $this->request->getPost('eventType'),
+            'date'         => $this->request->getPost('date'),
+            'is_locked'    => $this->request->getPost('isLocked') ?? 0,
+        ];
 
-        $clientNames = $json['clientNames'] ?? null;
-        $eventType   = $json['eventType'] ?? null;
-        $date        = $json['date'] ?? null;
-        $isLocked    = $json['isLocked'] ?? 0;
-        $coverImage  = $json['coverImage'] ?? null; // base64 or URL
-
-        if (!$clientNames || !$eventType || !$date || !$coverImage) {
-            return $this->fail('All fields are required', 400);
+        $file = $this->request->getFile('coverImage');
+        if (!$file || !$file->isValid()) {
+            return $this->respond(['success' => false, 'message' => 'Invalid or missing cover image'], 400);
         }
 
-        $albumId = $this->albumModel->insert([
-            'client_names' => $clientNames,
-            'event_type'   => $eventType,
-            'date'         => $date,
-            'cover_image'  => $coverImage,
-            'is_locked'    => $isLocked,
-        ]);
+        // Insert album to get ID
+        $albumId = $this->albumModel->insert($data);
+        if (!$albumId) {
+            return $this->respond(['success' => false, 'message' => 'Failed to create album'], 500);
+        }
+
+        // Create album folder inside "public/uploads/album/{albumId}/"
+        $albumFolder = FCPATH . 'uploads/album/' . $albumId . '/';
+        if (!is_dir($albumFolder)) {
+            mkdir($albumFolder, 0777, true);
+        }
+
+        // Process cover image
+        $fileExt = strtolower($file->getExtension());
+        $newFileName = 'coverImage.webp'; // Always store as 'coverImage.webp'
+        $destination = $albumFolder . $newFileName;
+
+        if ($fileExt === 'webp') {
+            $file->move($albumFolder, $newFileName);
+        } else {
+            $tempPath = $file->getTempName();
+            $this->convertToWebp($tempPath, $destination, $fileExt);
+        }
+
+        // Store relative path (from public/)
+        $relativePath = 'uploads/album/' . $albumId . '/' . $newFileName;
+
+        // Update album with cover image path
+        $this->albumModel->update($albumId, ['cover_image' => $relativePath]);
 
         return $this->respond([
             'success' => true,
-            'albumId' => $albumId
+            'message' => 'Album created successfully',
+            'data' => [
+                'id' => $albumId,
+                'coverImage' => base_url($relativePath),
+            ]
         ]);
     }
 
     /**
-     * Upload images to an album
+     * Convert image to WebP
      */
-public function uploadImages($albumId)
-{
-    $admin = $this->getAdmin();
-    if (!$admin) return $this->failUnauthorized('Unauthorized');
-
-    $files = $this->request->getFiles();
-    if (empty($files['images'])) {
-        return $this->fail('No files uploaded', 400);
-    }
-
-    $images = $files['images'];
-    $totalFiles = count($images);
-
-    if ($totalFiles > 10) {
-        return $this->fail('Maximum 10 images allowed per upload', 400);
-    }
-
-    // Store inside public folder
-    $uploadPath = FCPATH . 'uploads/albums/' . $albumId . '/';
-    if (!is_dir($uploadPath)) {
-        mkdir($uploadPath, 0777, true);
-    }
-
-    $uploaded = [];
-
-    foreach ($images as $file) {
-        if ($file->isValid() && !$file->hasMoved()) {
-            $ext = strtolower($file->getExtension());
-            $newName = uniqid('img_', true) . '.webp'; // store all as .webp
-            $destination = $uploadPath . $newName;
-
-            // Convert to WebP if needed
-            if ($ext === 'webp') {
-                $file->move($uploadPath, $newName);
-            } else {
-                $this->convertToWebp($file->getTempName(), $destination, $ext);
-            }
-
-            // Store relative path (for DB)
-            $relativePath = 'uploads/albums/' . $albumId . '/' . $newName;
-
-            // Insert record into DB
-            $this->imageModel->insert([
-                'album_id' => $albumId,
-                'filename' => $newName,
-                'file_url' => $relativePath, // relative from public/
-                'caption'  => '',
-            ]);
-
-            $uploaded[] = base_url($relativePath);
+    private function convertToWebp(string $sourcePath, string $destination, string $ext)
+    {
+        // Check GD availability
+        if (!function_exists('imagewebp')) {
+            log_message('error', 'GD extension not enabled — WebP conversion skipped');
+            return false;
         }
-    }
 
-    return $this->respond([
-        'success'  => true,
-        'uploaded' => $uploaded, // return full URLs
-    ]);
-}
+        $image = null;
+        switch ($ext) {
+            case 'jpg':
+            case 'jpeg':
+                $image = @imagecreatefromjpeg($sourcePath);
+                break;
+            case 'png':
+                $image = @imagecreatefrompng($sourcePath);
+                if ($image) {
+                    imagepalettetotruecolor($image);
+                    imagealphablending($image, true);
+                    imagesavealpha($image, true);
+                }
+                break;
+            case 'gif':
+                $image = @imagecreatefromgif($sourcePath);
+                break;
+            default:
+                log_message('error', "Unsupported image type for conversion: $ext");
+                return false;
+        }
 
-/**
- * Convert image to WebP
- */
-private function convertToWebp(string $sourcePath, string $destination, string $ext)
-{
-    // Check GD availability
-    if (!function_exists('imagewebp')) {
-        log_message('error', 'GD extension not enabled — WebP conversion skipped');
+        if ($image) {
+            imagewebp($image, $destination, 85);
+            imagedestroy($image);
+            return true;
+        }
         return false;
     }
 
-    $image = null;
+    /**
+     * Upload multiple images into an album (form-data multiple)
+     */
+    public function uploadImages($albumId)
+    {
+        $admin = $this->getAdmin();
+        if (!$admin) return $this->failUnauthorized('Unauthorized');
 
-    switch ($ext) {
-        case 'jpg':
-        case 'jpeg':
-            $image = @imagecreatefromjpeg($sourcePath);
-            break;
-        case 'png':
-            $image = @imagecreatefrompng($sourcePath);
-            if ($image) {
-                imagepalettetotruecolor($image);
-                imagealphablending($image, true);
-                imagesavealpha($image, true);
+        $files = $this->request->getFiles();
+        if (empty($files['images'])) {
+            return $this->fail('No files uploaded', 400);
+        }
+
+        $images = $files['images'];
+        $totalFiles = count($images);
+
+        if ($totalFiles > 10) {
+            return $this->fail('Maximum 10 images allowed per upload', 400);
+        }
+
+        // Store inside public folder
+        $uploadPath = FCPATH . 'uploads/albums/' . $albumId . '/';
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        $uploaded = [];
+
+        foreach ($images as $file) {
+            if ($file->isValid() && !$file->hasMoved()) {
+                $ext = strtolower($file->getExtension());
+                $newName = uniqid('img_', true) . '.webp'; // store all as .webp
+                $destination = $uploadPath . $newName;
+
+                // Convert to WebP if needed
+                if ($ext === 'webp') {
+                    $file->move($uploadPath, $newName);
+                } else {
+                    $this->convertToWebp($file->getTempName(), $destination, $ext);
+                }
+
+                // Store relative path (for DB)
+                $relativePath = 'uploads/albums/' . $albumId . '/' . $newName;
+
+                // Insert record into DB
+                $this->imageModel->insert([
+                    'album_id' => $albumId,
+                    'filename' => $newName,
+                    'file_url' => $relativePath,
+                    'caption'  => '',
+                ]);
+
+                $uploaded[] = base_url($relativePath);
             }
-            break;
-        case 'gif':
-            $image = @imagecreatefromgif($sourcePath);
-            break;
-        default:
-            log_message('error', "Unsupported image type for conversion: $ext");
-            return false;
+        }
+
+        return $this->respond([
+            'success'  => true,
+            'uploaded' => $uploaded,
+        ]);
     }
-
-    if ($image) {
-        imagewebp($image, $destination, 85);
-        imagedestroy($image);
-        return true;
-    }
-
-    return false;
-}
-
 
     /**
      * Get all images for an album
@@ -184,14 +206,14 @@ private function convertToWebp(string $sourcePath, string $destination, string $
     public function images($albumId = null) {
         if (!$albumId) {
             return $this->response
-                        ->setJSON(['status' => 'error', 'message' => 'Album ID is required'])
-                        ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
+                ->setJSON(['status' => 'error', 'message' => 'Album ID is required'])
+                ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
 
         $images = $this->imageModel
-                       ->where('album_id', $albumId)
-                       ->orderBy('created_at', 'DESC')
-                       ->findAll();
+            ->where('album_id', $albumId)
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
 
         return $this->response->setJSON([
             'status' => 'success',
