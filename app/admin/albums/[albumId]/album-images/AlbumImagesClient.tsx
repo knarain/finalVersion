@@ -57,7 +57,7 @@ export default function AlbumImagesClient({ albumId }: AlbumImagesClientProps) {
           {images.map((img) => (
             <div key={img.id} className="bg-gray-800 rounded-lg overflow-hidden shadow hover:shadow-lg transition">
               <img
-                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/albums/${albumId}/${img.filename}`}
+                src={`https://stg.rashmiphotography.com/backend/uploads/albums/${albumId}/${img.filename}`}
                 alt={img.caption || 'Album Image'}
                 className="w-full h-40 object-cover"
               />
