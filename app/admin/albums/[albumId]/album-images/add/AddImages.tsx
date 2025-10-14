@@ -39,7 +39,7 @@ export default function AddImagesClient({ albumId }: AddImagesClientProps) {
       const token = localStorage.getItem('adminToken')
 
       await axios.post(
-        `https://stg.rashmiphotography.com/backend/api/admin/albums/${albumId}/images`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums/${albumId}/images`,
         formData,
         {
           headers: {

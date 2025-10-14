@@ -1,9 +1,11 @@
 export async function generateStaticParams() {
   const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api'
-  const defaultIds = ['1', '2', '3', '4', '5']
+  const defaultIds = Array.from({ length: 50 }, (_, i) => String(i + 1))
 
   try {
-    const res = await fetch(`${apiBase}/admin/albums`)
+    // Try both common endpoints used in this project
+    let res = await fetch(`${apiBase}/admin/albums`)
+    if (!res.ok) res = await fetch(`${apiBase}/albums`)
     if (res.ok) {
       const json = await res.json()
       const albums = Array.isArray(json.data)

@@ -42,7 +42,7 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
     setError(null)
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
-      const res = await axios.get(`${API_BASE}/user/albums/${albumId}/images`, { headers })
+      const res = await axios.get(`${API_BASE}/api/user/albums/${albumId}/images`, { headers })
       if (!res.data.success) {
         setError(res.data.error || "Failed to load images")
         setImages([])
@@ -175,7 +175,7 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
             </Button>
             {/* Big image */}
             <img
-              src={`https://stg.rashmiphotography.com/backend/${images[currentImageIndex].fileUrl}`}
+              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${images[currentImageIndex].fileUrl}`}
               alt={images[currentImageIndex].caption}
               onLoad={() => handleImageLoad(images[currentImageIndex].id)}
               onError={() => handleImageError(images[currentImageIndex].id)}

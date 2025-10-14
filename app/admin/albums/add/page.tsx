@@ -44,7 +44,7 @@ export default function AddAlbum() {
 
       const token = localStorage.getItem('adminToken');
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/albums`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums`,
         formData,
         {
           headers: {

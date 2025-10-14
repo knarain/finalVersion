@@ -9,7 +9,7 @@ export default function ListAlbums() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/albums`)
+      .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums`)
       .then((res) => {
         setAlbums(res.data.data?.items || [])
         console.log(res.data)
@@ -42,7 +42,7 @@ export default function ListAlbums() {
             <div className="flex items-center gap-4">
               {album.coverImage && (
                 <img
-                  src={album.coverImage}
+                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${album.coverImage}`}
                   alt={album.clientNames}
                   className="w-24 h-24 object-cover rounded-md"
                 />

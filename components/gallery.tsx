@@ -79,7 +79,7 @@ export function Gallery() {
     setIsLoading(true)
     setError(null)
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/albums`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums`, {
         params: {
           category: activeCategory === "all" ? undefined : activeCategory,
           page: currentPage,
@@ -132,7 +132,7 @@ export function Gallery() {
       if (!selectedAlbum) return false
       try {
         const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/albums/${selectedAlbum.id}/authenticate`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user/albums/${selectedAlbum.id}/authenticate`,
           { email, password }
         )
 
@@ -215,7 +215,7 @@ export function Gallery() {
                 style={{ aspectRatio: "3/4" }}
               >
                 <img
-                  src={album.coverImage || "/placeholder.svg"}
+                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${album.coverImage || "/placeholder.svg"}`}
                   alt={`${album.clientNames} - ${album.eventType}`}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />

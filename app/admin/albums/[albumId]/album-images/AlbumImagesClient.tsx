@@ -23,7 +23,7 @@ export default function AlbumImagesClient({ albumId }: AlbumImagesClientProps) {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-  const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/albums/${albumId}/images`)
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums/${albumId}/images`)
   setImages(res.data.data || [])
       } catch (err: any) {
         console.error(err)
@@ -57,7 +57,7 @@ export default function AlbumImagesClient({ albumId }: AlbumImagesClientProps) {
           {images.map((img) => (
             <div key={img.id} className="bg-gray-800 rounded-lg overflow-hidden shadow hover:shadow-lg transition">
               <img
-                src={`https://stg.rashmiphotography.com/backend/uploads/albums/${albumId}/${img.filename}`}
+                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/albums/${albumId}/${img.filename}`}
                 alt={img.caption || 'Album Image'}
                 className="w-full h-40 object-cover"
               />

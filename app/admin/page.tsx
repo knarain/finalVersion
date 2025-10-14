@@ -25,7 +25,7 @@ export default function EnquiriesPage() {
 
   const fetchEnquiries = async () => {
     try {
-  const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/enquiries`)
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/enquiries`)
       setEnquiries(res.data.data || [])
     } catch (err) {
       console.error(err)
