@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback } from "react"
 import axios from "axios"
 import { Button } from "@/components/ui/button"
-import { Loader2, X, ZoomIn, ZoomOut } from "lucide-react"
+import { X, Loader2, Download } from "lucide-react"
 
 interface AlbumImage {
   id: number
@@ -20,22 +20,18 @@ interface AlbumViewerProps {
   onClose: () => void
 }
 
-// AlbumViewer takes token as prop for explicit control!
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProps) {
   const [images, setImages] = useState<AlbumImage[]>([])
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [scale, setScale] = useState(1)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const dragStart = useRef({ x: 0, y: 0 })
   const [imageLoadingStates, setImageLoadingStates] = useState<{ [key: number]: boolean }>({})
   const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>({})
+  const [selectedImage, setSelectedImage] = useState<AlbumImage | null>(null)
+  const [downloadError, setDownloadError] = useState<string | null>(null)
 
-  // Fetch images
+  // Load images from API
   const loadAlbumImages = useCallback(async () => {
     if (!albumId) return
     setIsLoading(true)
@@ -49,7 +45,6 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
         return
       }
       setImages(res.data.data)
-      setCurrentImageIndex(0)
       const loadingStates: { [key: number]: boolean } = {}
       res.data.data.forEach((img: AlbumImage) => (loadingStates[img.id] = true))
       setImageLoadingStates(loadingStates)
@@ -65,167 +60,189 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
   useEffect(() => {
     if (isOpen) {
       setImages([])
-      setCurrentImageIndex(0)
-      setScale(1)
-      setPosition({ x: 0, y: 0 })
-      setImageLoadingStates({})
-      setImageErrors({})
       setError(null)
+      setSelectedImage(null)
+      setDownloadError(null)
       loadAlbumImages()
-    } else {
-      setImages([])
-      setCurrentImageIndex(0)
-      setScale(1)
-      setPosition({ x: 0, y: 0 })
-      setImageLoadingStates({})
-      setImageErrors({})
-      setError(null)
     }
   }, [isOpen, albumId, token, loadAlbumImages])
 
-  // Image navigation
-  const navigateImage = useCallback(
-    (dir: "next" | "prev") => {
-      if (!images.length) return
-      setCurrentImageIndex((prev) =>
-        dir === "next" ? (prev + 1) % images.length : (prev - 1 + images.length) % images.length
-      )
-    },
-    [images.length]
-  )
-
-  // Zoom and Pan
-  const handleZoom = (dir: "in" | "out") =>
-    setScale((prev) => Math.min(Math.max(dir === "in" ? prev * 1.2 : prev / 1.2, 0.5), 3))
-  const resetZoom = () => {
-    setScale(1)
-    setPosition({ x: 0, y: 0 })
-  }
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (scale > 1) {
-      setIsDragging(true)
-      dragStart.current = { x: e.clientX - position.x, y: e.clientY - position.y }
-    }
-  }
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging && scale > 1) {
-      setPosition({ x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y })
-    }
-  }
-  const handleMouseUp = () => setIsDragging(false)
-
-  // Loading/error for <img>
-  const handleImageLoad = (id: number) => {
+  // Handle thumbnail image load and error states
+  const handleImageLoad = (id: number) =>
     setImageLoadingStates((prev) => ({ ...prev, [id]: false }))
-    setImageErrors((prev) => ({ ...prev, [id]: false }))
-  }
-  const handleImageError = (id: number) => {
-    setImageLoadingStates((prev) => ({ ...prev, [id]: false }))
+  const handleImageError = (id: number) =>
     setImageErrors((prev) => ({ ...prev, [id]: true }))
+
+  // Navigate to previous image
+  const goToPrevImage = () => {
+    if (!selectedImage) return
+    const currentIndex = images.findIndex((img) => img.id === selectedImage.id)
+    const prevIndex = (currentIndex - 1 + images.length) % images.length
+    setSelectedImage(images[prevIndex])
+  }
+
+  // Navigate to next image
+  const goToNextImage = () => {
+    if (!selectedImage) return
+    const currentIndex = images.findIndex((img) => img.id === selectedImage.id)
+    const nextIndex = (currentIndex + 1) % images.length
+    setSelectedImage(images[nextIndex])
+  }
+
+  // Download image with auth token and convert to jpg
+  const handleDownload = async (img: AlbumImage) => {
+    setDownloadError(null)
+    try {
+      if (!token) throw new Error("No authorization token provided for download")
+
+      const imageUrl = `${API_BASE}/${img.fileUrl}`
+
+      const res = await axios.get(imageUrl, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: "blob",
+      })
+
+      const blob = res.data
+      const imgBitmap = await createImageBitmap(blob)
+      const canvas = document.createElement("canvas")
+      canvas.width = imgBitmap.width
+      canvas.height = imgBitmap.height
+      const ctx = canvas.getContext("2d")
+      if (!ctx) throw new Error("Could not get canvas context")
+      ctx.drawImage(imgBitmap, 0, 0)
+
+      const jpgBlob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob((b) => resolve(b), "image/jpeg", 0.95)
+      })
+
+      if (jpgBlob) {
+        const blobUrl = URL.createObjectURL(jpgBlob)
+        const link = document.createElement("a")
+        link.download = img.fileName.replace(/\.[^/.]+$/, "") + ".jpg"
+        link.href = blobUrl
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(blobUrl)
+      } else {
+        throw new Error("Could not convert image to JPG")
+      }
+    } catch (error: any) {
+      setDownloadError("Failed to download image. " + (error?.message || ""))
+    }
   }
 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 overflow-hidden">
+    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 overflow-y-auto">
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10">
-        <div className="text-white">
-          <h2 className="text-xl font-semibold">{images[currentImageIndex]?.caption || "Photo Gallery"}</h2>
-          <p className="text-sm opacity-75">{`Image ${
-            images.length > 0 ? currentImageIndex + 1 : 0
-          } of ${images.length}`}</p>
-        </div>
+      <div className="sticky top-0 left-0 right-0 bg-black/80 p-4 flex justify-between items-center z-10">
+        <h2 className="text-white text-xl font-semibold">Album Gallery</h2>
         <Button variant="ghost" size="icon" className="text-white hover:bg-white/20" onClick={onClose}>
           <X className="h-6 w-6" />
         </Button>
       </div>
-      {/* Main image area */}
-      <div
-        className="h-full flex items-center justify-center p-4"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
+
+      {/* Photo Grid */}
+      <div className="p-6 flex flex-col items-center">
         {isLoading ? (
-          <Loader2 className="animate-spin h-8 w-8 text-white" />
+          <Loader2 className="animate-spin h-8 w-8 text-white mt-12" />
         ) : error ? (
-          <div className="text-red-400 text-center">{error}</div>
-        ) : images.length > 0 ? (
-          <div className="relative w-full h-full max-w-6xl flex items-center justify-center overflow-hidden">
-            {/* Navigation buttons */}
+          <div className="text-red-400 text-center mt-12">{error}</div>
+        ) : images.length === 0 ? (
+          <div className="text-gray-400 mt-12">No images found.</div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full max-w-7xl">
+            {images.map((img) => (
+              <div
+                key={img.id}
+                onClick={() => setSelectedImage(img)}
+                className="relative group overflow-hidden rounded-lg border border-white/10 bg-black/30 cursor-pointer hover:ring-2 hover:ring-white/40 transition-all"
+              >
+                <img
+                  src={`${API_BASE}/${img.fileUrl}`}
+                  alt={img.caption}
+                  onLoad={() => handleImageLoad(img.id)}
+                  onError={() => handleImageError(img.id)}
+                  className={`object-cover w-full h-48 transition-opacity duration-300 ${
+                    imageLoadingStates[img.id] ? "opacity-50" : "opacity-100"
+                  }`}
+                />
+                {imageErrors[img.id] && (
+                  <div className="absolute inset-0 flex items-center justify-center text-red-400 text-sm bg-black/50">
+                    Failed to load
+                  </div>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                  {img.caption || "Untitled"}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Fullscreen Modal */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+          <div className="relative w-full max-w-5xl flex flex-col items-center">
+            {/* Close button */}
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-4 text-white hover:bg-white/20"
-              onClick={() => navigateImage("prev")}
+              className="absolute top-4 right-4 text-white hover:bg-white/20"
+              onClick={() => setSelectedImage(null)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+
+            {/* Download button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-4 right-16 text-white hover:bg-white/20"
+              onClick={() => handleDownload(selectedImage)}
+            >
+              <Download className="h-6 w-6" />
+            </Button>
+
+            {/* Left navigation */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-1/2 left-4 -translate-y-1/2 text-white hover:bg-white/20"
+              onClick={goToPrevImage}
               aria-label="Previous Image"
             >
               ←
             </Button>
+
+            {/* Right navigation */}
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-4 text-white hover:bg-white/20"
-              onClick={() => navigateImage("next")}
+              className="absolute top-1/2 right-4 -translate-y-1/2 text-white hover:bg-white/20"
+              onClick={goToNextImage}
               aria-label="Next Image"
             >
               →
             </Button>
-            {/* Big image */}
+
             <img
-              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${images[currentImageIndex].fileUrl}`}
-              alt={images[currentImageIndex].caption}
-              onLoad={() => handleImageLoad(images[currentImageIndex].id)}
-              onError={() => handleImageError(images[currentImageIndex].id)}
-              className={`max-h-full max-w-full object-contain transition-all duration-200 ${
-                imageLoadingStates[images[currentImageIndex].id] ? "opacity-0" : "opacity-100"
-              }`}
-              style={{ transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)` }}
+              src={`${API_BASE}/${selectedImage.fileUrl}`}
+              alt={selectedImage.caption}
+              className="max-h-[85vh] max-w-full object-contain mt-6"
             />
-            {imageErrors[images[currentImageIndex].id] && (
-              <div className="absolute inset-0 flex items-center justify-center text-red-400">
-                Failed to load image
-              </div>
-            )}
-            {/* Zoom controls */}
-            <div className="absolute bottom-4 right-4 flex items-center gap-2">
-              <div className="bg-black/50 px-2 py-1 rounded text-white text-sm">{Math.round(scale * 100)}%</div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/20"
-                onClick={() => handleZoom("in")}
-                disabled={scale >= 3}
-                aria-label="Zoom In"
-              >
-                <ZoomIn className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/20"
-                onClick={() => handleZoom("out")}
-                disabled={scale <= 0.5}
-                aria-label="Zoom Out"
-              >
-                <ZoomOut className="h-5 w-5" />
-              </Button>
-              {scale !== 1 && (
-                <Button
-                  variant="ghost"
-                  className="text-white hover:bg-white/20 text-sm"
-                  onClick={resetZoom}
-                  aria-label="Reset Zoom"
-                >
-                  Reset
-                </Button>
-              )}
+            <div className="text-white text-center mt-4 opacity-75">
+              {selectedImage.caption}
             </div>
+            {downloadError && (
+              <div className="text-red-400 text-center mt-4">{downloadError}</div>
+            )}
           </div>
-        ) : null}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
