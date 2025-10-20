@@ -28,4 +28,4 @@ jobs:
           protocol: ftp   # change to sftp if Hostinger supports it
           port: 21
           local-dir: ./out/
-          server-dir: /domains/rashmiphotography.com/public_html/staging/
+          server-dir: /domains/rashmiphotography.com/public_html/
