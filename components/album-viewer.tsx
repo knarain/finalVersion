@@ -5,6 +5,9 @@ import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { X, Loader2, Download } from "lucide-react"
 
+// Define watermark image
+const WATERMARK_IMAGE = "/watermark.png" // Path in your public folder, e.g. /public/watermark.png
+
 interface AlbumImage {
   id: number
   albumId: number
@@ -31,7 +34,7 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
   const [selectedImage, setSelectedImage] = useState<AlbumImage | null>(null)
   const [downloadError, setDownloadError] = useState<string | null>(null)
 
-  // Load images from API
+  // Fetch images from backend
   const loadAlbumImages = useCallback(async () => {
     if (!albumId) return
     setIsLoading(true)
@@ -67,13 +70,9 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
     }
   }, [isOpen, albumId, token, loadAlbumImages])
 
-  // Handle thumbnail image load and error states
-  const handleImageLoad = (id: number) =>
-    setImageLoadingStates((prev) => ({ ...prev, [id]: false }))
-  const handleImageError = (id: number) =>
-    setImageErrors((prev) => ({ ...prev, [id]: true }))
+  const handleImageLoad = (id: number) => setImageLoadingStates((prev) => ({ ...prev, [id]: false }))
+  const handleImageError = (id: number) => setImageErrors((prev) => ({ ...prev, [id]: true }))
 
-  // Navigate to previous image
   const goToPrevImage = () => {
     if (!selectedImage) return
     const currentIndex = images.findIndex((img) => img.id === selectedImage.id)
@@ -81,7 +80,6 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
     setSelectedImage(images[prevIndex])
   }
 
-  // Navigate to next image
   const goToNextImage = () => {
     if (!selectedImage) return
     const currentIndex = images.findIndex((img) => img.id === selectedImage.id)
@@ -89,27 +87,43 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
     setSelectedImage(images[nextIndex])
   }
 
-  // Download image with auth token and convert to jpg
+  // Download image with watermark in bottom-right
   const handleDownload = async (img: AlbumImage) => {
     setDownloadError(null)
     try {
       if (!token) throw new Error("No authorization token provided for download")
 
       const imageUrl = `${API_BASE}/${img.fileUrl}`
-
       const res = await axios.get(imageUrl, {
         headers: { Authorization: `Bearer ${token}` },
         responseType: "blob",
       })
 
       const blob = res.data
-      const imgBitmap = await createImageBitmap(blob)
+      const baseImage = await createImageBitmap(blob)
+
+      // Load watermark image
+      const watermarkResponse = await fetch(WATERMARK_IMAGE)
+      const watermarkBlob = await watermarkResponse.blob()
+      const watermarkImage = await createImageBitmap(watermarkBlob)
+
       const canvas = document.createElement("canvas")
-      canvas.width = imgBitmap.width
-      canvas.height = imgBitmap.height
+      canvas.width = baseImage.width
+      canvas.height = baseImage.height
       const ctx = canvas.getContext("2d")
+
       if (!ctx) throw new Error("Could not get canvas context")
-      ctx.drawImage(imgBitmap, 0, 0)
+      ctx.drawImage(baseImage, 0, 0)
+      ctx.globalAlpha = 0.6 // watermark transparency
+
+      // position watermark bottom-right
+      const watermarkWidth = baseImage.width * 0.25 // 25% of base image width
+      const watermarkHeight = (watermarkImage.height / watermarkImage.width) * watermarkWidth
+      const x = baseImage.width - watermarkWidth - 20
+      const y = baseImage.height - watermarkHeight - 20
+
+      ctx.drawImage(watermarkImage, x, y, watermarkWidth, watermarkHeight)
+      ctx.globalAlpha = 1.0
 
       const jpgBlob = await new Promise<Blob | null>((resolve) => {
         canvas.toBlob((b) => resolve(b), "image/jpeg", 0.95)
@@ -118,15 +132,13 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
       if (jpgBlob) {
         const blobUrl = URL.createObjectURL(jpgBlob)
         const link = document.createElement("a")
-        link.download = img.fileName.replace(/\.[^/.]+$/, "") + ".jpg"
+        link.download = img.fileName.replace(/\.[^/.]+$/, "") + "_wm.jpg"
         link.href = blobUrl
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
         URL.revokeObjectURL(blobUrl)
-      } else {
-        throw new Error("Could not convert image to JPG")
-      }
+      } else throw new Error("Could not convert image to JPG")
     } catch (error: any) {
       setDownloadError("Failed to download image. " + (error?.message || ""))
     }
@@ -234,12 +246,8 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
               alt={selectedImage.caption}
               className="max-h-[85vh] max-w-full object-contain mt-6"
             />
-            <div className="text-white text-center mt-4 opacity-75">
-              {selectedImage.caption}
-            </div>
-            {downloadError && (
-              <div className="text-red-400 text-center mt-4">{downloadError}</div>
-            )}
+            <div className="text-white text-center mt-4 opacity-75">{selectedImage.caption}</div>
+            {downloadError && <div className="text-red-400 text-center mt-4">{downloadError}</div>}
           </div>
         </div>
       )}
