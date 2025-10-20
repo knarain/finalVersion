@@ -124,18 +124,23 @@ export default function HomePage() {
                 </h2>
                 <div className="w-16 h-1 bg-amber-400 rounded-full mb-8"></div>
               </div>
-
               <div className="space-y-4 sm:space-y-6 text-gray-300 leading-relaxed">
                 <p className="text-base sm:text-lg">
-                  I am a passionate photographer based in Hyderabad, India. Lorem ipsum dolor sit amet, consectetur
-                  adipiscing elit. Praesent nec leo libero. Ut blandit lorem non magna volutpat, vitae tempor lorem
-                  venenatis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
-                  egestas.
+                  I'm a passionate photographer based in Hyderabad, India, driven by an endless fascination with light, emotion, and human stories. 
+                  Through my lens, I seek to capture not just moments—but the essence of people, places, and experiences that make them timeless. 
+                  Every photograph is an opportunity to turn everyday life into a piece of art that resonates long after it’s seen.
                 </p>
                 <p className="text-base sm:text-lg">
-                   Founded in 2014, Rashmi Photography was born out of pure passion and a shared love for storytelling through images. What started as a creative pursuit has now grown into a dedicated team of professionals with backgrounds in software engineering and an unshakable commitment to the art of photography.
+                  Established in 2014, Rashmi Photography began as a personal creative pursuit and has since blossomed into a full-fledged photography studio. 
+                  Our team combines artistic vision with technical precision, blending backgrounds in software engineering and visual storytelling to craft images that speak volumes. 
+                  From intimate portraits to large-scale events, our work focuses on authenticity, emotion, and elegance—creating memories that last a lifetime.
+                </p>
+                <p className="text-base sm:text-lg">
+                  At Rashmi Photography, every frame tells a story. Whether capturing the laughter of a family, the beauty of a wedding, or the energy of a city street—we aim 
+                  to preserve the soul behind every scene. Based in Hyderabad, we continue to redefine the art of photography with creativity, compassion, and commitment.
                 </p>
               </div>
+
 
               {/* Stats or Highlights */}
               <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 border-t border-gray-700">
