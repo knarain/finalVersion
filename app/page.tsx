@@ -101,7 +101,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
             {/* Portrait Image */}
-            <div className="relative order-2 lg:order-1">
+            {/* <div className="relative order-2 lg:order-1">
               <div className="relative overflow-hidden rounded-2xl">
                 <img
                   src="/professional-photographer-portrait-by-bridge-water.png"
@@ -111,10 +111,10 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
-              {/* Decorative Elements */}
+
               <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-16 sm:w-24 h-16 sm:h-24 border-4 border-amber-400 rounded-full opacity-20"></div>
               <div className="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 w-12 sm:w-16 h-12 sm:h-16 bg-amber-400 rounded-full opacity-30"></div>
-            </div>
+            </div> */}
 
             {/* Bio Content */}
             <div className="space-y-6 order-1 lg:order-2">
