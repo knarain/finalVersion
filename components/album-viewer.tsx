@@ -186,9 +186,9 @@ export function AlbumViewer({ albumId, isOpen, token, onClose }: AlbumViewerProp
                     Failed to load
                   </div>
                 )}
-                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                {/* <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 truncate opacity-0 group-hover:opacity-100 transition-opacity">
                   {img.caption || "Untitled"}
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
