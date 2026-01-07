@@ -1,79 +1,121 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function AddAlbum() {
   const [clientNames, setClientNames] = useState('');
-  const [eventType, setEventType] = useState('');
-  const [date, setDate] = useState('');
+  const [categoryId, setCategoryId] = useState('');
+  const [eventDate, setEventDate] = useState('');
   const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState('');
   const [isLocked, setIsLocked] = useState(false);
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const router = useRouter();
 
-  const eventTypes = [
-    { id: 'engagement', name: 'Engagement' },
-    { id: 'wedding', name: 'Wedding' },
-    { id: 'sreemantham', name: 'Sreemantham' },
-    { id: 'cradle ceremony', name: 'Cradle Ceremony' },
-    { id: 'pre-birthday', name: 'Pre-Birthday' },
-    { id: 'birthday', name: 'Birthday' },
-    { id: 'dothi ceremony', name: 'Dothi Ceremony' },
-    { id: 'house warming', name: 'House Warming' },
-    { id: 'photoshoot', name: 'Photoshoot' },
-    { id: 'anniversary', name: 'Anniversary' },
-    { id: 'pre-wedding', name: 'Pre-Wedding' },
-  ];
+  const loadCategories = async () => {
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/categories`);
+      if (res.data.results) {
+        setCategories(res.data.results);
+      }
+    } catch (err) {
+      console.error('Failed to load categories:', err);
+    }
+  };
+
+  // Load categories on mount
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverImage(file);
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setCoverImagePreview(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage('');
+    setLoading(true);
 
-    if (!clientNames || !eventType || !coverImage) {
-      setMessage('Please fill all required fields, including cover image.');
+    if (!clientNames || !categoryId || !coverImage) {
+      setMessage('Please fill all required fields.');
+      setLoading(false);
       return;
     }
 
     try {
-      // Use FormData for image upload
-      const formData = new FormData();
-      formData.append('clientNames', clientNames);
-      formData.append('eventType', eventType);
-      formData.append('date', date);
-      formData.append('isLocked', isLocked ? '1' : '0');
-      formData.append('coverImage', coverImage);
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Image = reader.result as string;
 
-      const token = localStorage.getItem('adminToken');
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
+        const payload = {
+          clientNames,
+          categoryId: parseInt(categoryId),
+          eventDate: eventDate || null,
+          isLocked: isLocked ? 1 : 0,
+          image: base64Image, // Send as base64
+        };
+
+        const token = localStorage.getItem('adminToken');
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums`,
+          payload,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          }
+        );
+
+        if (res.status === 201 || res.data.results?.id) {
+          setMessage('Album created successfully!');
+          // Reset form
+          setClientNames('');
+          setCategoryId('');
+          setEventDate('');
+          setCoverImage(null);
+          setCoverImagePreview('');
+          setIsLocked(false);
+          // Redirect after 1.5 seconds
+          setTimeout(() => {
+            router.push('/admin/albums');
+          }, 1500);
+        } else {
+          setMessage(res.data.message || 'Failed to create album.');
         }
-      );
-
-      if (res.data.success) {
-        setMessage('Album added successfully!');
-        setClientNames('');
-        setEventType('');
-        setDate('');
-        setCoverImage(null);
-        setIsLocked(false);
-      } else {
-        setMessage(res.data.message || 'Failed to add album.');
-      }
-    } catch (err) {
+      };
+      reader.readAsDataURL(coverImage);
+    } catch (err: any) {
       console.error(err);
-      setMessage('Server error. Try again.');
+      const errorMsg = err.response?.data?.message || 'Server error. Try again.';
+      setMessage(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-gray-900 rounded-xl shadow-lg text-white">
       <h1 className="text-2xl font-bold mb-4">Add New Album</h1>
-      {message && <p className="mb-4 text-yellow-400">{message}</p>}
+      {message && (
+        <p className={`mb-4 p-2 rounded ${message.includes('success') ? 'bg-green-900 text-green-200' : 'bg-red-900 text-red-200'}`}>
+          {message}
+        </p>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Client Name */}
         <div>
@@ -87,31 +129,31 @@ export default function AddAlbum() {
           />
         </div>
 
-        {/* Event Type Dropdown */}
+        {/* Category Dropdown */}
         <div>
-          <label className="block mb-1 text-gray-300">Event Type *</label>
+          <label className="block mb-1 text-gray-300">Category *</label>
           <select
-            value={eventType}
-            onChange={(e) => setEventType(e.target.value)}
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
             className="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 text-white"
             required
           >
-            <option value="">Select Event Type</option>
-            {eventTypes.map((type) => (
-              <option key={type.id} value={type.name}>
-                {type.name}
+            <option value="">Select Category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Date */}
+        {/* Event Date */}
         <div>
-          <label className="block mb-1 text-gray-300">Date</label>
+          <label className="block mb-1 text-gray-300">Event Date</label>
           <input
             type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={eventDate}
+            onChange={(e) => setEventDate(e.target.value)}
             className="w-full p-2 rounded-lg bg-gray-800 border border-gray-700"
           />
         </div>
@@ -122,10 +164,19 @@ export default function AddAlbum() {
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => setCoverImage(e.target.files?.[0] ?? null)}
+            onChange={handleImageChange}
             className="w-full text-gray-300"
             required
           />
+          {coverImagePreview && (
+            <div className="mt-3">
+              <img
+                src={coverImagePreview}
+                alt="Preview"
+                className="w-full h-40 object-cover rounded-lg border border-gray-700"
+              />
+            </div>
+          )}
         </div>
 
         {/* Lock Album */}
@@ -144,9 +195,10 @@ export default function AddAlbum() {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-yellow-500 text-black font-bold py-2 rounded-xl hover:bg-yellow-600 transition"
+          disabled={loading}
+          className="w-full bg-yellow-500 text-black font-bold py-2 rounded-xl hover:bg-yellow-600 transition disabled:opacity-50"
         >
-          Add Album
+          {loading ? 'Creating...' : 'Create Album'}
         </button>
       </form>
     </div>

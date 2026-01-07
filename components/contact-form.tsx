@@ -43,9 +43,19 @@ export function ContactForm() {
     setSubmissionState({ isSubmitting: true, isSuccess: false, error: null })
 
     try {
-  const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/enquiries`, formData)
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/enquiries`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      )
 
-      if (res.data.success) {
+      // Backend returns status code 201 for successful submission
+      if (res.status === 201 || res.data.message === 'Enquiry submitted successfully') {
         setSubmissionState({ isSubmitting: false, isSuccess: true, error: null })
         setFormData({ name: "", email: "", phone: "", eventType: "", eventDate: "", message: "" })
 
@@ -61,9 +71,9 @@ export function ContactForm() {
     } catch (err: any) {
       // Handle backend validation errors
       const backendError =
+        err.response?.data?.message ||
         err.response?.data?.messages ||
         err.response?.data?.error ||
-        err.response?.data?.message ||
         "Submission failed"
 
       setSubmissionState({

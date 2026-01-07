@@ -1,0 +1,429 @@
+ERROR - 2026-01-04 03:11:48 --> mysqli_sql_exception: Unknown column 'updated_at' in 'field list' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `al...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `al...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `al...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `al...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 E:\finalVersion\backend\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 E:\finalVersion\backend\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 E:\finalVersion\backend\app\Controllers\Api\AlbumsAdmin.php(192): CodeIgniter\Model->insert(Array)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('1')
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+CRITICAL - 2026-01-04 03:11:48 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'updated_at' in 'field list'
+[Method: POST, Route: api/admin/albums/1/images]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (:album_id:, :filename:, :file_url:, :caption:, :created_at:, :updated_at:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\Api\AlbumsAdmin.php(192): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('1')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 03:11:48 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'updated_at' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da744a5e61.01580302.jpg\', \'uploads/albums/1/img_6959da744a5e61.01580302.jpg\', \'\', \'2026-01-04 03:11:48\', \'2026-01-04 03:11:48\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da744a5e61.01580302.jpg\', \'uploads/albums/1/img_6959da744a5e61.01580302.jpg\', \'\', \'2026-01-04 03:11:48\', \'2026-01-04 03:11:48\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (:album_id:, :filename:, :file_url:, :caption:, :created_at:, :updated_at:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\Api\AlbumsAdmin.php(192): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('1')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 03:11:48 --> [Caused by] mysqli_sql_exception: Unknown column 'updated_at' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da744a5e61.01580302.jpg\', \'uploads/albums/1/img_6959da744a5e61.01580302.jpg\', \'\', \'2026-01-04 03:11:48\', \'2026-01-04 03:11:48\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da744a5e61.01580302.jpg\', \'uploads/albums/1/img_6959da744a5e61.01580302.jpg\', \'\', \'2026-01-04 03:11:48\', \'2026-01-04 03:11:48\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da744a5e61.01580302.jpg\', \'uploads/albums/1/img_6959da744a5e61.01580302.jpg\', \'\', \'2026-01-04 03:11:48\', \'2026-01-04 03:11:48\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (:album_id:, :filename:, :file_url:, :caption:, :created_at:, :updated_at:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\Api\AlbumsAdmin.php(192): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('1')
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2026-01-04 03:12:20 --> mysqli_sql_exception: Unknown column 'updated_at' in 'field list' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `al...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `al...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `al...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `al...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 E:\finalVersion\backend\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 E:\finalVersion\backend\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 E:\finalVersion\backend\app\Controllers\Api\AlbumsAdmin.php(192): CodeIgniter\Model->insert(Array)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('1')
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+CRITICAL - 2026-01-04 03:12:20 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'updated_at' in 'field list'
+[Method: POST, Route: api/admin/albums/1/images]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (:album_id:, :filename:, :file_url:, :caption:, :created_at:, :updated_at:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\Api\AlbumsAdmin.php(192): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('1')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 03:12:20 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'updated_at' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da942fd979.72546534.jpg\', \'uploads/albums/1/img_6959da942fd979.72546534.jpg\', \'\', \'2026-01-04 03:12:20\', \'2026-01-04 03:12:20\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da942fd979.72546534.jpg\', \'uploads/albums/1/img_6959da942fd979.72546534.jpg\', \'\', \'2026-01-04 03:12:20\', \'2026-01-04 03:12:20\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (:album_id:, :filename:, :file_url:, :caption:, :created_at:, :updated_at:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\Api\AlbumsAdmin.php(192): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('1')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 03:12:20 --> [Caused by] mysqli_sql_exception: Unknown column 'updated_at' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da942fd979.72546534.jpg\', \'uploads/albums/1/img_6959da942fd979.72546534.jpg\', \'\', \'2026-01-04 03:12:20\', \'2026-01-04 03:12:20\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da942fd979.72546534.jpg\', \'uploads/albums/1/img_6959da942fd979.72546534.jpg\', \'\', \'2026-01-04 03:12:20\', \'2026-01-04 03:12:20\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (1, \'img_6959da942fd979.72546534.jpg\', \'uploads/albums/1/img_6959da942fd979.72546534.jpg\', \'\', \'2026-01-04 03:12:20\', \'2026-01-04 03:12:20\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_images` (`album_id`, `filename`, `file_url`, `caption`, `created_at`, `updated_at`) VALUES (:album_id:, :filename:, :file_url:, :caption:, :created_at:, :updated_at:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\Api\AlbumsAdmin.php(192): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->uploadImages('1')
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 06:16:19 --> ParseError: syntax error, unexpected token "public"
+[Method: DELETE, Route: api/admin/albums/1]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 239.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile('E:\\finalVersion\\backend\\app\\Controllers\\Api\\AlbumsAdmin.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\Api\\AlbumsAdmin')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\Api\\AlbumsAdmin')
+ 4 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\Api\\AlbumsAdmin', true)
+ 5 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 06:16:38 --> ParseError: syntax error, unexpected token "public"
+[Method: DELETE, Route: api/admin/images/5]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 239.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile('E:\\finalVersion\\backend\\app\\Controllers\\Api\\AlbumsAdmin.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\Api\\AlbumsAdmin')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\Api\\AlbumsAdmin')
+ 4 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\Api\\AlbumsAdmin', true)
+ 5 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 06:17:28 --> ParseError: syntax error, unexpected variable "$imageData", expecting "function" or "const"
+[Method: DELETE, Route: api/admin/albums/1]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 392.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile('E:\\finalVersion\\backend\\app\\Controllers\\Api\\AlbumsAdmin.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\Api\\AlbumsAdmin')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\Api\\AlbumsAdmin')
+ 4 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\Api\\AlbumsAdmin', true)
+ 5 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 06:17:30 --> ParseError: syntax error, unexpected variable "$imageData", expecting "function" or "const"
+[Method: DELETE, Route: api/admin/albums/1]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 392.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile('E:\\finalVersion\\backend\\app\\Controllers\\Api\\AlbumsAdmin.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\Api\\AlbumsAdmin')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\Api\\AlbumsAdmin')
+ 4 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\Api\\AlbumsAdmin', true)
+ 5 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 17:53:47 --> Error: Class "App\Controllers\ResponseInterface" not found
+[Method: POST, Route: admin/album-credentials]
+in APPPATH\Controllers\AlbumAuthController.php on line 66.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 17:53:58 --> Error: Class "App\Controllers\ResponseInterface" not found
+[Method: POST, Route: admin/album-credentials]
+in APPPATH\Controllers\AlbumAuthController.php on line 66.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2026-01-04 17:59:20 --> mysqli_sql_exception: Table 'rsphotography.album_access' doesn't exist in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `a...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `a...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `a...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `a...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Controllers\AlbumAuthController.php(43): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumAuthController->listCredentials()
+#8 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+#9 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#14 {main}
+CRITICAL - 2026-01-04 17:59:20 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'rsphotography.album_access' doesn't exist
+[Method: GET, Route: admin/album-credentials]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\AlbumAuthController.php(43): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->listCredentials()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 17:59:20 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'rsphotography.album_access' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\AlbumAuthController.php(43): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->listCredentials()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 17:59:20 --> [Caused by] mysqli_sql_exception: Table 'rsphotography.album_access' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\AlbumAuthController.php(43): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->listCredentials()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2026-01-04 18:01:34 --> mysqli_sql_exception: Table 'rsphotography.album_access' doesn't exist in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `a...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `a...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `a...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `a...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Controllers\AlbumAuthController.php(43): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumAuthController->listCredentials()
+#8 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+#9 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#14 {main}
+CRITICAL - 2026-01-04 18:01:34 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'rsphotography.album_access' doesn't exist
+[Method: GET, Route: api/admin/album-credentials]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\AlbumAuthController.php(43): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->listCredentials()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 18:01:34 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'rsphotography.album_access' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\AlbumAuthController.php(43): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->listCredentials()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 18:01:34 --> [Caused by] mysqli_sql_exception: Table 'rsphotography.album_access' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `album_id`, `email`, `created_at`
+FROM `album_access`', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\AlbumAuthController.php(43): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->listCredentials()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2026-01-04 18:04:28 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`rsphotography`.`album_access`, CONSTRAINT `album_access_ibfk_1` FOREIGN KEY (`album_id`) REFERENCES `albums` (`id`) ON DELETE CASCADE) in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `al...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `al...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `al...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `al...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 E:\finalVersion\backend\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 E:\finalVersion\backend\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 E:\finalVersion\backend\app\Controllers\AlbumAuthController.php(106): CodeIgniter\Model->insert(Array)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+CRITICAL - 2026-01-04 18:04:28 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`rsphotography`.`album_access`, CONSTRAINT `album_access_ibfk_1` FOREIGN KEY (`album_id`) REFERENCES `albums` (`id`) ON DELETE CASCADE)
+[Method: POST, Route: api/admin/album-credentials]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_access` (`album_id`, `email`, `password_hash`) VALUES (:album_id:, :email:, :password_hash:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\AlbumAuthController.php(106): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 18:04:28 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`rsphotography`.`album_access`, CONSTRAINT `album_access_ibfk_1` FOREIGN KEY (`album_id`) REFERENCES `albums` (`id`) ON DELETE CASCADE)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `album_access` (`album_id`, `email`, `password_hash`) VALUES (2, \'bsumith209@gmail.com\', \'$2y$10$pznnOY.Tkx055SvKtmVNk.YDqzNBoK9J4ieYZjmD1/77fSI7Bx0o.\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `album_access` (`album_id`, `email`, `password_hash`) VALUES (2, \'bsumith209@gmail.com\', \'$2y$10$pznnOY.Tkx055SvKtmVNk.YDqzNBoK9J4ieYZjmD1/77fSI7Bx0o.\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_access` (`album_id`, `email`, `password_hash`) VALUES (:album_id:, :email:, :password_hash:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\AlbumAuthController.php(106): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-04 18:04:28 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`rsphotography`.`album_access`, CONSTRAINT `album_access_ibfk_1` FOREIGN KEY (`album_id`) REFERENCES `albums` (`id`) ON DELETE CASCADE)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `album_access` (`album_id`, `email`, `password_hash`) VALUES (2, \'bsumith209@gmail.com\', \'$2y$10$pznnOY.Tkx055SvKtmVNk.YDqzNBoK9J4ieYZjmD1/77fSI7Bx0o.\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `album_access` (`album_id`, `email`, `password_hash`) VALUES (2, \'bsumith209@gmail.com\', \'$2y$10$pznnOY.Tkx055SvKtmVNk.YDqzNBoK9J4ieYZjmD1/77fSI7Bx0o.\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `album_access` (`album_id`, `email`, `password_hash`) VALUES (2, \'bsumith209@gmail.com\', \'$2y$10$pznnOY.Tkx055SvKtmVNk.YDqzNBoK9J4ieYZjmD1/77fSI7Bx0o.\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `album_access` (`album_id`, `email`, `password_hash`) VALUES (:album_id:, :email:, :password_hash:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\AlbumAuthController.php(106): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+ERROR - 2026-01-04 18:20:27 --> Email send failed: Call to a member function setMessage() on string
+ERROR - 2026-01-04 18:23:38 --> Email send failed: Call to a member function setMessage() on string
+ERROR - 2026-01-04 18:25:27 --> Email send exception: Call to a member function setMessage() on string
+ERROR - 2026-01-04 18:27:57 --> Email send exception: Call to a member function setMessage() on string
+ERROR - 2026-01-04 18:29:14 --> Email send exception: Call to a member function setMessage() on string
+ERROR - 2026-01-04 18:32:30 --> Email send exception: Call to a member function setMessage() on string
+CRITICAL - 2026-01-04 18:51:36 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: PATCH, Route: api/admin/albums/4/status]
+in SYSTEMPATH\BaseModel.php on line 1014.
+ 1 SYSTEMPATH\BaseModel.php(1014): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\Model.php(863): CodeIgniter\BaseModel->update([...], [])
+ 3 APPPATH\Controllers\Api\AlbumsAdmin.php(158): CodeIgniter\Model->update('4', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->toggleStatus('4')
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')

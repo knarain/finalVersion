@@ -4,24 +4,34 @@ namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
 use App\Models\EnquiryModel;
+use App\Libraries\Utils;
 use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\Email\Email;
 
 class Enquiries extends BaseController
 {
     /**
      * Get all enquiries
      */
-    public function index()
-    {
-        $model = new EnquiryModel();
-        $enquiries = $model->orderBy('created_at', 'DESC')->findAll();
+        public function index()
+        {
+            $user = Utils::getAuthenticatedUser();
 
-        return $this->response->setJSON([
-            'status' => 'success',
-            'data'   => $enquiries
-        ]);
-    }
+            // If auth failed, it already returned a Response
+            if ($user instanceof \CodeIgniter\HTTP\Response) {
+                return $user;
+            }
+
+            $model = new EnquiryModel();
+            $enquiries = $model
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+
+            return Utils::formatApiResponse(
+                $enquiries,
+                'Enquiries fetched successfully',
+                200
+            );
+        }
 
     /**
      * Store a new enquiry and send email
@@ -31,52 +41,84 @@ class Enquiries extends BaseController
         $model = new EnquiryModel();
         $data  = $this->request->getJSON(true);
 
-        if (!$data) {
-            return $this->response
-                        ->setJSON(['status' => 'error', 'message' => 'Invalid data'])
-                        ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
+        if (! $data) {
+            return Utils::formatApiResponse(
+                null,
+                'Invalid data',
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
         }
 
         log_message('info', 'Enquiry data: ' . print_r($data, true));
 
-        // Insert enquiry into database
-        $inserted = $model->insert([
+        // Prepare data for insert (don't validate, just insert)
+        $insertData = [
             'name'       => $data['name'] ?? '',
             'email'      => $data['email'] ?? '',
             'phone'      => $data['phone'] ?? '',
             'eventType'  => $data['eventType'] ?? '',
             'eventDate'  => $data['eventDate'] ?? null,
             'message'    => $data['message'] ?? '',
-        ]);
+        ];
 
-        if (!$inserted) {
-            return $this->response
-                        ->setJSON(['status' => 'error', 'message' => 'Failed to submit enquiry'])
-                        ->setStatusCode(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
+        // Insert enquiry into database
+        try {
+            $inserted = $model->insert($insertData, false); // false = don't validate
+            
+            if (! $inserted) {
+                log_message('error', 'Failed to insert enquiry. Model errors: ' . print_r($model->errors(), true));
+                $dbError = $model->db->error();
+                log_message('error', 'Database error: ' . ($dbError ?? 'Unknown'));
+                return Utils::formatApiResponse(
+                    null,
+                    'Failed to submit enquiry',
+                    ResponseInterface::HTTP_INTERNAL_SERVER_ERROR
+                );
+            }
+        } catch (\Throwable $e) {
+            log_message('error', 'Insert exception: ' . $e->getMessage());
+            return Utils::formatApiResponse(
+                null,
+                'Failed to submit enquiry: ' . $e->getMessage(),
+                ResponseInterface::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
-        // Send email notification
-        $this->sendEnquiryEmail($data);
+        // Send email notification (don't fail if email fails)
+        try {
+            $this->sendEnquiryEmail($data);
+        } catch (\Throwable $e) {
+            log_message('error', 'Email error: ' . $e->getMessage());
+            // Don't return error, enquiry was saved successfully
+        }
 
-        return $this->response->setJSON([
-            'status'  => 'success',
-            'message' => 'Enquiry submitted successfully'
-        ]);
+        return Utils::formatApiResponse(
+            null,
+            'Enquiry submitted successfully',
+            ResponseInterface::HTTP_CREATED
+        );
     }
 
     /**
      * Send enquiry email
      */
-    private function sendEnquiryEmail(array $data)
+    private function sendEnquiryEmail(array $data): void
     {
         $email = \Config\Services::email();
 
-        // Configure email (you can also set this in app/Config/Email.php)
-        $email->setFrom('contactus@rashmiphotography.com', 'RashmiPhotography');  // change to your email
-        $email->setTo('sumithbandela@gmail.com');                     // admin or studio email
-        $email->setReplyTo($data['email'] ?? '', $data['name'] ?? '');
+        $email->setFrom(
+            'contactus@rashmiphotography.com',
+            'RashmiPhotography'
+        );
+
+        $email->setTo('sumithbandela@gmail.com');
+        $email->setReplyTo(
+            $data['email'] ?? '',
+            $data['name'] ?? ''
+        );
 
         $subject = 'New Enquiry Received - RashmiPhotography';
+
         $message = "
             <h2>New Enquiry Details</h2>
             <p><strong>Name:</strong> {$data['name']}</p>
@@ -91,8 +133,12 @@ class Enquiries extends BaseController
         $email->setMessage($message);
         $email->setMailType('html');
 
-        if (!$email->send()) {
-            log_message('error', 'Failed to send enquiry email: ' . print_r($email->printDebugger(['headers']), true));
+        if (! $email->send()) {
+            log_message(
+                'error',
+                'Failed to send enquiry email: ' .
+                print_r($email->printDebugger(['headers']), true)
+            );
         } else {
             log_message('info', 'Enquiry email sent successfully.');
         }

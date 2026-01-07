@@ -160,19 +160,17 @@ class AlbumsController extends BaseController
             return false;
         }
 
+        // Delete expired tokens first
+        $currentTime = date('Y-m-d H:i:s');
+        $this->authTokenModel->where('expires_at <=', $currentTime)->delete();
+
         $row = $this->authTokenModel
             ->where('album_id', $albumId)
             ->where('token', $token)
             ->first();
 
         if (!$row) {
-            log_message('error', "Token validation failed: Token not found in database. AlbumID: {$albumId}, Token: {$token}");
-            return false;
-        }
-
-        // Check expiry
-        if (strtotime($row['expires_at']) < time()) {
-            log_message('error', "Token validation failed: Token expired. AlbumID: {$albumId}, Token: {$token}");
+            log_message('error', "Token validation failed: Token not found or expired. AlbumID: {$albumId}, Token: {$token}");
             return false;
         }
 

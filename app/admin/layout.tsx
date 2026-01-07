@@ -33,6 +33,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/albums" className="hover:text-yellow-400 transition-colors">
             Albums
           </Link>
+
+          {/* Categories */}
+          <Link href="/admin/categories" className="hover:text-yellow-400 transition-colors">
+            Categories
+          </Link>
+
+          {/* Settings */}
+          <Link href="/admin/settings" className="hover:text-yellow-400 transition-colors">
+            Settings
+          </Link>
         </div>
 
         {/* Logout Button */}

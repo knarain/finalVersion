@@ -3,8 +3,10 @@
 use CodeIgniter\Model;
 
 class AlbumAuthCredentialModel extends Model {
-    protected $table = 'album_auth_credentials';
+    protected $table = 'album_access';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['album_id', 'email', 'password_hash', 'created_at'];
+    protected $useAutoIncrement = true;
+    protected $allowedFields = ['album_id', 'email', 'password_hash', 'is_active'];
     protected $returnType = 'array';
+    protected $useTimestamps = false;
 }

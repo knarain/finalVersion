@@ -1,178 +1,278 @@
-<?php namespace App\Controllers\Api;
+<?php
+
+namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
 use App\Models\AlbumModel;
 use App\Models\AlbumImageModel;
 use App\Models\AlbumAuthCredentialModel;
 use App\Models\AlbumAuthTokenModel;
-use CodeIgniter\API\ResponseTrait;
+use App\Models\CategoryModel;
+use App\Libraries\Utils;
+use CodeIgniter\HTTP\ResponseInterface;
 
-class Albums extends BaseController {
-    use ResponseTrait;
-
+class Albums extends BaseController
+{
     protected AlbumModel $albumModel;
     protected AlbumImageModel $imageModel;
     protected AlbumAuthCredentialModel $credModel;
     protected AlbumAuthTokenModel $tokenModel;
-    public function __construct() {
+
+    protected CategoryModel $categoryModel;
+
+    public function __construct()
+    {
         $this->albumModel = new AlbumModel();
         $this->imageModel = new AlbumImageModel();
         $this->credModel  = new AlbumAuthCredentialModel();
         $this->tokenModel = new AlbumAuthTokenModel();
+        $this->categoryModel = new CategoryModel();
     }
 
-    /**
-     * GET /api/albums?category=&page=&limit=
-     * Returns paginated albums, filtered by category if given.
-     */
-     public function index()
+    public function byCategory($categoryId = null)
     {
-        $category = $this->request->getGet('category');
-        $page = max(1, (int) ($this->request->getGet('page') ?? 1));
-        $limit = (int) ($this->request->getGet('limit') ?? 12);
-
-        $builder = $this->albumModel;
-        if ($category) {
-            $builder = $builder->like('LOWER(event_type)', strtolower($category), 'both', null, true);
+        if (!$categoryId) {
+            return Utils::formatApiResponse(
+                null,
+                'Category ID required',
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
         }
 
-        $total = $builder->countAllResults(false);
-        $totalPages = max(1, (int) ceil($total / $limit));
-        $offset = ($page - 1) * $limit;
+        $category = $this->categoryModel->find($categoryId);
+        if (!$category) {
+            return Utils::formatApiResponse(
+                null,
+                'Category not found',
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
 
-        $albums = $builder->orderBy('date', 'DESC')->findAll($limit, $offset);
+        $page = (int) ($this->request->getGet('page') ?? 1);
+        $pageSize = (int) ($this->request->getGet('page_size') ?? 10);
 
-        $items = array_map(function ($a) {
-            return [
-                'id' => (int)$a['id'],
-                'clientNames' => $a['client_names'],
-                'eventType' => $a['event_type'],
-                'date' => $a['date'],
-                'coverImage' => $a['cover_image'],
-                'isLocked' => (bool)$a['is_locked'],
-            ];
-        }, $albums);
+        $result = Utils::getPaginationData(
+            $this->albumModel,
+            ['category_id' => $categoryId, 'is_active' => 1],
+            $page,
+            $pageSize,
+            ['created_at' => 'DESC']
+        );
 
-        return $this->respond([
-            'success' => true,
-            'data' => [
-                'items' => $items,
-                'totalPages' => $totalPages,
-                'page' => $page,
-                'limit' => $limit,
-            ]
-        ]);
+        $data = array_map(fn ($a) => [
+            'id'          => (int) $a['id'],
+            'clientNames' => $a['client_names'],
+            'albumCode'   => $a['album_code'],
+            'eventDate'   => $a['event_date'],
+            'coverImage'  => $a['cover_image'],
+            'isLocked'    => (bool) $a['is_locked'],
+        ], $result['data']);
+
+        return Utils::formatApiResponse(
+            [
+                'category' => [
+                    'id' => (int) $category['id'],
+                    'name' => $category['name']
+                ],
+                'albums' => $data,
+                'pagination' => $result['pagination']
+            ],
+            'Albums fetched successfully'
+        );
     }
 
-    /**
-     * Create new album and process cover image
-     */
-
-
-    /**
-     * GET /api/albums/{id}/images
-     * Returns images in album; requires token if album is locked.
-     */
-    public function images($id = null) {
-        if (!$id) return $this->failNotFound('Album id required');
+    public function images($id = null)
+    {
+        if (!$id) {
+            return Utils::formatApiResponse(
+                null,
+                'Album id required',
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
+        }
 
         $album = $this->albumModel->find($id);
-        if (!$album) return $this->failNotFound('Album not found');
+        if (!$album) {
+            return Utils::formatApiResponse(
+                null,
+                'Album not found',
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
 
-        if ((int)$album['is_locked'] === 1) {
-            $token = $this->getBearerToken() ?? $this->request->getGet('token');
-            if (!$this->isTokenValid($id, $token)) {
-                return $this->respond([
-                    'success' => false,
-                    'error' => 'Album is locked. Authentication required.'
-                ], 401);
+        if ((int) $album['is_locked'] === 1) {
+            $tokenData = Utils::getAuthenticatedUser(
+                $this->request,
+                $this->tokenModel,
+                ['album_id' => $id]
+            );
+
+            if ($tokenData === null) {
+                return Utils::formatApiResponse(
+                    null,
+                    'Album is locked. Authentication required.',
+                    ResponseInterface::HTTP_UNAUTHORIZED
+                );
             }
         }
 
-        $images = $this->imageModel->where('album_id', $id)->orderBy('id', 'ASC')->findAll();
-        $data = array_map(function($img) {
-            return [
-                'id' => (int)$img['id'],
-                'albumId' => (int)$img['album_id'],
-                'fileName' => $img['filename'],
-                'fileUrl' => $img['file_url'],
-                'caption' => $img['caption'],
-            ];
-        }, $images);
+        $images = $this->imageModel
+            ->where('album_id', $id)
+            ->orderBy('id', 'ASC')
+            ->findAll();
 
-        return $this->respond(['success' => true, 'data' => $data]);
+        $data = array_map(fn ($img) => [
+            'id'       => (int) $img['id'],
+            'albumId'  => (int) $img['album_id'],
+            'fileName' => $img['filename'],
+            'fileUrl'  => $img['file_url'],
+            'caption'  => $img['caption'],
+        ], $images);
+
+        return Utils::formatApiResponse(
+            $data,
+            'Album images fetched successfully',
+            ResponseInterface::HTTP_OK
+        );
     }
 
-    /**
-     * POST /api/albums/{id}/authenticate
-     * Authenticates email/password for locked album; returns token
-     */
-    public function authenticate($id = null) {
-        if (!$id) return $this->failNotFound('Album id required');
+    public function imagesByCode($code = null)
+    {
+        if (!$code) {
+            return Utils::formatApiResponse(
+                null,
+                'Album code required',
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
+        }
 
-        $album = $this->albumModel->find($id);
-        if (!$album) return $this->failNotFound('Album not found');
+        $album = $this->albumModel->where('album_code', $code)->first();
+        if (!$album) {
+            return Utils::formatApiResponse(
+                null,
+                'Album not found',
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+        if ((int) $album['is_locked'] === 1) {
+            $authHeader = $this->request->getHeaderLine('Authorization');
+            if (!$authHeader) {
+                return Utils::formatApiResponse(
+                    null,
+                    'Album is locked. Token required.',
+                    ResponseInterface::HTTP_UNAUTHORIZED
+                );
+            }
+
+            $token = str_starts_with($authHeader, 'Bearer ') 
+                ? substr($authHeader, 7) 
+                : $authHeader;
+
+            // Check for valid token
+            $tokenData = $this->tokenModel
+                ->where('token', $token)
+                ->where('album_id', $album['id'])
+                ->where('expires_at >', date('Y-m-d H:i:s'))
+                ->first();
+
+            if (!$tokenData) {
+                return Utils::formatApiResponse(
+                    null,
+                    'Invalid or expired token',
+                    ResponseInterface::HTTP_UNAUTHORIZED
+                );
+            }
+        }
+
+        $images = $this->imageModel
+            ->where('album_id', $album['id'])
+            ->orderBy('id', 'ASC')
+            ->findAll();
+
+        $data = array_map(fn ($img) => [
+            'id'       => (int) $img['id'],
+            'fileName' => $img['filename'],
+            'fileUrl'  => $img['file_url'],
+            'caption'  => $img['caption'],
+        ], $images);
+
+        return Utils::formatApiResponse(
+            $data,
+            'Album images fetched successfully'
+        );
+    }
+
+    public function authenticateByCode($code = null)
+    {
+        if (!$code) {
+            return Utils::formatApiResponse(
+                null,
+                'Album code required',
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
+        }
+
+        $album = $this->albumModel->where('album_code', $code)->first();
+        if (!$album) {
+            return Utils::formatApiResponse(
+                null,
+                'Album not found',
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
 
         $json = $this->request->getJSON(true);
         $email = $json['email'] ?? null;
         $password = $json['password'] ?? null;
+        $captchaId = $json['captcha_id'] ?? null;
+        $captchaText = $json['captcha_text'] ?? null;
 
-        if (!$email || !$password) {
-            return $this->respond([
-                'success' => false,
-                'error' => 'Email and password are required'
-            ], 400);
+        if (!$email || !$password || !$captchaId || !$captchaText) {
+            return Utils::formatApiResponse(
+                null,
+                'Email, password, captcha_id, and captcha_text are required',
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
         }
 
-        $cred = $this->credModel->where(['album_id' => $id, 'email' => $email])->first();
+        // 🧠 CAPTCHA Validation
+        $captcha = Utils::verifyCaptcha($captchaId, $captchaText);
+        if ($captcha !== true) {
+            return Utils::formatApiResponse(
+                null,
+                $captcha,
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
+        }
+
+        $cred = $this->credModel
+            ->where(['album_id' => $album['id'], 'email' => $email])
+            ->first();
+
         if (!$cred || !password_verify($password, $cred['password_hash'])) {
-            return $this->respond(['success' => false, 'error' => 'Invalid credentials'], 401);
+            return Utils::formatApiResponse(
+                null,
+                'Invalid credentials',
+                ResponseInterface::HTTP_UNAUTHORIZED
+            );
         }
 
-        // Create token with 6-hour expiry
         $token = bin2hex(random_bytes(24));
         $expiresAt = date('Y-m-d H:i:s', time() + 6 * 3600);
 
         $this->tokenModel->insert([
-            'album_id' => $id,
-            'token' => $token,
+            'album_id'   => $album['id'],
+            'token'      => $token,
             'expires_at' => $expiresAt,
         ]);
 
-        return $this->respond([
-            'success' => true,
-            'data' => [
-                'token' => $token,
-                'expiresAt' => $expiresAt
-            ]
-        ]);
-    }
-
-    /**
-     * Helper: get bearer token from Authorization header
-     */
-    protected function getBearerToken(): ?string {
-        $auth = $this->request->getServer('HTTP_AUTHORIZATION') ?? $this->request->getServer('Authorization');
-        if (!$auth) return null;
-        if (strpos($auth, 'Bearer ') === 0) {
-            return trim(substr($auth, 7));
-        }
-        return null;
-    }
-
-    /**
-     * Helper: validate token belongs to album and is not expired
-     */
-    protected function isTokenValid(int $albumId, ?string $token): bool {
-        if (!$token) return false;
-        $row = $this->tokenModel->where(['album_id' => $albumId, 'token' => $token])->first();
-        if (!$row) return false;
-
-        if (strtotime($row['expires_at']) < time()) {
-            // Remove expired token
-            $this->tokenModel->delete($row['id']);
-            return false;
-        }
-        return true;
+        return Utils::formatApiResponse(
+            [
+                'token'     => $token,
+                'expiresAt' => $expiresAt,
+            ],
+            'Authentication successful'
+        );
     }
 }

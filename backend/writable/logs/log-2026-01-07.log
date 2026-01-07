@@ -1,0 +1,33 @@
+CRITICAL - 2026-01-07 11:12:37 --> TypeError: App\Libraries\Utils::send2FACode(): Argument #2 ($email) must be of type string, null given, called in E:\finalVersion\backend\app\Controllers\Api\Admin.php on line 148
+[Method: POST, Route: api/admin/login]
+in APPPATH\Libraries\Utils.php on line 559.
+ 1 APPPATH\Controllers\Api\Admin.php(148): App\Libraries\Utils::send2FACode(3, null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Admin->login()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Admin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-07 11:12:59 --> TypeError: App\Libraries\Utils::send2FACode(): Argument #2 ($email) must be of type string, null given, called in E:\finalVersion\backend\app\Controllers\Api\Admin.php on line 148
+[Method: POST, Route: api/admin/login]
+in APPPATH\Libraries\Utils.php on line 559.
+ 1 APPPATH\Controllers\Api\Admin.php(148): App\Libraries\Utils::send2FACode(3, null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Admin->login()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Admin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-07 11:13:23 --> TypeError: App\Libraries\Utils::send2FACode(): Argument #2 ($email) must be of type string, null given, called in E:\finalVersion\backend\app\Controllers\Api\Admin.php on line 148
+[Method: POST, Route: api/admin/login]
+in APPPATH\Libraries\Utils.php on line 559.
+ 1 APPPATH\Controllers\Api\Admin.php(148): App\Libraries\Utils::send2FACode(3, null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Admin->login()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Admin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')

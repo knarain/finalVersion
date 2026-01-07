@@ -3,221 +3,492 @@
 use App\Controllers\BaseController;
 use App\Models\AlbumModel;
 use App\Models\AlbumImageModel;
+use App\Models\CategoryModel;
 use CodeIgniter\API\ResponseTrait;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use CodeIgniter\HTTP\ResponseInterface;
+use App\Libraries\Utils;
 
-class AlbumsAdmin extends BaseController {
+class AlbumsAdmin extends BaseController
+{
     use ResponseTrait;
 
     protected $albumModel;
     protected $imageModel;
-    protected $jwtKey = "YOUR_SECRET_KEY";
+    protected $categoryModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->albumModel = new AlbumModel();
         $this->imageModel = new AlbumImageModel();
+        $this->categoryModel = new CategoryModel();
     }
 
-    /**
-     * Decode JWT token and return admin payload
-     */
-    protected function getAdmin() {
-        $authHeader = $this->request->getServer('HTTP_AUTHORIZATION');
-        if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) return false;
+    public function categories()
+    {
+        $categories = $this->categoryModel->findAll();
+        
+        $data = array_map(fn ($c) => [
+            'id'   => (int) $c['id'],
+            'name' => $c['name']
+        ], $categories);
+        
+        return Utils::formatApiResponse(
+            $data,
+            'Categories fetched successfully'
+        );
+    }
 
-        $token = $matches[1];
+    public function storeCategory()
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $payload = $this->request->getJSON(true);
+        if (!$payload) {
+            return Utils::formatApiResponse(null, 'Invalid JSON payload', 400);
+        }
+
+        $name = trim($payload['name'] ?? '');
+        if (!$name) {
+            return Utils::formatApiResponse(null, 'Category name is required', 400);
+        }
 
         try {
-            $decoded = JWT::decode($token, new Key($this->jwtKey, 'HS256'));
-            return (array)$decoded;
+            $categoryId = $this->categoryModel->insert([
+                'name' => $name
+            ]);
+
+            $newCategory = $this->categoryModel->find($categoryId);
+
+            return Utils::formatApiResponse(
+                [
+                    'id'   => (int) $newCategory['id'],
+                    'name' => $newCategory['name']
+                ],
+                'Category created successfully',
+                ResponseInterface::HTTP_CREATED
+            );
         } catch (\Exception $e) {
-            log_message('error', $e->getMessage());
-            return false;
+            return Utils::formatApiResponse(null, 'Failed to create category: ' . $e->getMessage(), 500);
         }
     }
 
-    /**
-     * Create new album (form-data POST)
-     */
+    public function deleteCategory($id)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $category = $this->categoryModel->find($id);
+        if (!$category) {
+            return Utils::formatApiResponse(null, 'Category not found', 404);
+        }
+
+        try {
+            $this->categoryModel->delete($id);
+            return Utils::formatApiResponse(null, 'Category deleted successfully');
+        } catch (\Exception $e) {
+            return Utils::formatApiResponse(null, 'Failed to delete category: ' . $e->getMessage(), 500);
+        }
+    }
+
+
+    public function index()
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $category = $this->request->getGet('category');
+        $page     = max(1, (int) ($this->request->getGet('page') ?? 1));
+        $pageSize = (int) ($this->request->getGet('page_size') ?? 12);
+
+        $filters = [];
+        if ($category) {
+            $filters['category'] = $category;
+        }
+
+        $result = Utils::getPaginationData(
+            model: $this->albumModel,
+            filters: $filters,
+            pageNumber: $page,
+            pageSize: $pageSize,
+            orderBy: ['created_at' => 'DESC']
+        );
+
+        $result['data'] = array_map(fn ($a) => [
+            'id'          => (int) $a['id'],
+            'clientNames' => $a['client_names'],
+            'eventDate'   => $a['event_date'],
+            'categoryId'  => $a['category_id'],
+            'coverImage'  => $a['cover_image'],
+            'isLocked'    => (bool) $a['is_locked'],
+            'isActive'    => (bool) ($a['is_active'] ?? true),
+        ], $result['data']);
+
+        return Utils::formatApiResponse(
+            $result,
+            'Albums fetched successfully'
+        );
+    }
+
+    public function show($albumId)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $album = $this->albumModel->find($albumId);
+        if (!$album) {
+            return Utils::formatApiResponse(null, 'Album not found', 404);
+        }
+
+        return Utils::formatApiResponse(
+            $album,
+            'Album fetched successfully',
+            200
+        );
+    }
+
     public function create()
     {
-        helper(['filesystem', 'text']);
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
 
-        $data = [
-            'client_names' => $this->request->getPost('clientNames'),
-            'event_type'   => $this->request->getPost('eventType'),
-            'date'         => $this->request->getPost('date'),
-            'is_locked'    => $this->request->getPost('isLocked') ?? 0,
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $payload = $this->request->getJSON(true);
+        if (!$payload) {
+            return Utils::formatApiResponse(null, 'Invalid JSON payload', 400);
+        }
+
+        // Validation
+        if (!isset($payload['categoryId']) || empty($payload['categoryId'])) {
+            return Utils::formatApiResponse(null, 'Category ID is required', 400);
+        }
+
+        $albumData = [
+            'client_names' => $payload['clientNames'] ?? '',
+            'event_date'   => $payload['eventDate'] ?? null,
+            'category_id'  => (int) $payload['categoryId'],
+            'is_locked'    => (int) ($payload['isLocked'] ?? 0),
+            'album_code'   => 'rsp' . strtolower(bin2hex(random_bytes(6))),
         ];
 
-        $file = $this->request->getFile('coverImage');
-        if (!$file || !$file->isValid()) {
-            return $this->respond(['success' => false, 'message' => 'Invalid or missing cover image'], 400);
-        }
-
-        // Insert album to get ID
-        $albumId = $this->albumModel->insert($data);
+        $albumId = $this->albumModel->insert($albumData);
         if (!$albumId) {
-            return $this->respond(['success' => false, 'message' => 'Failed to create album'], 500);
+            return Utils::formatApiResponse(null, 'Album creation failed', 500);
         }
 
-        // Create album folder inside "public/uploads/album/{albumId}/"
-        $albumFolder = FCPATH . 'uploads/album/' . $albumId . '/';
-        if (!is_dir($albumFolder)) {
-            mkdir($albumFolder, 0777, true);
-        }
+        $coverImageUrl = null;
 
-        // Process cover image
-        $fileExt = strtolower($file->getExtension());
-        $newFileName = 'coverImage.webp'; // Always store as 'coverImage.webp'
-        $destination = $albumFolder . $newFileName;
-
-        if ($fileExt === 'webp') {
-            $file->move($albumFolder, $newFileName);
-        } else {
-            $tempPath = $file->getTempName();
-            $this->convertToWebp($tempPath, $destination, $fileExt);
-        }
-
-        // Store relative path (from public/)
-        $relativePath = 'uploads/album/' . $albumId . '/' . $newFileName;
-
-        // Update album with cover image path
-        $this->albumModel->update($albumId, ['cover_image' => $relativePath]);
-
-        return $this->respond([
-            'success' => true,
-            'message' => 'Album created successfully',
-            'data' => [
-                'id' => $albumId,
-                'coverImage' => base_url($relativePath),
-            ]
-        ]);
-    }
-
-    /**
-     * Convert image to WebP
-     */
-    private function convertToWebp(string $sourcePath, string $destination, string $ext)
-    {
-        // Check GD availability
-        if (!function_exists('imagewebp')) {
-            log_message('error', 'GD extension not enabled — WebP conversion skipped');
-            return false;
-        }
-
-        $image = null;
-        switch ($ext) {
-            case 'jpg':
-            case 'jpeg':
-                $image = @imagecreatefromjpeg($sourcePath);
-                break;
-            case 'png':
-                $image = @imagecreatefrompng($sourcePath);
-                if ($image) {
-                    imagepalettetotruecolor($image);
-                    imagealphablending($image, true);
-                    imagesavealpha($image, true);
+        if (!empty($payload['image'])) {
+            $albumPath = FCPATH . "uploads/album/$albumId/";
+            
+            try {
+                $files = Utils::processBase64Images(
+                    [$payload['image']], // Direct base64, no prefix needed
+                    $albumPath,
+                    1
+                );
+                
+                if (!empty($files)) {
+                    $relative = "uploads/album/$albumId/" . $files[0];
+                    $this->albumModel->update($albumId, ['cover_image' => $relative]);
+                    $coverImageUrl = base_url($relative);
                 }
-                break;
-            case 'gif':
-                $image = @imagecreatefromgif($sourcePath);
-                break;
-            default:
-                log_message('error', "Unsupported image type for conversion: $ext");
-                return false;
-        }
-
-        if ($image) {
-            imagewebp($image, $destination, 85);
-            imagedestroy($image);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Upload multiple images into an album (form-data multiple)
-     */
-    public function uploadImages($albumId)
-    {
-        $admin = $this->getAdmin();
-        if (!$admin) return $this->failUnauthorized('Unauthorized');
-
-        $files = $this->request->getFiles();
-        if (empty($files['images'])) {
-            return $this->fail('No files uploaded', 400);
-        }
-
-        $images = $files['images'];
-        $totalFiles = count($images);
-
-        if ($totalFiles > 10) {
-            return $this->fail('Maximum 10 images allowed per upload', 400);
-        }
-
-        // Store inside public folder
-        $uploadPath = FCPATH . 'uploads/albums/' . $albumId . '/';
-        if (!is_dir($uploadPath)) {
-            mkdir($uploadPath, 0777, true);
-        }
-
-        $uploaded = [];
-
-        foreach ($images as $file) {
-            if ($file->isValid() && !$file->hasMoved()) {
-                $ext = strtolower($file->getExtension());
-                $newName = uniqid('img_', true) . '.webp'; // store all as .webp
-                $destination = $uploadPath . $newName;
-
-                // Convert to WebP if needed
-                if ($ext === 'webp') {
-                    $file->move($uploadPath, $newName);
-                } else {
-                    $this->convertToWebp($file->getTempName(), $destination, $ext);
-                }
-
-                // Store relative path (for DB)
-                $relativePath = 'uploads/albums/' . $albumId . '/' . $newName;
-
-                // Insert record into DB
-                $this->imageModel->insert([
-                    'album_id' => $albumId,
-                    'filename' => $newName,
-                    'file_url' => $relativePath,
-                    'caption'  => '',
-                ]);
-
-                $uploaded[] = base_url($relativePath);
+            } catch (\Exception $e) {
+                log_message('error', 'Cover image processing failed: ' . $e->getMessage());
             }
         }
 
-        return $this->respond([
-            'success'  => true,
-            'uploaded' => $uploaded,
-        ]);
+        return Utils::formatApiResponse(
+            ['id' => $albumId, 'coverImage' => $coverImageUrl],
+            'Album created successfully',
+            ResponseInterface::HTTP_CREATED
+        );
     }
 
-    /**
-     * Get all images for an album
-     */
-    public function images($albumId = null) {
-        if (!$albumId) {
-            return $this->response
-                ->setJSON(['status' => 'error', 'message' => 'Album ID is required'])
-                ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
+    public function edit($albumId)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
         }
 
-        $images = $this->imageModel
-            ->where('album_id', $albumId)
-            ->orderBy('created_at', 'DESC')
-            ->findAll();
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
 
-        return $this->response->setJSON([
-            'status' => 'success',
-            'data'   => $images
-        ]);
+        $payload = $this->request->getJSON(true);
+        if (!$payload) {
+            return Utils::formatApiResponse(null, 'Invalid JSON payload', 400);
+        }
+
+        if (!$this->albumModel->find($albumId)) {
+            return Utils::formatApiResponse(null, 'Album not found', 404);
+        }
+
+        $updateData = [];
+
+        if (isset($payload['clientNames'])) $updateData['client_names'] = $payload['clientNames'];
+        if (isset($payload['eventDate']))   $updateData['event_date']   = $payload['eventDate'];
+        if (isset($payload['categoryId']))  $updateData['category_id']  = $payload['categoryId'];
+        if (isset($payload['isLocked']))    $updateData['is_locked']    = (int) $payload['isLocked'];
+
+        if (!empty($payload['image'])) {
+            $albumPath = FCPATH . "uploads/album/$albumId/";
+            
+            try {
+                $files = Utils::processBase64Images(
+                    [$payload['image']], // Direct base64, no prefix needed
+                    $albumPath,
+                    1
+                );
+                
+                if (!empty($files)) {
+                    $updateData['cover_image'] = "uploads/album/$albumId/" . $files[0];
+                }
+            } catch (\Exception $e) {
+                log_message('error', 'Cover image processing failed: ' . $e->getMessage());
+            }
+        }
+
+        if (!$this->albumModel->update($albumId, $updateData)) {
+            return Utils::formatApiResponse(null, 'Album update failed', 500);
+        }
+
+        $album = $this->albumModel->find($albumId);
+        unset($album['created_at'], $album['updated_at']);
+        
+        return Utils::formatApiResponse(
+            ['id' => $albumId, 'album' => $album],
+            'Album updated successfully',
+            200
+        );
+    }
+
+    public function toggleStatus($albumId)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $album = $this->albumModel->find($albumId);
+        if (!$album) {
+            return Utils::formatApiResponse(null, 'Album not found', 404);
+        }
+
+        $payload = $this->request->getJSON(true);
+        $isActive = isset($payload['is_active']) ? (int) $payload['is_active'] : (isset($album['is_active']) ? ($album['is_active'] ? 0 : 1) : 1);
+
+        $this->albumModel->update($albumId, ['is_active' => $isActive]);
+
+        return Utils::formatApiResponse(
+            ['is_active' => $isActive],
+            $isActive ? 'Album activated successfully' : 'Album deactivated successfully'
+        );
+    }
+
+    public function toggleLock($albumId)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $album = $this->albumModel->find($albumId);
+        if (!$album) {
+            return Utils::formatApiResponse(null, 'Album not found', 404);
+        }
+
+        $payload = $this->request->getJSON(true);
+        $isLocked = isset($payload['is_locked']) ? (int) $payload['is_locked'] : ($album['is_locked'] ? 0 : 1);
+
+        $this->albumModel->update($albumId, ['is_locked' => $isLocked]);
+
+        return Utils::formatApiResponse(
+            ['is_locked' => $isLocked],
+            $isLocked ? 'Album locked successfully' : 'Album unlocked successfully'
+        );
+    }
+
+    public function delete($albumId)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        if (!$this->albumModel->find($albumId)) {
+            return Utils::formatApiResponse(null, 'Album not found', 404);
+        }
+
+        $this->imageModel->where('album_id', $albumId)->delete();
+        $this->albumModel->delete($albumId);
+
+        $paths = [
+            FCPATH . "uploads/album/$albumId/",
+            FCPATH . "uploads/albums/$albumId/",
+        ];
+
+        foreach ($paths as $path) {
+            if (is_dir($path)) {
+                $this->deleteDirectory($path);
+            }
+        }
+
+        return Utils::formatApiResponse(null, 'Album deleted successfully', 200);
+    }
+
+    public function deleteImage($imageId)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $image = $this->imageModel->find($imageId);
+        if (!$image) {
+            return Utils::formatApiResponse(null, 'Image not found', 404);
+        }
+
+        $filePath = FCPATH . $image['file_url'];
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        $this->imageModel->delete($imageId);
+
+        return Utils::formatApiResponse(null, 'Image deleted successfully', 200);
+    }
+
+    private function deleteDirectory($dir)
+    {
+        foreach (array_diff(scandir($dir), ['.', '..']) as $file) {
+            $path = "$dir/$file";
+            is_dir($path) ? $this->deleteDirectory($path) : unlink($path);
+        }
+        rmdir($dir);
+    }
+
+    public function uploadImages($albumId)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $payload = $this->request->getJSON(true);
+        if (empty($payload['images']) || !is_array($payload['images'])) {
+            return Utils::formatApiResponse(null, 'Images array required', 400);
+        }
+
+        $albumPath = FCPATH . "uploads/albums/$albumId/";
+        
+        try {
+            $files = Utils::processBase64Images(
+                $payload['images'], // Direct base64 array, no prefix needed
+                $albumPath,
+                10
+            );
+            
+            foreach ($files as $filename) {
+                $relative = "uploads/albums/$albumId/$filename";
+                $this->imageModel->insert([
+                    'album_id' => $albumId,
+                    'filename' => $filename,
+                    'file_url' => $relative,
+                    'caption'  => '',
+                ]);
+                $uploaded[] = base_url($relative);
+            }
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Image processing failed: ' . $e->getMessage());
+            return Utils::formatApiResponse(null, 'Image processing failed: ' . $e->getMessage(), 400);
+        }
+
+        return Utils::formatApiResponse(['uploaded' => $uploaded], 'Images uploaded successfully', 200);
+    }
+
+    public function images($albumId = null)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (!$albumId) {
+            return Utils::formatApiResponse(null, 'Album ID is required', 400);
+        }
+
+        $page     = max(1, (int) ($this->request->getGet('page') ?? 1));
+        $pageSize = min(50, (int) ($this->request->getGet('page_size') ?? 12));
+
+        $result = Utils::getPaginationData(
+            model: $this->imageModel,
+            filters: ['album_id' => $albumId],
+            pageNumber: $page,
+            pageSize: $pageSize,
+            orderBy: ['created_at' => 'DESC']
+        );
+
+        $result['data'] = array_map(fn ($img) => [
+            'id'        => (int) $img['id'],
+            'albumId'   => (int) $img['album_id'],
+            'fileName'  => $img['filename'],
+            'fileUrl'   => base_url($img['file_url']),
+            'caption'   => $img['caption'] ?? '',
+            'createdAt'=> $img['created_at'] ?? null,
+        ], $result['data']);
+
+        return Utils::formatApiResponse($result, 'Images fetched successfully', 200);
     }
 }

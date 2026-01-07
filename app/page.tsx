@@ -99,25 +99,9 @@ export default function HomePage() {
       {/* About Section */}
       <section id="about" className="py-16 sm:py-20 px-4 bg-gray-900">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-            {/* Portrait Image */}
-            {/* <div className="relative order-2 lg:order-1">
-              <div className="relative overflow-hidden rounded-2xl">
-                <img
-                  src="/professional-photographer-portrait-by-bridge-water.png"
-                  alt="Rohan - Professional Photographer"
-                  className="w-full h-[400px] sm:h-[500px] lg:h-[600px] object-cover transition-transform duration-700 hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-              </div>
-
-              <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-16 sm:w-24 h-16 sm:h-24 border-4 border-amber-400 rounded-full opacity-20"></div>
-              <div className="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 w-12 sm:w-16 h-12 sm:h-16 bg-amber-400 rounded-full opacity-30"></div>
-            </div> */}
-
-            {/* Bio Content */}
-            <div className="space-y-6 order-1 lg:order-2">
+          <div className="space-y-8">
+            {/* Bio Content - Full Width */}
+            <div className="space-y-6">
               <div>
                 <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">
                   <span className="text-amber-400">Hi</span> I am <span className="text-white">Rohan</span>
@@ -143,18 +127,18 @@ export default function HomePage() {
 
 
               {/* Stats or Highlights */}
-              <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 border-t border-gray-700">
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-amber-400 mb-2">500+</div>
-                  <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Weddings</div>
+              <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-8 sm:pt-12 border-t border-gray-700">
+                <div className="text-center py-4 sm:py-6">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-amber-400 mb-2">500+</div>
+                  <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide font-semibold">Weddings</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-amber-400 mb-2">12+</div>
-                  <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Years Experience</div>
+                <div className="text-center py-4 sm:py-6">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-amber-400 mb-2">12+</div>
+                  <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide font-semibold">Years Experience</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-amber-400 mb-2">1000+</div>
-                  <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Happy Clients</div>
+                <div className="text-center py-4 sm:py-6">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-amber-400 mb-2">1000+</div>
+                  <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide font-semibold">Happy Clients</div>
                 </div>
               </div>
 

@@ -1,0 +1,88 @@
+CRITICAL - 2026-01-05 06:55:44 --> ErrorException: Undefined array key "event_type"
+[Method: POST, Route: api/admin/album-credentials]
+in APPPATH\Controllers\AlbumAuthController.php on line 154.
+ 1 APPPATH\Controllers\AlbumAuthController.php(154): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "event_type"', 'E:\\finalVersion\\backend\\app\\Controllers\\AlbumAuthController.php', 154)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-05 06:56:31 --> ErrorException: Undefined array key "event_type"
+[Method: POST, Route: api/admin/album-credentials]
+in APPPATH\Controllers\AlbumAuthController.php on line 154.
+ 1 APPPATH\Controllers\AlbumAuthController.php(154): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "event_type"', 'E:\\finalVersion\\backend\\app\\Controllers\\AlbumAuthController.php', 154)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AlbumAuthController->addCredential()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AlbumAuthController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-05 07:52:47 --> ErrorException: Undefined property: App\Controllers\Api\AlbumsAdmin::$categoryModel
+[Method: GET, Route: api/categories]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 25.
+ 1 APPPATH\Controllers\Api\AlbumsAdmin.php(25): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined property: App\\Controllers\\Api\\AlbumsAdmin::$categoryModel', 'E:\\finalVersion\\backend\\app\\Controllers\\Api\\AlbumsAdmin.php', 25)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\AlbumsAdmin->categories()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\AlbumsAdmin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-05 08:25:10 --> ErrorException: Undefined array key "password"
+[Method: POST, Route: api/admin/login]
+in APPPATH\Controllers\Api\Admin.php on line 36.
+ 1 APPPATH\Controllers\Api\Admin.php(36): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "password"', 'E:\\finalVersion\\backend\\app\\Controllers\\Api\\Admin.php', 36)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Admin->login()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Admin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-05 08:25:13 --> ErrorException: Undefined array key "password"
+[Method: POST, Route: api/admin/login]
+in APPPATH\Controllers\Api\Admin.php on line 36.
+ 1 APPPATH\Controllers\Api\Admin.php(36): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "password"', 'E:\\finalVersion\\backend\\app\\Controllers\\Api\\Admin.php', 36)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Admin->login()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Admin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-05 08:26:10 --> ErrorException: Undefined array key "password"
+[Method: POST, Route: api/admin/login]
+in APPPATH\Controllers\Api\Admin.php on line 34.
+ 1 APPPATH\Controllers\Api\Admin.php(34): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "password"', 'E:\\finalVersion\\backend\\app\\Controllers\\Api\\Admin.php', 34)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Admin->login()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Admin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-05 08:26:12 --> ErrorException: Undefined array key "password"
+[Method: POST, Route: api/admin/login]
+in APPPATH\Controllers\Api\Admin.php on line 34.
+ 1 APPPATH\Controllers\Api\Admin.php(34): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "password"', 'E:\\finalVersion\\backend\\app\\Controllers\\Api\\Admin.php', 34)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Admin->login()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Admin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-05 08:28:37 --> ErrorException: Undefined array key "password"
+[Method: PUT, Route: api/admin/change-password]
+in APPPATH\Controllers\Api\Admin.php on line 135.
+ 1 APPPATH\Controllers\Api\Admin.php(135): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "password"', 'E:\\finalVersion\\backend\\app\\Controllers\\Api\\Admin.php', 135)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\Admin->changePassword()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\Admin))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 8 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
