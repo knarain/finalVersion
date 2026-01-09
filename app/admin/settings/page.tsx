@@ -49,8 +49,9 @@ export default function SettingsPage() {
         return
       }
 
+      // Use the admin profile-update endpoint instead
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/profile-settings`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/profile-update`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ export default function SettingsPage() {
         }
       )
 
-      const data = res.data.results
+      const data = res.data.data || res.data.results
       setProfile(data)
       setEditEmail(data.email || "")
       setError("")

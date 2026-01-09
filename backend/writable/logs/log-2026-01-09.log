@@ -1,0 +1,321 @@
+CRITICAL - 2026-01-09 11:38:43 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/users]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:38:43 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/users]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:40:55 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/users]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:41:51 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/users]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:41:51 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/users]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:42:10 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/categories]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:42:10 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/categories]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:42:29 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/categories]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:42:30 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/categories]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:44:08 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/users]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:44:08 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/users]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:47:31 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/users]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:47:31 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/users]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:47:36 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/categories]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:47:36 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/categories]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:47:44 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/categories]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:49:13 --> ParseError: Unmatched '}'
+[Method: GET, Route: api/categories]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CodeIgniter.php(821): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(null)
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 7 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-09 11:52:03 --> ParseError: Unmatched '}'
+[Method: CLI, Route: db:query/DESCRIBE enquiries;]
+in APPPATH\Config\Routes.php on line 74.
+ 1 SYSTEMPATH\CLI\Console.php(41): CodeIgniter\Router\RouteCollection->loadRoutes()
+ 2 SYSTEMPATH\Boot.php(360): CodeIgniter\CLI\Console->run()
+ 3 SYSTEMPATH\Boot.php(104): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+ 4 ROOTPATH\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+ERROR - 2026-01-09 11:54:04 --> mysqli_sql_exception: Unknown column 'admins.role_id' in 'on clause' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admins`...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admins`...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admins`...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admins`...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Models\AdminModel.php(75): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\app\Controllers\Api\UserController.php(33): App\Models\AdminModel->getPaginatedAdmins(10, 0)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+ERROR - 2026-01-09 11:54:05 --> mysqli_sql_exception: Unknown column 'admins.role_id' in 'on clause' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admins`...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admins`...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admins`...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admins`...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Models\AdminModel.php(75): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\app\Controllers\Api\UserController.php(33): App\Models\AdminModel->getPaginatedAdmins(10, 0)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+ERROR - 2026-01-09 11:58:32 --> mysqli_sql_exception: Unknown column 'admins.role_id' in 'on clause' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admins`...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admins`...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admins`...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admins`...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Models\AdminModel.php(75): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\app\Controllers\Api\UserController.php(33): App\Models\AdminModel->getPaginatedAdmins(10, 0)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+ERROR - 2026-01-09 11:58:32 --> mysqli_sql_exception: Unknown column 'admins.role_id' in 'on clause' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admins`...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admins`...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admins`...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admins`...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Models\AdminModel.php(75): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\app\Controllers\Api\UserController.php(33): App\Models\AdminModel->getPaginatedAdmins(10, 0)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+ERROR - 2026-01-09 12:13:58 --> mysqli_sql_exception: Unknown column 'admins.role_id' in 'on clause' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admins`...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admins`...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admins`...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admins`...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Models\AdminModel.php(75): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\app\Controllers\Api\UserController.php(33): App\Models\AdminModel->getPaginatedAdmins(10, 0)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+ERROR - 2026-01-09 12:13:59 --> mysqli_sql_exception: Unknown column 'admins.role_id' in 'on clause' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admins`...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admins`...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admins`...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admins`...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Models\AdminModel.php(75): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\app\Controllers\Api\UserController.php(33): App\Models\AdminModel->getPaginatedAdmins(10, 0)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+ERROR - 2026-01-09 12:15:22 --> mysqli_sql_exception: Unknown column 'admins.role_id' in 'on clause' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admins`...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admins`...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admins`...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admins`...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Models\AdminModel.php(75): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\app\Controllers\Api\UserController.php(33): App\Models\AdminModel->getPaginatedAdmins(10, 0)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}
+ERROR - 2026-01-09 12:15:51 --> mysqli_sql_exception: Unknown column 'admins.role_id' in 'on clause' in E:\finalVersion\backend\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 E:\finalVersion\backend\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admins`...', 0)
+#1 E:\finalVersion\backend\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admins`...')
+#2 E:\finalVersion\backend\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admins`...')
+#3 E:\finalVersion\backend\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admins`...', Array, false)
+#4 E:\finalVersion\backend\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 E:\finalVersion\backend\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 E:\finalVersion\backend\app\Models\AdminModel.php(75): CodeIgniter\BaseModel->findAll()
+#7 E:\finalVersion\backend\app\Controllers\Api\UserController.php(33): App\Models\AdminModel->getPaginatedAdmins(10, 0)
+#8 E:\finalVersion\backend\system\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+#9 E:\finalVersion\backend\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+#10 E:\finalVersion\backend\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 E:\finalVersion\backend\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 E:\finalVersion\backend\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 E:\finalVersion\backend\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 E:\finalVersion\backend\system\rewrite.php(44): require_once('E:\\finalVersion...')
+#15 {main}

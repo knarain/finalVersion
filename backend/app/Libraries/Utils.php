@@ -589,5 +589,23 @@ public static function send2FACode(int $userId, string $email)
         $model->delete($row['id']);
         return true;
     }
+    
+    public static function checkPermission(
+        int $roleId,
+        string $moduleSlug,
+        string $permission
+    ): bool {
+        $db = \Config\Database::connect();
+
+        return (bool) $db->table('role_module_permissions rmp')
+            ->join('modules m', 'm.id = rmp.module_id')
+            ->join('permissions p', 'p.id = rmp.permission_id')
+            ->where([
+                'rmp.role_id' => $roleId,
+                'm.slug' => $moduleSlug,
+                'p.name' => $permission
+            ])
+            ->countAllResults();
+    }
 
 }
