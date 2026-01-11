@@ -18,7 +18,7 @@ export default function CreateCategoryPage() {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/categories`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/categories`,
         { name, description },
         {
           headers: {

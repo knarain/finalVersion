@@ -36,8 +36,8 @@ class UserController extends BaseController
         }
 
         try {
-            $page = $this->request->getVar('page') ?? 1;
-            $perPage = $this->request->getVar('per_page') ?? 10;
+            $page = (int)($this->request->getVar('page') ?? 1);
+            $perPage = (int)($this->request->getVar('per_page') ?? 10);
             $offset = ($page - 1) * $perPage;
 
             $users = $this->adminModel->getPaginatedAdmins($perPage, $offset);

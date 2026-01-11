@@ -296,9 +296,9 @@ export default function UsersPage() {
                 >
                   Previous
                 </button>
-                {Array.from({ length: data.pagination.total_pages }, (_, i) => i + 1).map((page) => (
+                {Array.from({ length: data.pagination.total_pages }, (_, i) => i + 1).map((page, idx) => (
                   <button
-                    key={page}
+                    key={`page-${page}-${idx}`}
                     onClick={() => setCurrentPage(page)}
                     className={`px-3 py-1 rounded ${
                       currentPage === page ? 'bg-blue-600 text-white' : 'border border-gray-300 hover:bg-gray-100'

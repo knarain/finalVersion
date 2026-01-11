@@ -64,7 +64,7 @@ export default function CategoriesPage() {
       }
 
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/categories`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/categories`,
         { name: newCategoryName },
         {
           headers: {

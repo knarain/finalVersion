@@ -93,6 +93,7 @@ export async function getRoles(token?: string): Promise<Role[]> {
     const response = await fetch(`${API_BASE_URL}/roles`, {
       method: 'GET',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to fetch roles')
@@ -114,6 +115,7 @@ export async function getActiveRoles(token?: string): Promise<Role[]> {
     const response = await fetch(`${API_BASE_URL}/roles/status/active`, {
       method: 'GET',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to fetch active roles')
@@ -135,6 +137,7 @@ export async function getRoleById(roleId: number, token?: string): Promise<Role>
     const response = await fetch(`${API_BASE_URL}/roles/${roleId}`, {
       method: 'GET',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to fetch role')
@@ -160,6 +163,7 @@ export async function createRole(
       method: 'POST',
       headers,
       body: JSON.stringify(role),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -189,6 +193,7 @@ export async function updateRole(
       method: 'PUT',
       headers,
       body: JSON.stringify(role),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -213,6 +218,7 @@ export async function deleteRole(roleId: number, token?: string): Promise<void> 
     const response = await fetch(`${API_BASE_URL}/roles/${roleId}`, {
       method: 'DELETE',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -238,6 +244,7 @@ export async function toggleRoleStatus(
     const response = await fetch(`${API_BASE_URL}/roles/${roleId}/toggle-status`, {
       method: 'PATCH',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to toggle role status')
@@ -253,26 +260,37 @@ export async function toggleRoleStatus(
 // USER SERVICE
 // ============================================
 
+const getAuthToken = (): string | null => {
+  if (typeof window === 'undefined') return null
+  return document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || 
+         (typeof localStorage !== 'undefined' ? localStorage.getItem('adminToken') : null)
+}
+
 export async function getUsers(
   page: number = 1,
   perPage: number = 10,
   token?: string
 ): Promise<PaginatedAdmins> {
   try {
+    const finalToken = token || getAuthToken()
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     }
-    if (token) headers['Authorization'] = `Bearer ${token}`
+    if (finalToken) headers['Authorization'] = `Bearer ${finalToken}`
 
     const response = await fetch(
       `${API_BASE_URL}/users?page=${page}&per_page=${perPage}`,
       {
         method: 'GET',
         headers,
+        credentials: 'include',
       }
     )
 
-    if (!response.ok) throw new Error('Failed to fetch users')
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.message || `Failed to fetch users: ${response.status}`)
+    }
     const data: ApiResponse<PaginatedAdmins> = await response.json()
     return data.data as PaginatedAdmins
   } catch (error) {
@@ -291,6 +309,7 @@ export async function getActiveUsers(token?: string): Promise<AdminUser[]> {
     const response = await fetch(`${API_BASE_URL}/users/status/active`, {
       method: 'GET',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to fetch active users')
@@ -312,6 +331,7 @@ export async function getUserById(userId: number, token?: string): Promise<Admin
     const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
       method: 'GET',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to fetch user')
@@ -337,6 +357,7 @@ export async function createUser(
       method: 'POST',
       headers,
       body: JSON.stringify(user),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -366,6 +387,7 @@ export async function updateUser(
       method: 'PUT',
       headers,
       body: JSON.stringify(user),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -390,6 +412,7 @@ export async function deleteUser(userId: number, token?: string): Promise<void> 
     const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
       method: 'DELETE',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -421,6 +444,7 @@ export async function changeUserPassword(
         old_password: oldPassword,
         new_password: newPassword,
       }),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -450,6 +474,7 @@ export async function resetUserPassword(
       body: JSON.stringify({
         new_password: newPassword,
       }),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -477,6 +502,7 @@ export async function assignRoleToUser(
       method: 'PATCH',
       headers,
       body: JSON.stringify({ role_id: roleId }),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -501,6 +527,7 @@ export async function toggleUserStatus(userId: number, token?: string): Promise<
     const response = await fetch(`${API_BASE_URL}/users/${userId}/toggle-status`, {
       method: 'PATCH',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to toggle user status')
@@ -528,6 +555,7 @@ export async function getPermissionStructure(
     const response = await fetch(`${API_BASE_URL}/permissions`, {
       method: 'GET',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to fetch permissions')
@@ -552,6 +580,7 @@ export async function getRolePermissions(
     const response = await fetch(`${API_BASE_URL}/permissions/role/${roleId}`, {
       method: 'GET',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to fetch role permissions')
@@ -583,6 +612,7 @@ export async function assignPermissionsToRole(
         module_id: moduleId,
         permission_ids: permissionIds,
       }),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -613,6 +643,7 @@ export async function assignPermissionsBulk(
         role_id: roleId,
         assignments,
       }),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -642,6 +673,7 @@ export async function removePermission(
       {
         method: 'DELETE',
         headers,
+        credentials: 'include',
       }
     )
 
@@ -672,6 +704,7 @@ export async function checkPermission(
         module_id: moduleId,
         permission_id: permissionId,
       }),
+      credentials: 'include',
     })
 
     if (!response.ok) return false
@@ -682,7 +715,6 @@ export async function checkPermission(
     return false
   }
 }
-
 
 export interface MenuModule {
   id: number
@@ -706,6 +738,7 @@ export async function getMenuStructure(
     const response = await fetch(`${API_BASE_URL}/permissions/menu/${roleId}`, {
       method: 'GET',
       headers,
+      credentials: 'include',
     })
 
     if (!response.ok) throw new Error('Failed to fetch menu structure')

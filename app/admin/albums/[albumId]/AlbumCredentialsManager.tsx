@@ -39,6 +39,10 @@ export function AlbumCredentialsManager({ albumId }: Props) {
     resolver: yupResolver(schema),
   })
 
+  const getToken = () => {
+    return document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
+  }
+
   useEffect(() => {
     fetchCredentials()
   }, [albumId])
@@ -47,7 +51,8 @@ export function AlbumCredentialsManager({ albumId }: Props) {
     try {
       setLoading(true)
       setError('')
-      const data = await albumCredentialsService.listCredentials(albumId)
+      const token = getToken()
+      const data = await albumCredentialsService.listCredentials(albumId, token || undefined)
       setCredentials(Array.isArray(data) ? data : [])
     } catch (err: any) {
       setError(err)
@@ -61,11 +66,12 @@ export function AlbumCredentialsManager({ albumId }: Props) {
       setIsSubmitting(true)
       setError('')
       setSuccess('')
+      const token = getToken()
       await albumCredentialsService.addCredential({
         album_id: albumId,
         email: data.email,
         password: data.password,
-      })
+      }, token || undefined)
       setSuccess('Credential added successfully!')
       reset()
       setShowForm(false)
@@ -81,7 +87,8 @@ export function AlbumCredentialsManager({ albumId }: Props) {
     try {
       setError('')
       setSuccess('')
-      await albumCredentialsService.deleteCredential(credentialId)
+      const token = getToken()
+      await albumCredentialsService.deleteCredential(credentialId, token || undefined)
       setSuccess('Credential deleted successfully!')
       setDeleteConfirmId(null)
       await fetchCredentials()
@@ -96,18 +103,16 @@ export function AlbumCredentialsManager({ albumId }: Props) {
       setSuccess('')
       const newStatus = !currentStatus
       
-      // Update local state immediately for better UX
       setCredentials(credentials.map(c => 
         c.id === credentialId 
           ? { ...c, is_active: newStatus ? 1 : 0 }
           : c
       ))
       
-      // Make API call
-      await albumCredentialsService.toggleCredentialStatus(credentialId, newStatus)
+      const token = getToken()
+      await albumCredentialsService.toggleCredentialStatus(credentialId, newStatus, token || undefined)
       setSuccess(`Credential ${newStatus ? 'activated' : 'deactivated'} successfully!`)
     } catch (err: any) {
-      // Revert on error
       setCredentials(credentials.map(c => 
         c.id === credentialId 
           ? { ...c, is_active: currentStatus ? 1 : 0 }
@@ -119,7 +124,6 @@ export function AlbumCredentialsManager({ albumId }: Props) {
 
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-white">
-      {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Album Credentials</h1>
         <div className="flex gap-3">
@@ -138,7 +142,6 @@ export function AlbumCredentialsManager({ albumId }: Props) {
         </div>
       </div>
 
-      {/* Messages */}
       {error && (
         <div className="bg-red-900/40 border-l-4 border-red-500 text-red-200 p-4 rounded-lg mb-6 flex items-start gap-3 shadow-lg animate-in">
           <span className="text-xl">⚠️</span>
@@ -152,11 +155,9 @@ export function AlbumCredentialsManager({ albumId }: Props) {
         </div>
       )}
 
-      {/* Add Credential Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border-2 border-yellow-500/30 shadow-2xl shadow-yellow-500/10 max-w-md w-full animate-in fade-in slide-in-from-bottom-4 duration-300">
-            {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-yellow-400">Add New Credential</h2>
               <button
@@ -167,7 +168,6 @@ export function AlbumCredentialsManager({ albumId }: Props) {
               </button>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-200">Email Address</label>
@@ -199,7 +199,6 @@ export function AlbumCredentialsManager({ albumId }: Props) {
                 )}
               </div>
 
-              {/* Buttons */}
               <div className="flex gap-3 pt-6">
                 <button
                   type="submit"
@@ -228,10 +227,8 @@ export function AlbumCredentialsManager({ albumId }: Props) {
         </div>
       )}
 
-      {/* Loading State */}
       {loading && <p className="text-yellow-500">Loading credentials...</p>}
 
-      {/* Empty State */}
       {!loading && credentials.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-400 text-lg mb-4">No credentials found for this album</p>
@@ -244,7 +241,6 @@ export function AlbumCredentialsManager({ albumId }: Props) {
         </div>
       )}
 
-      {/* Credentials List */}
       {!loading && credentials.length > 0 && (
         <div className="space-y-4">
           <div className="text-gray-400 text-sm">Total credentials: {credentials.length}</div>
@@ -260,7 +256,6 @@ export function AlbumCredentialsManager({ albumId }: Props) {
                     <p className="text-gray-400 text-sm mt-1">ID: {credential.id}</p>
                   </div>
                   <div className="flex gap-2 flex-wrap justify-end">
-                    {/* Status Badge */}
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         credential.is_active
@@ -273,7 +268,6 @@ export function AlbumCredentialsManager({ albumId }: Props) {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex gap-2 flex-wrap">
                   <button
                     onClick={() => handleToggleStatus(credential.id, !!credential.is_active)}
@@ -299,7 +293,6 @@ export function AlbumCredentialsManager({ albumId }: Props) {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
       {deleteConfirmId !== null && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-gray-800 rounded-lg p-6 max-w-sm border border-gray-700">

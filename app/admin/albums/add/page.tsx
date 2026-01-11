@@ -25,7 +25,7 @@ export default function AddAlbum() {
       if (!token) {
         token = localStorage.getItem('adminToken') || ''
       }
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums/categories`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/categories`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         withCredentials: true,
       });
@@ -63,57 +63,63 @@ export default function AddAlbum() {
     try {
       const reader = new FileReader();
       reader.onload = async () => {
-        const base64Image = reader.result as string;
+        try {
+          const base64Image = reader.result as string;
 
-        const payload = {
-          clientNames,
-          categoryId: parseInt(categoryId),
-          eventDate: eventDate || null,
-          isLocked: isLocked ? 1 : 0,
-          image: base64Image,
-        };
+          const payload = {
+            clientNames,
+            categoryId: parseInt(categoryId),
+            eventDate: eventDate || null,
+            isLocked: isLocked ? 1 : 0,
+            image: base64Image,
+          };
 
-        let token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
-        if (!token) {
-          token = localStorage.getItem('adminToken') || ''
-        }
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums`,
-          payload,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            withCredentials: true,
+          let token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+          if (!token) {
+            token = localStorage.getItem('adminToken') || ''
           }
-        );
+          const res = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums`,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+              withCredentials: true,
+            }
+          );
 
-        if (res.status === 201 || res.data.results?.id) {
-          setMessage('Album created successfully!');
-          setClientNames('');
-          setCategoryId('');
-          setEventDate('');
-          setCoverImage(null);
-          setCoverImagePreview('');
-          setIsLocked(false);
-          setTimeout(() => {
-            router.push('/admin/albums');
-          }, 1500);
-        } else {
-          setMessage(res.data.message || 'Failed to create album.');
+          if (res.status === 201 || res.data.results?.id) {
+            setMessage('Album created successfully!');
+            setClientNames('');
+            setCategoryId('');
+            setEventDate('');
+            setCoverImage(null);
+            setCoverImagePreview('');
+            setIsLocked(false);
+            setTimeout(() => {
+              router.push('/admin/albums');
+            }, 1500);
+          } else {
+            setMessage(res.data.message || 'Failed to create album.');
+          }
+        } catch (err: any) {
+          console.error(err);
+          if (err.response?.status === 403) {
+            setMessage('You do not have permission');
+          } else {
+            const errorMsg = err.response?.data?.message || 'Server error. Try again.';
+            setMessage(errorMsg);
+          }
+        } finally {
+          setLoading(false);
         }
       };
       reader.readAsDataURL(coverImage);
     } catch (err: any) {
       console.error(err);
-      if (err.response?.status === 403) {
-        setMessage('You do not have permission');
-      } else {
-        const errorMsg = err.response?.data?.message || 'Server error. Try again.';
-        setMessage(errorMsg);
-      }
-    } finally {
+      setMessage('Failed to read file');
       setLoading(false);
     }
   };

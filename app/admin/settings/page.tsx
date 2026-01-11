@@ -21,19 +21,20 @@ export default function SettingsPage() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
-  // Profile edit state
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [editEmail, setEditEmail] = useState("")
   const [profileLoading, setProfileLoading] = useState(false)
 
-  // Password change state
   const [oldPassword, setOldPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [passwordLoading, setPasswordLoading] = useState(false)
 
-  // 2FA state
   const [twoFALoading, setTwoFALoading] = useState(false)
+
+  const getToken = () => {
+    return document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
+  }
 
   useEffect(() => {
     fetchAdminProfile()
@@ -42,21 +43,21 @@ export default function SettingsPage() {
   const fetchAdminProfile = async () => {
     try {
       setLoading(true)
-      const token = localStorage.getItem('adminToken')
+      const token = getToken()
 
       if (!token) {
         setError("Admin token not found")
         return
       }
 
-      // Use the admin profile-update endpoint instead
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/profile-update`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/profile-settings`,
         {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
+          withCredentials: true
         }
       )
 
@@ -88,7 +89,7 @@ export default function SettingsPage() {
     try {
       setProfileLoading(true)
       setError("")
-      const token = localStorage.getItem('adminToken')
+      const token = getToken()
 
       if (!token) {
         setError("Admin token not found. Please log in again.")
@@ -96,13 +97,14 @@ export default function SettingsPage() {
       }
 
       const res = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/profile-update`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/profile-update`,
         { email: editEmail },
         {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
+          withCredentials: true
         }
       )
 
@@ -142,15 +144,15 @@ export default function SettingsPage() {
     try {
       setPasswordLoading(true)
       setError("")
-      const token = localStorage.getItem('adminToken')
+      const token = getToken()
 
       if (!token) {
         setError("Admin token not found. Please log in again.")
         return
       }
 
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/change-password`,
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/change-password`,
         {
           currentPassword: oldPassword,
           newPassword: newPassword,
@@ -160,6 +162,7 @@ export default function SettingsPage() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
+          withCredentials: true
         }
       )
 
@@ -181,14 +184,14 @@ export default function SettingsPage() {
     try {
       setTwoFALoading(true)
       setError("")
-      const token = localStorage.getItem('adminToken')
+      const token = getToken()
 
       if (!token) {
         setError("Admin token not found. Please log in again.")
         return
       }
 
-      const endpoint = enable ? '/api/admin/2fa/enable' : '/api/admin/2fa/disable'
+      const endpoint = enable ? '/admin/2fa/enable' : '/admin/2fa/disable'
 
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
@@ -198,6 +201,7 @@ export default function SettingsPage() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
+          withCredentials: true
         }
       )
 
@@ -220,7 +224,6 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-bold mb-6">Settings</h1>
 
       <div className="flex gap-6">
-        {/* Sidebar Tabs */}
         <div className="w-48 flex flex-col gap-2">
           <button
             onClick={() => setActiveTab('profile')}
@@ -254,12 +257,10 @@ export default function SettingsPage() {
           </button>
         </div>
 
-        {/* Tab Content */}
         <div className="flex-1 max-w-2xl">
           {error && <p className="text-red-500 mb-4 p-3 bg-red-900/20 rounded">{error}</p>}
           {success && <p className="text-green-500 mb-4 p-3 bg-green-900/20 rounded">{success}</p>}
 
-          {/* Profile Details Tab */}
           {activeTab === 'profile' && (
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <h2 className="text-xl font-semibold mb-4">Profile Details</h2>
@@ -350,7 +351,6 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Change Password Tab */}
           {activeTab === 'password' && (
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <h2 className="text-xl font-semibold mb-4">Change Password</h2>
@@ -412,7 +412,6 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Two-Factor Auth Tab */}
           {activeTab === '2fa' && (
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <h2 className="text-xl font-semibold mb-4">Two-Factor Authentication</h2>

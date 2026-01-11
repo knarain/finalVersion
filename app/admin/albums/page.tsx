@@ -59,9 +59,12 @@ export default function ListAlbums() {
 
   const handleToggleLock = async (albumId: number, currentLocked: boolean) => {
     try {
-      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      let token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      if (!token) {
+        token = localStorage.getItem('adminToken') || ''
+      }
       const res = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums/${albumId}/toggle-lock`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums/${albumId}/lock`,
         { is_locked: currentLocked ? 0 : 1 },
         {
           headers: {
@@ -84,9 +87,12 @@ export default function ListAlbums() {
 
   const handleToggleStatus = async (albumId: number, currentActive: boolean) => {
     try {
-      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      let token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      if (!token) {
+        token = localStorage.getItem('adminToken') || ''
+      }
       const res = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums/${albumId}/toggle-status`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums/${albumId}/status`,
         { is_active: currentActive ? 0 : 1 },
         {
           headers: {
@@ -115,9 +121,12 @@ export default function ListAlbums() {
     if (deleteConfirmId === null) return
 
     try {
-      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      let token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      if (!token) {
+        token = localStorage.getItem('adminToken') || ''
+      }
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums/${deleteConfirmId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums/${deleteConfirmId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,

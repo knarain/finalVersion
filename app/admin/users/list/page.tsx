@@ -35,9 +35,10 @@ export default function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('adminToken')
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
       })
       setUsers(res.data.results?.users || [])
     } catch (err) {
@@ -49,9 +50,10 @@ export default function UserManagement() {
 
   const fetchRoles = async () => {
     try {
-      const token = localStorage.getItem('adminToken')
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/roles`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
       })
       setRoles(res.data.results || [])
     } catch (err) {
@@ -65,7 +67,7 @@ export default function UserManagement() {
     setSuccess('')
 
     try {
-      const token = localStorage.getItem('adminToken')
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
       const payload = {
         username: formData.username,
         email: formData.email,
@@ -74,7 +76,8 @@ export default function UserManagement() {
       }
 
       await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users`, payload, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
       })
 
       setSuccess('User created successfully')
@@ -90,9 +93,10 @@ export default function UserManagement() {
     if (!confirm('Are you sure you want to delete this user?')) return
 
     try {
-      const token = localStorage.getItem('adminToken')
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
       await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
       })
       setSuccess('User deleted successfully')
       fetchUsers()
@@ -131,7 +135,7 @@ export default function UserManagement() {
           </thead>
           <tbody>
             {users.map((user, idx) => (
-              <tr key={user.id} className={`border-b border-gray-700 hover:bg-gray-750 transition ${idx % 2 === 0 ? 'bg-gray-800' : 'bg-gray-750'}`}>
+              <tr key={`user-${user.id}-${idx}`} className={`border-b border-gray-700 hover:bg-gray-750 transition ${idx % 2 === 0 ? 'bg-gray-800' : 'bg-gray-750'}`}>
                 <td className="px-6 py-4 text-gray-300">{user.username}</td>
                 <td className="px-6 py-4 text-gray-400">{user.email}</td>
                 <td className="px-6 py-4 text-gray-300">{user.role_name || 'N/A'}</td>
@@ -196,8 +200,8 @@ export default function UserManagement() {
                   className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
                 >
                   <option value="">Select a role</option>
-                  {roles.map(role => (
-                    <option key={role.id} value={role.id}>{role.name}</option>
+                  {roles.map((role, idx) => (
+                    <option key={`role-${role.id}-${idx}`} value={role.id}>{role.name}</option>
                   ))}
                 </select>
               </div>

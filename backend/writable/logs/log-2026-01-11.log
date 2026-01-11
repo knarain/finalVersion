@@ -1,0 +1,26 @@
+CRITICAL - 2026-01-11 12:51:32 --> TypeError: CodeIgniter\Database\BaseBuilder::limit(): Argument #1 ($value) must be of type ?int, string given, called in E:\finalVersion\backend\system\Model.php on line 928
+[Method: GET, Route: api/users]
+in SYSTEMPATH\Database\BaseBuilder.php on line 1514.
+ 1 SYSTEMPATH\Model.php(928): CodeIgniter\Database\BaseBuilder->limit('10', 0)
+ 2 APPPATH\Models\AdminModel.php(74): CodeIgniter\Model->__call('limit', [...])
+ 3 APPPATH\Controllers\Api\UserController.php(43): App\Models\AdminModel->getPaginatedAdmins('10', 0)
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')
+CRITICAL - 2026-01-11 12:51:34 --> TypeError: CodeIgniter\Database\BaseBuilder::limit(): Argument #1 ($value) must be of type ?int, string given, called in E:\finalVersion\backend\system\Model.php on line 928
+[Method: GET, Route: api/users]
+in SYSTEMPATH\Database\BaseBuilder.php on line 1514.
+ 1 SYSTEMPATH\Model.php(928): CodeIgniter\Database\BaseBuilder->limit('10', 0)
+ 2 APPPATH\Models\AdminModel.php(74): CodeIgniter\Model->__call('limit', [...])
+ 3 APPPATH\Controllers\Api\UserController.php(43): App\Models\AdminModel->getPaginatedAdmins('10', 0)
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Api\UserController->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Api\UserController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')

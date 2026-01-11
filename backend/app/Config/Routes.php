@@ -102,14 +102,9 @@ $routes->group('api', ['namespace' => 'App\\Controllers\\Api'], function($routes
     $routes->get('albums/category/(:num)', 'Albums::byCategory/$1');
     $routes->get('albums/code/(:alphanum)/images', 'Albums::imagesByCode/$1');
     $routes->post('albums/code/(:alphanum)/authenticate', 'Albums::authenticateByCode/$1');
-    $routes->get('albums/(:num)/images', 'Api\\Albums::images/$1');
+    $routes->get('albums/(:num)/images', 'Albums::images/$1');
+    $routes->post('albums/(:num)/authenticate', 'AlbumAuthController::authenticate/$1');
+    $routes->get('albums/(:num)/verify-token', 'AlbumAuthController::verifyToken/$1');
 });
 
-$routes->post('albums/(:num)/authenticate', 'AlbumAuthController::authenticate/$1');
-$routes->get('albums/(:num)/verify-token', 'AlbumAuthController::verifyToken/$1');
 $routes->get('/', 'Home::index');
-
-$routes->group('api', ['namespace' => 'App\\Controllers'], function($routes) {
-    $routes->get('user/albums/(:num)/images', 'AlbumsController::images/$1');
-    $routes->post('user/albums/(:num)/authenticate', 'AlbumsController::authenticate/$1');
-});
