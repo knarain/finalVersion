@@ -1,4 +1,13 @@
-CRITICAL - 2026-01-11 17:16:42 --> ErrorException: Type of App\Models\PackageModel::$casts must be array (as in class CodeIgniter\BaseModel)
-[Method: GET, Route: api/admin/packages]
-in APPPATH\Models\PackageModel.php on line 7.
- 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-01-11 18:50:29 --> ParseError: syntax error, unexpected token "{", expecting "function" or "const"
+[Method: GET, Route: api/admin/albums]
+in APPPATH\Controllers\Api\AlbumsAdmin.php on line 553.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile('E:\\finalVersion\\backend\\app\\Controllers\\Api\\AlbumsAdmin.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\Api\\AlbumsAdmin')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\Api\\AlbumsAdmin')
+ 4 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\Api\\AlbumsAdmin', true)
+ 5 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('E:\\finalVersion\\backend\\public\\index.php')

@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Libraries\Utils;
 use App\Models\AdminModel;
 use App\Models\RoleModel;
+use App\Helpers\ActionLogHelper;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class UserController extends BaseController
@@ -19,10 +20,6 @@ class UserController extends BaseController
         $this->roleModel = new RoleModel();
     }
 
-    /**
-     * GET: List all admin users with pagination
-     * GET /api/users?page=1&per_page=10
-     */
     public function index()
     {
         $auth = Utils::getAuthenticatedUser();
@@ -61,10 +58,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * GET: Get single user by ID
-     * GET /api/users/{id}
-     */
     public function show($id)
     {
         try {
@@ -83,11 +76,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * POST: Create new admin user
-     * POST /api/users
-     * Body: { "username": "string", "email": "string", "password": "string", "role_id": int }
-     */
     public function create()
     {
         $auth = Utils::getAuthenticatedUser();
@@ -103,7 +91,6 @@ class UserController extends BaseController
         try {
             $payload = $this->request->getJSON(true);
 
-            // Validation
             if (empty($payload['username']) || empty($payload['password'])) {
                 return Utils::formatApiResponse(
                     null,
@@ -122,7 +109,6 @@ class UserController extends BaseController
                 }
             }
 
-            // Check if username already exists
             $existing = $this->adminModel->where('username', $payload['username'])->first();
             if ($existing) {
                 return Utils::formatApiResponse(
@@ -132,7 +118,6 @@ class UserController extends BaseController
                 );
             }
 
-            // Check if email already exists (if provided)
             if (!empty($payload['email'])) {
                 $existingEmail = $this->adminModel->where('email', $payload['email'])->first();
                 if ($existingEmail) {
@@ -154,8 +139,15 @@ class UserController extends BaseController
             ];
 
             $userId = $this->adminModel->insert($data);
-
             $user = $this->adminModel->getAdminWithRole($userId);
+
+            ActionLogHelper::logAction(
+                'Created a User',
+                "Admin created user: {$user['username']} with email: {$user['email']}",
+                'Admin',
+                $userId,
+                $auth['id']
+            );
 
             return Utils::formatApiResponse(
                 $user,
@@ -171,11 +163,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * PUT: Update user details (except password)
-     * PUT /api/users/{id}
-     * Body: { "email": "string", "role_id": int }
-     */
     public function update($id)
     {
         $auth = Utils::getAuthenticatedUser();
@@ -195,10 +182,8 @@ class UserController extends BaseController
             }
 
             $payload = $this->request->getJSON(true);
-
             $data = [];
 
-            // Update email if provided and different
             if (!empty($payload['email']) && $payload['email'] !== $user['email']) {
                 $existingEmail = $this->adminModel->where('email', $payload['email'])->first();
                 if ($existingEmail) {
@@ -211,7 +196,6 @@ class UserController extends BaseController
                 $data['email'] = $payload['email'];
             }
 
-            // Update role if provided
             if (isset($payload['role_id'])) {
                 if ($payload['role_id'] !== null && !$this->roleModel->find($payload['role_id'])) {
                     return Utils::formatApiResponse(
@@ -225,6 +209,14 @@ class UserController extends BaseController
 
             if (!empty($data)) {
                 $this->adminModel->update($id, $data);
+                
+                ActionLogHelper::logAction(
+                    'Updated a User',
+                    "Admin updated user ID: {$id} with data: " . json_encode($data),
+                    'Admin',
+                    $id,
+                    $auth['id']
+                );
             }
 
             return Utils::formatApiResponse(
@@ -240,11 +232,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * POST: Change user password
-     * POST /api/users/{id}/change-password
-     * Body: { "old_password": "string", "new_password": "string" }
-     */
     public function changePassword($id)
     {
         try {
@@ -263,7 +250,6 @@ class UserController extends BaseController
                 );
             }
 
-            // Verify old password
             if (!password_verify($payload['old_password'], $user['password_hash'])) {
                 return Utils::formatApiResponse(
                     null,
@@ -272,7 +258,6 @@ class UserController extends BaseController
                 );
             }
 
-            // Validate new password strength (at least 8 characters)
             if (strlen($payload['new_password']) < 8) {
                 return Utils::formatApiResponse(
                     null,
@@ -281,10 +266,20 @@ class UserController extends BaseController
                 );
             }
 
-            // Update password
             $this->adminModel->update($id, [
                 'password_hash' => password_hash($payload['new_password'], PASSWORD_BCRYPT)
             ]);
+
+            $auth = Utils::getAuthenticatedUser();
+            if (!($auth instanceof ResponseInterface)) {
+                ActionLogHelper::logAction(
+                    'Changed Password',
+                    "User {$user['username']} changed their password",
+                    'Admin',
+                    $id,
+                    $auth['id'] ?? null
+                );
+            }
 
             return Utils::formatApiResponse(null, 'Password changed successfully');
         } catch (\Exception $e) {
@@ -296,11 +291,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * POST: Reset user password (by admin)
-     * POST /api/users/{id}/reset-password
-     * Body: { "new_password": "string" }
-     */
     public function resetPassword($id)
     {
         $auth = Utils::getAuthenticatedUser();
@@ -329,7 +319,6 @@ class UserController extends BaseController
                 );
             }
 
-            // Validate password strength
             if (strlen($payload['new_password']) < 6) {
                 return Utils::formatApiResponse(
                     null,
@@ -338,11 +327,18 @@ class UserController extends BaseController
                 );
             }
 
-            // Update password and store plain password in watch_word
             $this->adminModel->update($id, [
                 'password_hash' => password_hash($payload['new_password'], PASSWORD_BCRYPT),
                 'watch_word' => $payload['new_password']
             ]);
+
+            ActionLogHelper::logAction(
+                'Reset User Password',
+                "Admin reset password for user: {$user['username']}",
+                'Admin',
+                $id,
+                $auth['id']
+            );
 
             return Utils::formatApiResponse(null, 'Password reset successfully');
         } catch (\Exception $e) {
@@ -354,11 +350,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * PATCH: Assign role to user
-     * PATCH /api/users/{id}/assign-role
-     * Body: { "role_id": int }
-     */
     public function assignRole($id)
     {
         $auth = Utils::getAuthenticatedUser();
@@ -397,6 +388,14 @@ class UserController extends BaseController
 
             $this->adminModel->assignRole($id, $payload['role_id']);
 
+            ActionLogHelper::logAction(
+                'Assigned Role to User',
+                "Admin assigned role ID {$payload['role_id']} to user: {$user['username']}",
+                'Admin',
+                $id,
+                $auth['id']
+            );
+
             return Utils::formatApiResponse(
                 $this->adminModel->getAdminWithRole($id),
                 'Role assigned successfully'
@@ -410,10 +409,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * PATCH: Toggle user active status
-     * PATCH /api/users/{id}/toggle-status
-     */
     public function toggleStatus($id)
     {
         $auth = Utils::getAuthenticatedUser();
@@ -435,6 +430,14 @@ class UserController extends BaseController
             $newStatus = $user['is_active'] ? 0 : 1;
             $this->adminModel->setActive($id, $newStatus);
 
+            ActionLogHelper::logAction(
+                'Toggled User Status',
+                "Admin toggled user {$user['username']} status to: " . ($newStatus ? 'Active' : 'Inactive'),
+                'Admin',
+                $id,
+                $auth['id']
+            );
+
             return Utils::formatApiResponse(
                 ['id' => $id, 'is_active' => $newStatus],
                 'User status updated successfully'
@@ -448,10 +451,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * DELETE: Delete user
-     * DELETE /api/users/{id}
-     */
     public function delete($id)
     {
         $auth = Utils::getAuthenticatedUser();
@@ -472,6 +471,14 @@ class UserController extends BaseController
 
             $this->adminModel->delete($id);
 
+            ActionLogHelper::logAction(
+                'Deleted a User',
+                "Admin deleted user: {$user['username']} with email: {$user['email']}",
+                'Admin',
+                $id,
+                $auth['id']
+            );
+
             return Utils::formatApiResponse(null, 'User deleted successfully');
         } catch (\Exception $e) {
             return Utils::formatApiResponse(
@@ -482,10 +489,6 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * GET: Get all active users
-     * GET /api/users/status/active
-     */
     public function getActiveUsers()
     {
         try {

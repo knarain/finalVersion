@@ -113,8 +113,36 @@ export default function ListAlbums() {
     }
   }
 
-  const handleDeleteAlbum = (albumId: number) => {
-    setDeleteConfirmId(albumId)
+  const handleDownloadQR = async (albumId: number) => {
+    try {
+      let token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      if (!token) {
+        token = localStorage.getItem('adminToken') || ''
+      }
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums/${albumId}/qr`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          responseType: 'blob',
+          withCredentials: true,
+        }
+      )
+
+      const url = window.URL.createObjectURL(new Blob([res.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `album_qr_${albumId}.png`)
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      setOpenMenuId(null)
+    } catch (err: any) {
+      console.error('Download QR error:', err)
+      alert(err.response?.data?.message || 'Failed to download QR code')
+    }
   }
 
   const confirmDelete = async () => {
@@ -278,7 +306,7 @@ export default function ListAlbums() {
                     <hr className="border-gray-700 my-1" />
 
                     <button
-                      onClick={() => router.push(`/admin/albums/${album.id}/qr`)}
+                      onClick={() => handleDownloadQR(album.id)}
                       className="w-full text-left px-4 py-2 hover:bg-gray-800 transition-colors flex items-center gap-2"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

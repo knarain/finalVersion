@@ -4,6 +4,8 @@ use App\Controllers\BaseController;
 use App\Models\AlbumModel;
 use App\Models\AlbumImageModel;
 use App\Models\CategoryModel;
+use App\Helpers\ActionLogHelper;
+use App\Helpers\QRCodeHelper;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Libraries\Utils;
@@ -71,6 +73,14 @@ class AlbumsAdmin extends BaseController
 
             $newCategory = $this->categoryModel->find($categoryId);
 
+            ActionLogHelper::logAction(
+                'Created a Category',
+                "Category created: {$name}",
+                'Admin',
+                $categoryId,
+                $auth['id']
+            );
+
             return Utils::formatApiResponse(
                 [
                     'id'   => (int) $newCategory['id'],
@@ -107,12 +117,20 @@ class AlbumsAdmin extends BaseController
 
         try {
             $this->categoryModel->delete($id);
+
+            ActionLogHelper::logAction(
+                'Deleted a Category',
+                "Category deleted: {$category['name']}",
+                'Admin',
+                $id,
+                $auth['id']
+            );
+
             return Utils::formatApiResponse(null, 'Category deleted successfully');
         } catch (\Exception $e) {
             return Utils::formatApiResponse(null, 'Failed to delete category: ' . $e->getMessage(), 500);
         }
     }
-
 
     public function index()
     {
@@ -212,7 +230,6 @@ class AlbumsAdmin extends BaseController
             return Utils::formatApiResponse(null, 'Invalid JSON payload', 400);
         }
 
-        // Validation
         if (!isset($payload['categoryId']) || empty($payload['categoryId'])) {
             return Utils::formatApiResponse(null, 'Category ID is required', 400);
         }
@@ -237,7 +254,7 @@ class AlbumsAdmin extends BaseController
             
             try {
                 $files = Utils::processBase64Images(
-                    [$payload['image']], // Direct base64, no prefix needed
+                    [$payload['image']],
                     $albumPath,
                     1
                 );
@@ -251,6 +268,14 @@ class AlbumsAdmin extends BaseController
                 log_message('error', 'Cover image processing failed: ' . $e->getMessage());
             }
         }
+
+        ActionLogHelper::logAction(
+            'Created an Album',
+            "Album created: {$albumData['client_names']} on {$albumData['event_date']}",
+            'Admin',
+            $albumId,
+            $auth['id']
+        );
 
         return Utils::formatApiResponse(
             ['id' => $albumId, 'coverImage' => $coverImageUrl],
@@ -296,7 +321,7 @@ class AlbumsAdmin extends BaseController
             
             try {
                 $files = Utils::processBase64Images(
-                    [$payload['image']], // Direct base64, no prefix needed
+                    [$payload['image']],
                     $albumPath,
                     1
                 );
@@ -312,6 +337,14 @@ class AlbumsAdmin extends BaseController
         if (!$this->albumModel->update($albumId, $updateData)) {
             return Utils::formatApiResponse(null, 'Album update failed', 500);
         }
+
+        ActionLogHelper::logAction(
+            'Updated an Album',
+            "Album ID {$albumId} updated",
+            'Admin',
+            $albumId,
+            $auth['id']
+        );
 
         $album = $this->albumModel->find($albumId);
         unset($album['created_at'], $album['updated_at']);
@@ -349,6 +382,14 @@ class AlbumsAdmin extends BaseController
 
         $this->albumModel->update($albumId, ['is_active' => $isActive]);
 
+        ActionLogHelper::logAction(
+            'Toggled Album Status',
+            "Album ID {$albumId} status changed to: " . ($isActive ? 'Active' : 'Inactive'),
+            'Admin',
+            $albumId,
+            $auth['id']
+        );
+
         return Utils::formatApiResponse(
             ['is_active' => $isActive],
             $isActive ? 'Album activated successfully' : 'Album deactivated successfully'
@@ -381,6 +422,14 @@ class AlbumsAdmin extends BaseController
 
         $this->albumModel->update($albumId, ['is_locked' => $isLocked]);
 
+        ActionLogHelper::logAction(
+            'Toggled Album Lock',
+            "Album ID {$albumId} lock status changed to: " . ($isLocked ? 'Locked' : 'Unlocked'),
+            'Admin',
+            $albumId,
+            $auth['id']
+        );
+
         return Utils::formatApiResponse(
             ['is_locked' => $isLocked],
             $isLocked ? 'Album locked successfully' : 'Album unlocked successfully'
@@ -403,7 +452,8 @@ class AlbumsAdmin extends BaseController
             return Utils::formatApiResponse(null, 'You do not have permission', 403);
         }
 
-        if (!$this->albumModel->find($albumId)) {
+        $album = $this->albumModel->find($albumId);
+        if (!$album) {
             return Utils::formatApiResponse(null, 'Album not found', 404);
         }
 
@@ -420,6 +470,14 @@ class AlbumsAdmin extends BaseController
                 $this->deleteDirectory($path);
             }
         }
+
+        ActionLogHelper::logAction(
+            'Deleted an Album',
+            "Album ID {$albumId} deleted: {$album['client_names']}",
+            'Admin',
+            $albumId,
+            $auth['id']
+        );
 
         return Utils::formatApiResponse(null, 'Album deleted successfully', 200);
     }
@@ -452,7 +510,45 @@ class AlbumsAdmin extends BaseController
 
         $this->imageModel->delete($imageId);
 
+        ActionLogHelper::logAction(
+            'Deleted Album Image',
+            "Image ID {$imageId} deleted from album ID {$image['album_id']}",
+            'Admin',
+            $image['album_id'],
+            $auth['id']
+        );
+
         return Utils::formatApiResponse(null, 'Image deleted successfully', 200);
+    }
+
+    public function downloadQR($albumId)
+    {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        if (($auth['auth_type'] ?? '') !== 'admin') {
+            return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $album = $this->albumModel->find($albumId);
+        if (!$album) {
+            return Utils::formatApiResponse(null, 'Album not found', 404);
+        }
+
+        try {
+            $albumCode = $album['album_code'] ?? 'album' . $albumId;
+            $qrUrl = 'http://localhost:3000/albums/' . $albumCode;
+            $qrImage = QRCodeHelper::generateQRCode($qrUrl);
+
+            return service('response')
+                ->setHeader('Content-Type', 'image/png')
+                ->setHeader('Content-Disposition', 'attachment; filename="album_' . $albumCode . '_qr.png"')
+                ->setBody($qrImage);
+        } catch (\Exception $e) {
+            return Utils::formatApiResponse(null, 'Failed to generate QR code: ' . $e->getMessage(), 500);
+        }
     }
 
     private function deleteDirectory($dir)
@@ -486,10 +582,11 @@ class AlbumsAdmin extends BaseController
         }
 
         $albumPath = FCPATH . "uploads/albums/$albumId/";
+        $uploaded = [];
         
         try {
             $files = Utils::processBase64Images(
-                $payload['images'], // Direct base64 array, no prefix needed
+                $payload['images'],
                 $albumPath,
                 10
             );
@@ -504,6 +601,14 @@ class AlbumsAdmin extends BaseController
                 ]);
                 $uploaded[] = base_url($relative);
             }
+
+            ActionLogHelper::logAction(
+                'Uploaded Album Images',
+                "Uploaded " . count($files) . " images to album ID {$albumId}",
+                'Admin',
+                $albumId,
+                $auth['id']
+            );
             
         } catch (\Exception $e) {
             log_message('error', 'Image processing failed: ' . $e->getMessage());

@@ -4,7 +4,7 @@ import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-type TabType = 'profile' | 'password' | '2fa'
+type TabType = 'profile' | '2fa'
 
 interface AdminProfile {
   id: number
@@ -21,14 +21,7 @@ export default function SettingsPage() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
-  const [isEditingProfile, setIsEditingProfile] = useState(false)
-  const [editEmail, setEditEmail] = useState("")
   const [profileLoading, setProfileLoading] = useState(false)
-
-  const [oldPassword, setOldPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [passwordLoading, setPasswordLoading] = useState(false)
 
   const [twoFALoading, setTwoFALoading] = useState(false)
 
@@ -63,7 +56,6 @@ export default function SettingsPage() {
 
       const data = res.data.data || res.data.results
       setProfile(data)
-      setEditEmail(data.email || "")
       setError("")
     } catch (err) {
       console.error(err)
@@ -73,112 +65,7 @@ export default function SettingsPage() {
     }
   }
 
-  const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
 
-    if (!editEmail.trim()) {
-      setError("Email cannot be empty")
-      return
-    }
-
-    if (!editEmail.includes("@")) {
-      setError("Invalid email format")
-      return
-    }
-
-    try {
-      setProfileLoading(true)
-      setError("")
-      const token = getToken()
-
-      if (!token) {
-        setError("Admin token not found. Please log in again.")
-        return
-      }
-
-      const res = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/profile-update`,
-        { email: editEmail },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          withCredentials: true
-        }
-      )
-
-      setSuccess("Profile updated successfully!")
-      if (profile) {
-        setProfile({ ...profile, email: editEmail })
-      }
-      setIsEditingProfile(false)
-
-      setTimeout(() => setSuccess(""), 3000)
-    } catch (err: any) {
-      console.error(err)
-      setError(err.response?.data?.message || "Failed to update profile")
-    } finally {
-      setProfileLoading(false)
-    }
-  }
-
-  const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      setError("All fields are required")
-      return
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError("New passwords do not match")
-      return
-    }
-
-    if (newPassword.length < 6) {
-      setError("New password must be at least 6 characters")
-      return
-    }
-
-    try {
-      setPasswordLoading(true)
-      setError("")
-      const token = getToken()
-
-      if (!token) {
-        setError("Admin token not found. Please log in again.")
-        return
-      }
-
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/change-password`,
-        {
-          currentPassword: oldPassword,
-          newPassword: newPassword,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          withCredentials: true
-        }
-      )
-
-      setSuccess("Password changed successfully!")
-      setOldPassword("")
-      setNewPassword("")
-      setConfirmPassword("")
-
-      setTimeout(() => setSuccess(""), 3000)
-    } catch (err: any) {
-      console.error(err)
-      setError(err.response?.data?.message || "Failed to change password")
-    } finally {
-      setPasswordLoading(false)
-    }
-  }
 
   const handleToggle2FA = async (enable: boolean) => {
     try {
@@ -235,16 +122,7 @@ export default function SettingsPage() {
           >
             Profile Details
           </button>
-          <button
-            onClick={() => setActiveTab('password')}
-            className={`p-3 rounded-lg text-left transition-colors ${
-              activeTab === 'password'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            Change Password
-          </button>
+
           <button
             onClick={() => setActiveTab('2fa')}
             className={`p-3 rounded-lg text-left transition-colors ${
@@ -285,52 +163,12 @@ export default function SettingsPage() {
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Email
                     </label>
-                    {isEditingProfile ? (
-                      <form onSubmit={handleProfileUpdate} className="space-y-2">
-                        <Input
-                          type="email"
-                          value={editEmail}
-                          onChange={(e) => setEditEmail(e.target.value)}
-                          placeholder="Enter your email"
-                          className="bg-gray-700 border-gray-600 text-white"
-                        />
-                        <div className="flex gap-2">
-                          <Button
-                            type="submit"
-                            disabled={profileLoading}
-                            className="bg-blue-600 hover:bg-blue-700"
-                          >
-                            {profileLoading ? 'Saving...' : 'Save'}
-                          </Button>
-                          <Button
-                            type="button"
-                            onClick={() => {
-                              setIsEditingProfile(false)
-                              setEditEmail(profile.email || "")
-                              setError("")
-                            }}
-                            className="bg-gray-700 hover:bg-gray-600"
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      </form>
-                    ) : (
-                      <div className="flex justify-between items-center">
-                        <input
-                          type="email"
-                          value={profile.email || 'Not set'}
-                          disabled
-                          className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded text-gray-300 cursor-not-allowed"
-                        />
-                        <Button
-                          onClick={() => setIsEditingProfile(true)}
-                          className="ml-2 bg-blue-600 hover:bg-blue-700"
-                        >
-                          Edit
-                        </Button>
-                      </div>
-                    )}
+                    <input
+                      type="email"
+                      value={profile.email || 'Not set'}
+                      disabled
+                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded text-gray-300 cursor-not-allowed"
+                    />
                   </div>
 
                   <div>
@@ -351,66 +189,7 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {activeTab === 'password' && (
-            <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-              <h2 className="text-xl font-semibold mb-4">Change Password</h2>
 
-              <form onSubmit={handleChangePassword} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Current Password
-                  </label>
-                  <Input
-                    type="password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    placeholder="Enter your current password"
-                    className="bg-gray-700 border-gray-600 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    New Password
-                  </label>
-                  <Input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new password"
-                    className="bg-gray-700 border-gray-600 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Confirm Password
-                  </label>
-                  <Input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
-                    className="bg-gray-700 border-gray-600 text-white"
-                  />
-                </div>
-
-                <div className="pt-2">
-                  <Button
-                    type="submit"
-                    disabled={passwordLoading}
-                    className="bg-blue-600 hover:bg-blue-700 w-full"
-                  >
-                    {passwordLoading ? 'Updating...' : 'Change Password'}
-                  </Button>
-                </div>
-              </form>
-
-              <p className="text-sm text-gray-400 mt-4">
-                ℹ️ Password must be at least 6 characters long
-              </p>
-            </div>
-          )}
 
           {activeTab === '2fa' && (
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">

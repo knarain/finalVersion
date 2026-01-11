@@ -21,6 +21,16 @@ $routes->group('api', ['namespace' => 'App\\Controllers\\Api'], function($routes
 });
 
 // ========================================
+// ACTION LOGS ROUTES
+// ========================================
+$routes->group('api', ['namespace' => 'App\\Controllers\\Api'], function($routes) {
+    $routes->get('action-logs', 'ActionLogController::getLogs');
+    $routes->get('action-logs/admin/(:num)', 'ActionLogController::getLogsByAdmin/$1');
+    $routes->get('action-logs/action/(:any)', 'ActionLogController::getLogsByAction/$1');
+    $routes->get('action-logs/date-range', 'ActionLogController::getLogsByDateRange');
+});
+
+// ========================================
 // PERMISSION MANAGEMENT ROUTES (NO FILTER)
 // ========================================
 $routes->group('api', ['namespace' => 'App\\Controllers\\Api'], function($routes) {
@@ -79,6 +89,7 @@ $routes->group('api', ['namespace' => 'App\\Controllers\\Api'], function($routes
     $routes->delete('admin/albums/(:num)', 'AlbumsAdmin::delete/$1');
     $routes->patch('admin/albums/(:num)/status', 'AlbumsAdmin::toggleStatus/$1');
     $routes->patch('admin/albums/(:num)/lock', 'AlbumsAdmin::toggleLock/$1');
+    $routes->get('admin/albums/(:num)/qr', 'AlbumsAdmin::downloadQR/$1');
     $routes->post('admin/albums/(:num)/images', 'AlbumsAdmin::uploadImages/$1');
     $routes->delete('admin/images/(:num)', 'AlbumsAdmin::deleteImage/$1');
     $routes->get('admin/albums/(:num)/images', 'AlbumsAdmin::images/$1');

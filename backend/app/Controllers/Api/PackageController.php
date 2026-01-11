@@ -5,6 +5,7 @@ namespace App\Controllers\Api;
 use App\Controllers\BaseController;
 use App\Libraries\Utils;
 use App\Models\PackageModel;
+use App\Helpers\ActionLogHelper;
 
 class PackageController extends BaseController
 {
@@ -53,6 +54,15 @@ class PackageController extends BaseController
             ];
 
             $this->packageModel->insert($data);
+            $packageId = $this->packageModel->insertID();
+
+            ActionLogHelper::logAction(
+                'Package Created',
+                'Package "' . $payload['name'] . '" created with price ' . $payload['price'],
+                'Package',
+                $packageId
+            );
+
             return Utils::formatApiResponse(null, 'Package created successfully');
         } catch (\Exception $e) {
             return Utils::formatApiResponse(null, 'Error: ' . $e->getMessage(), 500);
@@ -76,6 +86,13 @@ class PackageController extends BaseController
             if (isset($payload['features'])) $data['features'] = json_encode($payload['features']);
             if (isset($payload['is_active'])) $data['is_active'] = $payload['is_active'];
 
+            ActionLogHelper::logAction(
+                'Package Updated',
+                'Package "' . ($payload['name'] ?? $package['name']) . '" updated',
+                'Package',
+                $id
+            );
+
             $this->packageModel->update($id, $data);
             return Utils::formatApiResponse(null, 'Package updated successfully');
         } catch (\Exception $e) {
@@ -90,6 +107,13 @@ class PackageController extends BaseController
             if (!$package) {
                 return Utils::formatApiResponse(null, 'Package not found', 404);
             }
+
+            ActionLogHelper::logAction(
+                'Package Deleted',
+                'Package "' . $package['name'] . '" deleted',
+                'Package',
+                $id
+            );
 
             $this->packageModel->delete($id);
             return Utils::formatApiResponse(null, 'Package deleted successfully');
@@ -107,6 +131,14 @@ class PackageController extends BaseController
             }
 
             $newStatus = $package['is_active'] ? 0 : 1;
+
+            ActionLogHelper::logAction(
+                'Package Status Toggled',
+                'Package "' . $package['name'] . '" status changed to ' . ($newStatus ? 'Active' : 'Inactive'),
+                'Package',
+                $id
+            );
+
             $this->packageModel->update($id, ['is_active' => $newStatus]);
             return Utils::formatApiResponse(null, 'Package status updated successfully');
         } catch (\Exception $e) {
