@@ -248,14 +248,17 @@ class PermissionController extends BaseController
                 return Utils::formatApiResponse(null, 'Role not found', 404);
             }
 
-            $this->db->table('role_module_permissions')->where('role_id', $roleId)->delete();
-
             foreach ($assignments as $assignment) {
                 $moduleId = $assignment['module_id'] ?? null;
                 $permissionIds = $assignment['permission_ids'] ?? [];
 
                 if (!$moduleId) continue;
                 if (!$this->moduleModel->find($moduleId)) continue;
+                
+                // Remove existing permissions for this module
+                $this->rmpModel->removeModulePermissions($roleId, $moduleId);
+                
+                // Add new permissions
                 if (!empty($permissionIds)) {
                     $this->rmpModel->addPermissions($roleId, $moduleId, $permissionIds);
                 }

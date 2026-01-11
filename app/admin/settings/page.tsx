@@ -51,7 +51,7 @@ export default function SettingsPage() {
       }
 
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/profile-settings`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/profile-settings`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ export default function SettingsPage() {
       }
 
       const res = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/profile-update`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/profile-update`,
         { email: editEmail },
         {
           headers: {
@@ -152,7 +152,7 @@ export default function SettingsPage() {
       }
 
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/change-password`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/change-password`,
         {
           currentPassword: oldPassword,
           newPassword: newPassword,
@@ -191,10 +191,10 @@ export default function SettingsPage() {
         return
       }
 
-      const endpoint = enable ? '/admin/2fa/enable' : '/admin/2fa/disable'
+      const endpoint = enable ? 'admin/2fa/enable' : 'admin/2fa/disable'
 
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api${endpoint}`,
         {},
         {
           headers: {

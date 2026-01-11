@@ -12,7 +12,9 @@ use CodeIgniter\Router\RouteCollection;
 $routes->group('api', ['namespace' => 'App\\Controllers\\Api'], function($routes) {
     $routes->post('admin/login', 'Admin::login');
     $routes->get('admin/captcha', 'Admin::captcha');
+    $routes->get('admin/profile-settings', 'Admin::profileSettings');
     $routes->put('admin/profile-update', 'Admin::profileUpdate');
+    $routes->post('admin/change-password', 'Admin::changePassword');
     $routes->post('admin/2fa/enable', 'Admin::enable2FA');
     $routes->post('admin/2fa/disable', 'Admin::disable2FA');
     $routes->get('dashboard/analytics', 'DashboardController::analytics');

@@ -303,6 +303,16 @@ class UserController extends BaseController
      */
     public function resetPassword($id)
     {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Users', 'UPDATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         try {
             $user = $this->adminModel->find($id);
             if (!$user) {
@@ -320,17 +330,18 @@ class UserController extends BaseController
             }
 
             // Validate password strength
-            if (strlen($payload['new_password']) < 8) {
+            if (strlen($payload['new_password']) < 6) {
                 return Utils::formatApiResponse(
                     null,
-                    'Password must be at least 8 characters',
+                    'Password must be at least 6 characters',
                     ResponseInterface::HTTP_BAD_REQUEST
                 );
             }
 
-            // Update password
+            // Update password and store plain password in watch_word
             $this->adminModel->update($id, [
-                'password_hash' => password_hash($payload['new_password'], PASSWORD_BCRYPT)
+                'password_hash' => password_hash($payload['new_password'], PASSWORD_BCRYPT),
+                'watch_word' => $payload['new_password']
             ]);
 
             return Utils::formatApiResponse(null, 'Password reset successfully');

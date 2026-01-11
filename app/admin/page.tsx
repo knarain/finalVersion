@@ -124,46 +124,44 @@ export default function DashboardPage() {
             />
           </div>
 
-          {/* Quick Links */}
+          {/* Dashboard Summary */}
           <div className="mt-8">
-            <h2 className="text-xl font-bold mb-4 text-white">Quick Actions</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <Link href="/admin/albums">
-                <button className="w-full p-4 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors text-center">
-                  <Image size={24} className="mx-auto mb-2 text-blue-500" />
-                  <p className="text-xs font-medium text-gray-300">Albums</p>
-                </button>
-              </Link>
-              <Link href="/admin/categories">
-                <button className="w-full p-4 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 hover:border-green-500 transition-colors text-center">
-                  <FolderOpen size={24} className="mx-auto mb-2 text-green-500" />
-                  <p className="text-xs font-medium text-gray-300">Categories</p>
-                </button>
-              </Link>
-              <Link href="/admin/enquiries">
-                <button className="w-full p-4 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 hover:border-purple-500 transition-colors text-center">
-                  <MessageSquare size={24} className="mx-auto mb-2 text-purple-500" />
-                  <p className="text-xs font-medium text-gray-300">Enquiries</p>
-                </button>
-              </Link>
-              <Link href="/admin/users/list">
-                <button className="w-full p-4 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 hover:border-orange-500 transition-colors text-center">
-                  <Users size={24} className="mx-auto mb-2 text-orange-500" />
-                  <p className="text-xs font-medium text-gray-300">Users</p>
-                </button>
-              </Link>
-              <Link href="/admin/action-logs">
-                <button className="w-full p-4 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 hover:border-yellow-500 transition-colors text-center">
-                  <ActivitySquare size={24} className="mx-auto mb-2 text-yellow-500" />
-                  <p className="text-xs font-medium text-gray-300">Logs</p>
-                </button>
-              </Link>
-              <Link href="/admin/settings">
-                <button className="w-full p-4 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 hover:border-red-500 transition-colors text-center">
-                  <BarChart3 size={24} className="mx-auto mb-2 text-red-500" />
-                  <p className="text-xs font-medium text-gray-300">Settings</p>
-                </button>
-              </Link>
+            <h2 className="text-xl font-bold mb-4 text-white">Dashboard Summary</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4">System Health</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Total Albums</span>
+                    <span className="text-green-400 font-semibold">{stats.total_albums}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Locked Albums</span>
+                    <span className="text-orange-400 font-semibold">{stats.locked_albums}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Active Users</span>
+                    <span className="text-blue-400 font-semibold">{stats.active_users}/{stats.total_users}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Total Enquiries</span>
+                    <span className="text-purple-400 font-semibold">{stats.total_enquiries}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Total Roles</span>
+                    <span className="text-red-400 font-semibold">{stats.total_roles}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Total Users</span>
+                    <span className="text-yellow-400 font-semibold">{stats.total_users}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </>

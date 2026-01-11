@@ -44,7 +44,10 @@ export default function EnquiriesPage() {
       )
       
       // Backend returns data in res.data.results
-      setEnquiries(res.data.results || [])
+      const data = res.data.results || []
+      // Remove duplicates by ID
+      const uniqueEnquiries = Array.from(new Map(data.map((e: Enquiry) => [e.id, e])).values())
+      setEnquiries(uniqueEnquiries)
     } catch (err: any) {
       console.error('Fetch error:', err)
       const errorMsg = err.response?.data?.message || "Failed to fetch enquiries"
@@ -72,8 +75,8 @@ export default function EnquiriesPage() {
       {!loading && enquiries.length === 0 && <p className="text-gray-400">No enquiries found.</p>}
 
       <div className="space-y-4">
-        {enquiries.map((enquiry) => (
-          <div key={enquiry.id} className="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-yellow-500 transition">
+        {enquiries.map((enquiry, index) => (
+          <div key={`${enquiry.id}-${index}`} className="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-yellow-500 transition">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p><strong className="text-yellow-400">Name:</strong> {enquiry.name}</p>

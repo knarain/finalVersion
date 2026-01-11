@@ -77,7 +77,8 @@ export default function AccessPrivileges() {
 
   const togglePermission = (moduleId: number, permissionId: number) => {
     setChanges(prev => {
-      const moduleChanges = prev[moduleId] !== undefined ? [...prev[moduleId]] : [...(modules.find(m => m.id === moduleId)?.permissions || [])]
+      const currentPerms = prev[moduleId] !== undefined ? prev[moduleId] : (modules.find(m => m.id === moduleId)?.permissions || [])
+      const moduleChanges = [...currentPerms]
       const idx = moduleChanges.indexOf(permissionId)
       if (idx > -1) {
         moduleChanges.splice(idx, 1)

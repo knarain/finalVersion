@@ -105,7 +105,7 @@ export default function CategoriesPage() {
       }
 
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/categories/${id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/categories/${id}`,
         {
           headers: {
             'Content-Type': 'application/json',

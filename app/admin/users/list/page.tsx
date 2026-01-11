@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Plus, Trash2, Edit2 } from 'lucide-react'
+import { Plus, MoreVertical } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface User {
   id: number
@@ -19,6 +22,8 @@ interface Role {
   name: string
 }
 
+type ActionMenuType = 'edit' | 'changeRole' | 'changePassword' | 'toggleStatus' | null
+
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([])
   const [roles, setRoles] = useState<Role[]>([])
@@ -27,6 +32,12 @@ export default function UserManagement() {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', role_id: '' })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [actionLoading, setActionLoading] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [actionType, setActionType] = useState<ActionMenuType>(null)
 
   useEffect(() => {
     fetchUsers()
@@ -41,8 +52,12 @@ export default function UserManagement() {
         withCredentials: true
       })
       setUsers(res.data.results?.users || [])
-    } catch (err) {
-      console.error('Failed to fetch users:', err)
+      setError('')
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to fetch users'
+      console.error('Fetch users error:', errorMsg)
+      setError(errorMsg)
+      setUsers([])
     } finally {
       setLoading(false)
     }
@@ -105,6 +120,98 @@ export default function UserManagement() {
     }
   }
 
+  const handleToggleStatus = async (user: User) => {
+    try {
+      setActionLoading(true)
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
+      await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${user.id}/toggle-status`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
+      })
+      setSuccess(`User ${user.is_active ? 'deactivated' : 'activated'} successfully`)
+      setOpenMenuId(null)
+      fetchUsers()
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to toggle status')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleChangeRole = async (roleId: number) => {
+    if (!selectedUser) return
+    try {
+      setActionLoading(true)
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
+      await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${selectedUser.id}/assign-role`, { role_id: roleId }, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
+      })
+      setSuccess('Role updated successfully')
+      setOpenMenuId(null)
+      setActionType(null)
+      setSelectedUser(null)
+      fetchUsers()
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to change role')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedUser || !newPassword || !confirmPassword) {
+      setError('All fields required')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+    try {
+      setActionLoading(true)
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${selectedUser.id}/reset-password`, { new_password: newPassword }, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
+      })
+      setSuccess('Password changed successfully')
+      setOpenMenuId(null)
+      setActionType(null)
+      setSelectedUser(null)
+      setNewPassword('')
+      setConfirmPassword('')
+      fetchUsers()
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to change password')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleEditUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedUser) return
+    try {
+      setActionLoading(true)
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1] || localStorage.getItem('adminToken')
+      await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${selectedUser.id}`, { email: selectedUser.email }, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
+      })
+      setSuccess('User updated successfully')
+      setOpenMenuId(null)
+      setActionType(null)
+      setSelectedUser(null)
+      fetchUsers()
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to update user')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   if (loading) return <div className="p-6 text-gray-400">Loading...</div>
 
   return (
@@ -122,7 +229,7 @@ export default function UserManagement() {
       {error && <div className="bg-red-900 text-red-200 p-4 rounded mb-4 border border-red-700">{error}</div>}
       {success && <div className="bg-green-900 text-green-200 p-4 rounded mb-4 border border-green-700">{success}</div>}
 
-      <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+      <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700">
         <table className="w-full">
           <thead className="bg-gray-700 border-b border-gray-600">
             <tr>
@@ -144,19 +251,132 @@ export default function UserManagement() {
                     {user.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
-                <td className="px-6 py-4 flex gap-3">
-                  <button className="text-blue-400 hover:text-blue-300 transition">
-                    <Edit2 size={18} />
+                <td className="px-6 py-4 relative">
+                  <button
+                    onClick={() => setOpenMenuId(openMenuId === user.id ? null : user.id)}
+                    className="text-gray-400 hover:text-gray-200 transition"
+                  >
+                    <MoreVertical size={18} />
                   </button>
-                  <button onClick={() => handleDeleteUser(user.id)} className="text-red-400 hover:text-red-300 transition">
-                    <Trash2 size={18} />
-                  </button>
+                  {openMenuId === user.id && (
+                    <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-lg shadow-lg z-50 border border-gray-600">
+                      <button
+                        onClick={() => { setSelectedUser(user); setActionType('edit'); setOpenMenuId(null) }}
+                        className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-600 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => { setSelectedUser(user); setActionType('changeRole'); setOpenMenuId(null) }}
+                        className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-600 transition border-t border-gray-600"
+                      >
+                        Change Role
+                      </button>
+                      <button
+                        onClick={() => { setSelectedUser(user); setActionType('changePassword'); setOpenMenuId(null) }}
+                        className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-600 transition border-t border-gray-600"
+                      >
+                        Change Password
+                      </button>
+                      <button
+                        onClick={() => { setOpenMenuId(null); handleToggleStatus(user) }}
+                        disabled={actionLoading}
+                        className="block w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-600 transition border-t border-gray-600 disabled:opacity-50"
+                      >
+                        {user.is_active ? 'Deactivate' : 'Activate'}
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {selectedUser && actionType === 'edit' && (
+        <Dialog open={true} onOpenChange={() => { setActionType(null); setSelectedUser(null) }}>
+          <DialogContent className="bg-gray-800 border-gray-700">
+            <DialogHeader>
+              <DialogTitle className="text-white">Edit User</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleEditUser} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-300">Email</label>
+                <Input
+                  type="email"
+                  value={selectedUser.email}
+                  onChange={e => setSelectedUser({ ...selectedUser, email: e.target.value })}
+                  className="bg-gray-700 border-gray-600 text-white"
+                />
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button type="button" onClick={() => { setActionType(null); setSelectedUser(null) }} className="bg-gray-700 hover:bg-gray-600">Cancel</Button>
+                <Button type="submit" disabled={actionLoading} className="bg-blue-600 hover:bg-blue-700">{actionLoading ? 'Saving...' : 'Save'}</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {selectedUser && actionType === 'changeRole' && (
+        <Dialog open={true} onOpenChange={() => { setActionType(null); setSelectedUser(null) }}>
+          <DialogContent className="bg-gray-800 border-gray-700">
+            <DialogHeader>
+              <DialogTitle className="text-white">Change Role</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <select
+                onChange={e => handleChangeRole(parseInt(e.target.value))}
+                disabled={actionLoading}
+                className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+              >
+                <option value="">Select a role</option>
+                {roles.map(role => (
+                  <option key={role.id} value={role.id}>{role.name}</option>
+                ))}
+              </select>
+              <Button type="button" onClick={() => { setActionType(null); setSelectedUser(null) }} className="w-full bg-gray-700 hover:bg-gray-600">Cancel</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {selectedUser && actionType === 'changePassword' && (
+        <Dialog open={true} onOpenChange={() => { setActionType(null); setSelectedUser(null); setNewPassword(''); setConfirmPassword('') }}>
+          <DialogContent className="bg-gray-800 border-gray-700">
+            <DialogHeader>
+              <DialogTitle className="text-white">Change Password</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-300">New Password</label>
+                <Input
+                  type="password"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  className="bg-gray-700 border-gray-600 text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-300">Confirm Password</label>
+                <Input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm password"
+                  className="bg-gray-700 border-gray-600 text-white"
+                />
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button type="button" onClick={() => { setActionType(null); setSelectedUser(null); setNewPassword(''); setConfirmPassword('') }} className="bg-gray-700 hover:bg-gray-600">Cancel</Button>
+                <Button type="submit" disabled={actionLoading} className="bg-blue-600 hover:bg-blue-700">{actionLoading ? 'Updating...' : 'Update'}</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
