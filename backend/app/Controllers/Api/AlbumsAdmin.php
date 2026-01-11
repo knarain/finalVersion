@@ -49,6 +49,11 @@ class AlbumsAdmin extends BaseController
             return Utils::formatApiResponse(null, 'Admin access required', 403);
         }
 
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Categories', 'CREATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         $payload = $this->request->getJSON(true);
         if (!$payload) {
             return Utils::formatApiResponse(null, 'Invalid JSON payload', 400);
@@ -90,6 +95,11 @@ class AlbumsAdmin extends BaseController
             return Utils::formatApiResponse(null, 'Admin access required', 403);
         }
 
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Categories', 'DELETE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         $category = $this->categoryModel->find($id);
         if (!$category) {
             return Utils::formatApiResponse(null, 'Category not found', 404);
@@ -113,6 +123,11 @@ class AlbumsAdmin extends BaseController
 
         if (($auth['auth_type'] ?? '') !== 'admin') {
             return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'READ')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
         }
 
         $category = $this->request->getGet('category');
@@ -159,6 +174,11 @@ class AlbumsAdmin extends BaseController
             return Utils::formatApiResponse(null, 'Admin access required', 403);
         }
 
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'READ')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         $album = $this->albumModel->find($albumId);
         if (!$album) {
             return Utils::formatApiResponse(null, 'Album not found', 404);
@@ -180,6 +200,11 @@ class AlbumsAdmin extends BaseController
 
         if (($auth['auth_type'] ?? '') !== 'admin') {
             return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'CREATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
         }
 
         $payload = $this->request->getJSON(true);
@@ -245,6 +270,11 @@ class AlbumsAdmin extends BaseController
             return Utils::formatApiResponse(null, 'Admin access required', 403);
         }
 
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'UPDATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         $payload = $this->request->getJSON(true);
         if (!$payload) {
             return Utils::formatApiResponse(null, 'Invalid JSON payload', 400);
@@ -304,6 +334,11 @@ class AlbumsAdmin extends BaseController
             return Utils::formatApiResponse(null, 'Admin access required', 403);
         }
 
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'UPDATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         $album = $this->albumModel->find($albumId);
         if (!$album) {
             return Utils::formatApiResponse(null, 'Album not found', 404);
@@ -331,6 +366,11 @@ class AlbumsAdmin extends BaseController
             return Utils::formatApiResponse(null, 'Admin access required', 403);
         }
 
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'UPDATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         $album = $this->albumModel->find($albumId);
         if (!$album) {
             return Utils::formatApiResponse(null, 'Album not found', 404);
@@ -356,6 +396,11 @@ class AlbumsAdmin extends BaseController
 
         if (($auth['auth_type'] ?? '') !== 'admin') {
             return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'DELETE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
         }
 
         if (!$this->albumModel->find($albumId)) {
@@ -388,6 +433,11 @@ class AlbumsAdmin extends BaseController
 
         if (($auth['auth_type'] ?? '') !== 'admin') {
             return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'DELETE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
         }
 
         $image = $this->imageModel->find($imageId);
@@ -423,6 +473,11 @@ class AlbumsAdmin extends BaseController
 
         if (($auth['auth_type'] ?? '') !== 'admin') {
             return Utils::formatApiResponse(null, 'Admin access required', 403);
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'CREATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
         }
 
         $payload = $this->request->getJSON(true);
@@ -463,6 +518,11 @@ class AlbumsAdmin extends BaseController
         $auth = Utils::getAuthenticatedUser();
         if ($auth instanceof ResponseInterface) {
             return $auth;
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Albums', 'READ')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
         }
 
         if (!$albumId) {

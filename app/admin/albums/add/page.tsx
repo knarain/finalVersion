@@ -15,9 +15,20 @@ export default function AddAlbum() {
   const [categories, setCategories] = useState<any[]>([]);
   const router = useRouter();
 
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
   const loadCategories = async () => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/categories`);
+      let token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      if (!token) {
+        token = localStorage.getItem('adminToken') || ''
+      }
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums/categories`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+        withCredentials: true,
+      });
       if (res.data.results) {
         setCategories(res.data.results);
       }
@@ -26,16 +37,10 @@ export default function AddAlbum() {
     }
   };
 
-  // Load categories on mount
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setCoverImage(file);
-      // Show preview
       const reader = new FileReader();
       reader.onload = (event) => {
         setCoverImagePreview(event.target?.result as string);
@@ -56,7 +61,6 @@ export default function AddAlbum() {
     }
 
     try {
-      // Convert image to base64
       const reader = new FileReader();
       reader.onload = async () => {
         const base64Image = reader.result as string;
@@ -66,31 +70,33 @@ export default function AddAlbum() {
           categoryId: parseInt(categoryId),
           eventDate: eventDate || null,
           isLocked: isLocked ? 1 : 0,
-          image: base64Image, // Send as base64
+          image: base64Image,
         };
 
-        const token = localStorage.getItem('adminToken');
+        let token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+        if (!token) {
+          token = localStorage.getItem('adminToken') || ''
+        }
         const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums`,
           payload,
           {
             headers: {
               'Content-Type': 'application/json',
               ...(token ? { Authorization: `Bearer ${token}` } : {}),
             },
+            withCredentials: true,
           }
         );
 
         if (res.status === 201 || res.data.results?.id) {
           setMessage('Album created successfully!');
-          // Reset form
           setClientNames('');
           setCategoryId('');
           setEventDate('');
           setCoverImage(null);
           setCoverImagePreview('');
           setIsLocked(false);
-          // Redirect after 1.5 seconds
           setTimeout(() => {
             router.push('/admin/albums');
           }, 1500);
@@ -101,41 +107,46 @@ export default function AddAlbum() {
       reader.readAsDataURL(coverImage);
     } catch (err: any) {
       console.error(err);
-      const errorMsg = err.response?.data?.message || 'Server error. Try again.';
-      setMessage(errorMsg);
+      if (err.response?.status === 403) {
+        setMessage('You do not have permission');
+      } else {
+        const errorMsg = err.response?.data?.message || 'Server error. Try again.';
+        setMessage(errorMsg);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-gray-900 rounded-xl shadow-lg text-white">
-      <h1 className="text-2xl font-bold mb-4">Add New Album</h1>
+    <div className="max-w-2xl mx-auto p-6 bg-gray-900 rounded-xl shadow-lg text-white">
+      <h1 className="text-3xl font-bold mb-6">Create New Album</h1>
+      
       {message && (
-        <p className={`mb-4 p-2 rounded ${message.includes('success') ? 'bg-green-900 text-green-200' : 'bg-red-900 text-red-200'}`}>
+        <p className={`mb-4 p-3 rounded ${message.includes('success') ? 'bg-green-900 text-green-200' : 'bg-red-900 text-red-200'}`}>
           {message}
         </p>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Client Name */}
+
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block mb-1 text-gray-300">Client Names *</label>
+          <label className="block mb-2 text-gray-300 font-medium">Client Names *</label>
           <input
             type="text"
             value={clientNames}
             onChange={(e) => setClientNames(e.target.value)}
-            className="w-full p-2 rounded-lg bg-gray-800 border border-gray-700"
+            className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:border-yellow-500 focus:outline-none"
+            placeholder="Enter client names"
             required
           />
         </div>
 
-        {/* Category Dropdown */}
         <div>
-          <label className="block mb-1 text-gray-300">Category *</label>
+          <label className="block mb-2 text-gray-300 font-medium">Category *</label>
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 text-white"
+            className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:border-yellow-500 focus:outline-none"
             required
           >
             <option value="">Select Category</option>
@@ -147,58 +158,55 @@ export default function AddAlbum() {
           </select>
         </div>
 
-        {/* Event Date */}
         <div>
-          <label className="block mb-1 text-gray-300">Event Date</label>
+          <label className="block mb-2 text-gray-300 font-medium">Event Date</label>
           <input
             type="date"
             value={eventDate}
             onChange={(e) => setEventDate(e.target.value)}
-            className="w-full p-2 rounded-lg bg-gray-800 border border-gray-700"
+            className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:border-yellow-500 focus:outline-none"
           />
         </div>
 
-        {/* Cover Image */}
         <div>
-          <label className="block mb-1 text-gray-300">Cover Image *</label>
+          <label className="block mb-2 text-gray-300 font-medium">Cover Image *</label>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="w-full text-gray-300"
+            className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 focus:border-yellow-500 focus:outline-none"
             required
           />
           {coverImagePreview && (
-            <div className="mt-3">
+            <div className="mt-4">
               <img
                 src={coverImagePreview}
                 alt="Preview"
-                className="w-full h-40 object-cover rounded-lg border border-gray-700"
+                className="w-full h-48 object-cover rounded-lg border border-gray-700"
               />
             </div>
           )}
         </div>
 
-        {/* Lock Album */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg">
           <input
             type="checkbox"
+            id="isLocked"
             checked={isLocked}
             onChange={(e) => setIsLocked(e.target.checked)}
-            className="w-4 h-4"
+            className="w-5 h-5 cursor-pointer"
           />
-          <label className="text-gray-300">
+          <label htmlFor="isLocked" className="text-gray-300 cursor-pointer">
             Lock Album (requires authentication)
           </label>
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-yellow-500 text-black font-bold py-2 rounded-xl hover:bg-yellow-600 transition disabled:opacity-50"
+          className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Creating...' : 'Create Album'}
+          {loading ? 'Creating Album...' : 'Create Album'}
         </button>
       </form>
     </div>

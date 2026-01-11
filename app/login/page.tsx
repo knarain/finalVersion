@@ -24,17 +24,14 @@ export default function AdminLogin() {
   const [modal, setModal] = useState<ModalState>({ show: false, type: 'success', message: '' });
   const router = useRouter();
 
-  // Load CAPTCHA on mount
   useEffect(() => {
     loadCaptcha();
   }, []);
 
-  // Auto-hide modal after 2 seconds
   useEffect(() => {
     if (modal.show) {
       const timer = setTimeout(() => {
         setModal({ ...modal, show: false });
-        // If success, redirect after modal disappears
         if (modal.type === 'success') {
           router.push('/admin');
         }
@@ -68,12 +65,10 @@ export default function AdminLogin() {
         captcha_text: captchaText,
       };
 
-      // Add 2FA data if we're verifying 2FA
       if (requires2FA) {
         payload['2fa_code'] = twoFactorCode;
         payload['admin_id'] = adminId;
       } else {
-        // Otherwise send username and password
         payload['username'] = username;
         payload['password'] = password;
       }
@@ -87,21 +82,27 @@ export default function AdminLogin() {
       );
 
       if (res.data.results?.requires_2fa) {
-        // Need 2FA
         setAdminId(res.data.results.admin_id);
         setRequires2FA(true);
         setTwoFactorCode('');
         setError('2FA code sent to your email');
-        // Don't reset attempts here, keep showing current attempts
         return;
       }
 
       if (res.data.results?.token) {
-        // ✅ Save token to localStorage
-        localStorage.setItem('adminToken', res.data.results.token);
+        const token = res.data.results.token;
+        const roleId = res.data.results.admin.role_id;
+        
+        // Store in cookies
+        document.cookie = `adminToken=${token}; path=/; max-age=604800`;
+        document.cookie = `roleId=${roleId}; path=/; max-age=604800`;
+        
+        // Also store in localStorage for backup
+        localStorage.setItem('adminToken', token);
         localStorage.setItem('adminUsername', res.data.results.admin.username);
+        localStorage.setItem('roleId', roleId);
+        localStorage.setItem('menu', JSON.stringify(res.data.results.menu || []));
 
-        // Show success modal (auto-redirects after 2 seconds)
         setModal({ 
           show: true, 
           type: 'success', 
@@ -128,7 +129,6 @@ export default function AdminLogin() {
       
       setAttemptsLeft(attempts);
       
-      // Format error message with attempts
       let displayMsg = errorMsg;
       if (errorMsg.toLowerCase().includes('invalid credentials') || errorMsg.toLowerCase().includes('invalid 2fa')) {
         displayMsg = `${errorMsg}\n\nAttempts left: ${attempts}`;
@@ -140,7 +140,6 @@ export default function AdminLogin() {
         message: displayMsg 
       });
       
-      // Only reload CAPTCHA if not in 2FA mode
       if (!requires2FA) {
         loadCaptcha();
       }
@@ -180,7 +179,6 @@ export default function AdminLogin() {
                 />
               </div>
 
-              {/* CAPTCHA */}
               <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
                 <label className="block mb-2 text-sm font-medium">CAPTCHA</label>
                 {captchaImage && (
@@ -263,7 +261,6 @@ export default function AdminLogin() {
         </form>
       </div>
 
-      {/* Success/Error Modal */}
       {modal.show && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className={`rounded-lg p-8 max-w-sm w-full mx-4 text-center ${

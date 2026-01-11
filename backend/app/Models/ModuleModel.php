@@ -15,18 +15,14 @@ class ModuleModel extends Model
         'parent_id',
         'is_sub_module',
         'icon',
+        'url',
         'order',
-        'created_at',
-        'updated_at',
     ];
 
     protected $useTimestamps = true;
 
     protected $returnType = 'array';
 
-    /* ===============================
-     * Get Parent Modules (Main Menus)
-     * =============================== */
     public function getMainModules()
     {
         return $this->where('parent_id', null)
@@ -35,9 +31,6 @@ class ModuleModel extends Model
                     ->findAll();
     }
 
-    /* ===============================
-     * Get Sub Modules for a Module
-     * =============================== */
     public function getSubModules(int $moduleId)
     {
         return $this->where('parent_id', $moduleId)
@@ -46,9 +39,6 @@ class ModuleModel extends Model
                     ->findAll();
     }
 
-    /* ===============================
-     * Full Menu Tree
-     * =============================== */
     public function getMenuTree(): array
     {
         $modules = $this->findAll();
@@ -70,17 +60,11 @@ class ModuleModel extends Model
         return array_values($tree);
     }
 
-    /**
-     * Get module by slug
-     */
     public function getBySlug($slug)
     {
         return $this->where('slug', $slug)->first();
     }
 
-    /**
-     * Get all accessible modules for a user role
-     */
     public function getAccessibleModules($roleId)
     {
         return $this->db->table('modules')

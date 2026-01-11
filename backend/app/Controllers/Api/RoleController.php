@@ -22,6 +22,16 @@ class RoleController extends BaseController
      */
     public function index()
     {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Roles', 'READ')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         try {
             $roles = $this->roleModel->findAll();
             return Utils::formatApiResponse($roles, 'Roles fetched successfully');
@@ -63,6 +73,16 @@ class RoleController extends BaseController
      */
     public function create()
     {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Roles', 'CREATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         try {
             $payload = $this->request->getJSON(true);
 
@@ -113,6 +133,16 @@ class RoleController extends BaseController
      */
     public function update($id)
     {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Roles', 'UPDATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         try {
             $role = $this->roleModel->find($id);
             if (!$role) {
@@ -159,6 +189,16 @@ class RoleController extends BaseController
      */
     public function delete($id)
     {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Roles', 'DELETE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         try {
             $role = $this->roleModel->find($id);
             if (!$role) {
@@ -196,6 +236,16 @@ class RoleController extends BaseController
      */
     public function toggleStatus($id)
     {
+        $auth = Utils::getAuthenticatedUser();
+        if ($auth instanceof ResponseInterface) {
+            return $auth;
+        }
+
+        $roleId = $auth['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Roles', 'UPDATE')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
         try {
             $role = $this->roleModel->find($id);
             if (!$role) {

@@ -224,13 +224,21 @@ class Admin extends BaseController
             'samesite' => 'Lax',
         ]);
 
+        // Get menu structure with permissions
+        $permissionController = new PermissionController();
+        $menuResponse = $permissionController->getMenuStructure($admin['role_id']);
+        $menuData = json_decode($menuResponse->getBody(), true);
+        $menu = $menuData['results'] ?? [];
+
         return Utils::formatApiResponse(
             [
                 'token' => $token,
                 'admin' => [
                     'id'       => $admin['id'],
                     'username' => $admin['username'],
-                ]
+                    'role_id'  => $admin['role_id'],
+                ],
+                'menu' => $menu
             ],
             'Login successful',
             200

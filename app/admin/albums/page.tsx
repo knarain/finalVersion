@@ -27,7 +27,10 @@ export default function ListAlbums() {
 
   const fetchAlbums = async () => {
     try {
-      const token = localStorage.getItem('adminToken')
+      let token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      if (!token) {
+        token = localStorage.getItem('adminToken') || ''
+      }
       if (!token) {
         setError('Not authenticated')
         setLoading(false)
@@ -45,7 +48,6 @@ export default function ListAlbums() {
         }
       )
       
-      // Backend returns data in res.data.results.data
       setAlbums(res.data.results?.data || [])
     } catch (err: any) {
       console.error('Fetch error:', err)
@@ -57,9 +59,9 @@ export default function ListAlbums() {
 
   const handleToggleLock = async (albumId: number, currentLocked: boolean) => {
     try {
-      const token = localStorage.getItem('adminToken')
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
       const res = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums/${albumId}/lock`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums/${albumId}/toggle-lock`,
         { is_locked: currentLocked ? 0 : 1 },
         {
           headers: {
@@ -70,7 +72,6 @@ export default function ListAlbums() {
         }
       )
 
-      // Update local state
       setAlbums(albums.map(a => 
         a.id === albumId ? { ...a, isLocked: res.data.results?.is_locked ?? !currentLocked } : a
       ))
@@ -83,9 +84,9 @@ export default function ListAlbums() {
 
   const handleToggleStatus = async (albumId: number, currentActive: boolean) => {
     try {
-      const token = localStorage.getItem('adminToken')
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
       const res = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums/${albumId}/status`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums/${albumId}/toggle-status`,
         { is_active: currentActive ? 0 : 1 },
         {
           headers: {
@@ -96,7 +97,6 @@ export default function ListAlbums() {
         }
       )
 
-      // Update local state
       setAlbums(albums.map(a => 
         a.id === albumId ? { ...a, isActive: res.data.results?.is_active ?? !currentActive } : a
       ))
@@ -115,9 +115,9 @@ export default function ListAlbums() {
     if (deleteConfirmId === null) return
 
     try {
-      const token = localStorage.getItem('adminToken')
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/albums/${deleteConfirmId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/albums/${deleteConfirmId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -127,7 +127,6 @@ export default function ListAlbums() {
         }
       )
 
-      // Remove from local state
       setAlbums(albums.filter(a => a.id !== deleteConfirmId))
       setOpenMenuId(null)
       setDeleteConfirmId(null)

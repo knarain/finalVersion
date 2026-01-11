@@ -10,31 +10,35 @@ use CodeIgniter\HTTP\ResponseInterface;
 class Enquiries extends BaseController
 {
     /**
-     * Get all enquiries
+     * Get all enquiries (admin only)
      */
-        public function index()
-        {
-            $user = Utils::getAuthenticatedUser();
+    public function index()
+    {
+        $user = Utils::getAuthenticatedUser();
 
-            // If auth failed, it already returned a Response
-            if ($user instanceof \CodeIgniter\HTTP\Response) {
-                return $user;
-            }
-
-            $model = new EnquiryModel();
-            $enquiries = $model
-                ->orderBy('created_at', 'DESC')
-                ->findAll();
-
-            return Utils::formatApiResponse(
-                $enquiries,
-                'Enquiries fetched successfully',
-                200
-            );
+        if ($user instanceof \CodeIgniter\HTTP\Response) {
+            return $user;
         }
 
+        $roleId = $user['role_id'] ?? null;
+        if (!$roleId || !Utils::checkPermission($roleId, 'Enquiries', 'READ')) {
+            return Utils::formatApiResponse(null, 'You do not have permission', 403);
+        }
+
+        $model = new EnquiryModel();
+        $enquiries = $model
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+
+        return Utils::formatApiResponse(
+            $enquiries,
+            'Enquiries fetched successfully',
+            200
+        );
+    }
+
     /**
-     * Store a new enquiry and send email
+     * Store a new enquiry (public)
      */
     public function store()
     {
@@ -51,7 +55,6 @@ class Enquiries extends BaseController
 
         log_message('info', 'Enquiry data: ' . print_r($data, true));
 
-        // Prepare data for insert (don't validate, just insert)
         $insertData = [
             'name'       => $data['name'] ?? '',
             'email'      => $data['email'] ?? '',
@@ -61,9 +64,8 @@ class Enquiries extends BaseController
             'message'    => $data['message'] ?? '',
         ];
 
-        // Insert enquiry into database
         try {
-            $inserted = $model->insert($insertData, false); // false = don't validate
+            $inserted = $model->insert($insertData, false);
             
             if (! $inserted) {
                 log_message('error', 'Failed to insert enquiry. Model errors: ' . print_r($model->errors(), true));
@@ -84,12 +86,10 @@ class Enquiries extends BaseController
             );
         }
 
-        // Send email notification (don't fail if email fails)
         try {
             $this->sendEnquiryEmail($data);
         } catch (\Throwable $e) {
             log_message('error', 'Email error: ' . $e->getMessage());
-            // Don't return error, enquiry was saved successfully
         }
 
         return Utils::formatApiResponse(

@@ -682,3 +682,37 @@ export async function checkPermission(
     return false
   }
 }
+
+
+export interface MenuModule {
+  id: number
+  name: string
+  icon: string
+  url: string
+  permissions: number[]
+  sub_module_info?: MenuModule[]
+}
+
+export async function getMenuStructure(
+  roleId: string | number,
+  token?: string
+): Promise<MenuModule[]> {
+  try {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    }
+    if (token) headers['Authorization'] = `Bearer ${token}`
+
+    const response = await fetch(`${API_BASE_URL}/permissions/menu/${roleId}`, {
+      method: 'GET',
+      headers,
+    })
+
+    if (!response.ok) throw new Error('Failed to fetch menu structure')
+    const data: ApiResponse<MenuModule[]> = await response.json()
+    return data.data || []
+  } catch (error) {
+    console.error('Error fetching menu structure:', error)
+    throw error
+  }
+}

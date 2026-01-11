@@ -36,7 +36,7 @@ export default function UsersPage() {
   const loadData = async () => {
     try {
       setLoading(true)
-      const token = localStorage.getItem('adminToken')
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
       const [usersData, rolesData] = await Promise.all([
         getUsers(currentPage, 10, token || undefined),
         getActiveRoles(token || undefined),
@@ -55,12 +55,13 @@ export default function UsersPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
       if (editingId) {
         const updateData: any = {
           email: formData.email,
         }
         if (formData.role_id) updateData.role_id = Number(formData.role_id)
-        await updateUser(editingId, updateData)
+        await updateUser(editingId, updateData, token || undefined)
       } else {
         if (!formData.password) {
           setError('Password is required for new users')
@@ -71,7 +72,7 @@ export default function UsersPage() {
           email: formData.email,
           password: formData.password,
           role_id: formData.role_id ? Number(formData.role_id) : undefined,
-        })
+        }, token || undefined)
       }
       resetForm()
       loadData()
@@ -100,7 +101,8 @@ export default function UsersPage() {
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this user?')) return
     try {
-      await deleteUser(id)
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      await deleteUser(id, token || undefined)
       loadData()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error deleting user')
@@ -109,7 +111,8 @@ export default function UsersPage() {
 
   const handleToggleStatus = async (id: number) => {
     try {
-      await toggleUserStatus(id)
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      await toggleUserStatus(id, token || undefined)
       loadData()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error toggling status')

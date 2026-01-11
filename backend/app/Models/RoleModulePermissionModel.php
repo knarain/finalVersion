@@ -9,27 +9,23 @@ class RoleModulePermissionModel extends Model
     protected $table = 'role_module_permissions';
     protected $primaryKey = 'id';
     protected $allowedFields = ['role_id', 'module_id', 'permission_id'];
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $returnType = 'array';
 
-    /**
-     * Get all permissions for a role in a specific module
-     */
     public function getModulePermissions($roleId, $moduleId)
     {
-        return $this
+        $query = $this
             ->select('role_module_permissions.*, permissions.name as permission_name, permissions.slug')
             ->join('permissions', 'permissions.id = role_module_permissions.permission_id')
-            ->where([
-                'role_module_permissions.role_id' => $roleId,
-                'role_module_permissions.module_id' => $moduleId,
-            ])
-            ->findAll();
+            ->where('role_module_permissions.role_id', $roleId);
+        
+        if ($moduleId) {
+            $query->where('role_module_permissions.module_id', $moduleId);
+        }
+        
+        return $query->findAll();
     }
 
-    /**
-     * Check if role has specific permission for module
-     */
     public function hasPermission($roleId, $moduleId, $permissionId)
     {
         return $this->where([
@@ -39,9 +35,6 @@ class RoleModulePermissionModel extends Model
         ])->countAllResults() > 0;
     }
 
-    /**
-     * Remove all permissions for a role in a module
-     */
     public function removeModulePermissions($roleId, $moduleId)
     {
         return $this->where([
@@ -50,9 +43,6 @@ class RoleModulePermissionModel extends Model
         ])->delete();
     }
 
-    /**
-     * Add multiple permissions at once
-     */
     public function addPermissions($roleId, $moduleId, $permissionIds = [])
     {
         $data = [];

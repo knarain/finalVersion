@@ -20,7 +20,8 @@ export default function RolesPage() {
   const loadRoles = async () => {
     try {
       setLoading(true)
-      const data = await getRoles()
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      const data = await getRoles(token || undefined)
       setRoles(data)
       setError('')
     } catch (err) {
@@ -34,10 +35,11 @@ export default function RolesPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
       if (editingId) {
-        await updateRole(editingId, formData)
+        await updateRole(editingId, formData, token || undefined)
       } else {
-        await createRole(formData)
+        await createRole(formData, token || undefined)
       }
       setFormData({ name: '', description: '' })
       setEditingId(null)
@@ -57,7 +59,8 @@ export default function RolesPage() {
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this role?')) return
     try {
-      await deleteRole(id)
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      await deleteRole(id, token || undefined)
       loadRoles()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error deleting role')
@@ -66,7 +69,8 @@ export default function RolesPage() {
 
   const handleToggleStatus = async (id: number) => {
     try {
-      await toggleRoleStatus(id)
+      const token = document.cookie.split('; ').find(row => row.startsWith('adminToken='))?.split('=')[1]
+      await toggleRoleStatus(id, token || undefined)
       loadRoles()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error toggling status')

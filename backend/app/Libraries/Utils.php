@@ -592,20 +592,38 @@ public static function send2FACode(int $userId, string $email)
     
     public static function checkPermission(
         int $roleId,
-        string $moduleSlug,
-        string $permission
+        string $moduleName,
+        string $permissionType
     ): bool {
+        // If roleId is 1 (Admin), always allow
+        if ($roleId === 1) {
+            return true;
+        }
+        
         $db = \Config\Database::connect();
+        
+        $permissionMap = [
+            'READ' => 1,
+            'CREATE' => 2,
+            'UPDATE' => 3,
+            'DELETE' => 4
+        ];
+        
+        $permissionId = $permissionMap[$permissionType] ?? null;
+        if (!$permissionId) {
+            return false;
+        }
 
-        return (bool) $db->table('role_module_permissions rmp')
+        $count = $db->table('role_module_permissions rmp')
             ->join('modules m', 'm.id = rmp.module_id')
-            ->join('permissions p', 'p.id = rmp.permission_id')
             ->where([
                 'rmp.role_id' => $roleId,
-                'm.slug' => $moduleSlug,
-                'p.name' => $permission
+                'm.name' => $moduleName,
+                'rmp.permission_id' => $permissionId
             ])
             ->countAllResults();
+        
+        return $count > 0;
     }
 
 }

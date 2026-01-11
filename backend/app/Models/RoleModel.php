@@ -12,17 +12,11 @@ class RoleModel extends Model
     protected $useTimestamps = true;
     protected $returnType = 'array';
 
-    /**
-     * Get all active roles
-     */
     public function getActiveRoles()
     {
         return $this->where('is_active', 1)->findAll();
     }
 
-    /**
-     * Get role with all its module-permission assignments
-     */
     public function getRoleWithPermissions($roleId)
     {
         return $this
@@ -34,9 +28,6 @@ class RoleModel extends Model
             ->first();
     }
 
-    /**
-     * Get all permissions assigned to a role
-     */
     public function getRolePermissions($roleId)
     {
         return $this->db->table('role_module_permissions')
@@ -45,9 +36,6 @@ class RoleModel extends Model
             ->findAll();
     }
 
-    /**
-     * Check if role has permission for a module
-     */
     public function hasModulePermission($roleId, $moduleId, $permissionId)
     {
         return $this->db->table('role_module_permissions')
