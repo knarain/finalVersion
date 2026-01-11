@@ -1,5 +1,6 @@
 import { Navigation } from "@/components/navigation"
 import { Gallery } from "@/components/gallery"
+import { PackagesGrid } from "@/components/packages-grid"
 import { ContactForm } from "@/components/contact-form"
 import { BackToTop } from "@/components/back-to-top"
 import { ScrollProgress } from "@/components/scroll-progress"
@@ -175,6 +176,25 @@ export default function HomePage() {
 
           {/* Gallery Component */}
           <Gallery />
+        </div>
+      </section>
+
+      {/* Packages Section */}
+      <section id="packages" className="py-16 sm:py-20 px-4 bg-gray-900">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+              <span className="text-white">Photography</span> <span className="text-amber-400">Packages</span>
+            </h2>
+            <div className="w-16 sm:w-24 h-1 bg-amber-400 mx-auto mb-6 rounded-full"></div>
+            <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto text-balance">
+              Choose the perfect package for your special moments
+            </p>
+          </div>
+
+          {/* Packages Carousel */}
+          <PackagesGrid />
         </div>
       </section>
 

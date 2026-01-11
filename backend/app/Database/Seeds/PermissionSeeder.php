@@ -8,7 +8,6 @@ class PermissionSeeder extends Seeder
 {
     public function run()
     {
-        // Seed Permissions (Standard CRUD operations)
         $permissions = [
             ['name' => 'Create', 'slug' => 'create', 'description' => 'Can create new records'],
             ['name' => 'Read', 'slug' => 'read', 'description' => 'Can view records'],
@@ -26,7 +25,6 @@ class PermissionSeeder extends Seeder
             }
         }
 
-        // Seed Modules (Main Modules)
         $modules = [
             [
                 'name' => 'Dashboard',
@@ -96,7 +94,23 @@ class PermissionSeeder extends Seeder
             }
         }
 
-        // Seed default role with all permissions
+        $settingsId = $this->db->table('modules')->where('slug', 'settings')->get()->getRow()->id ?? 7;
+        
+        $tasksExists = $this->db->table('modules')
+            ->where('slug', 'tasks')
+            ->countAllResults() > 0;
+        
+        if (!$tasksExists) {
+            $this->db->table('modules')->insert([
+                'name' => 'Tasks',
+                'slug' => 'tasks',
+                'parent_id' => $settingsId,
+                'is_sub_module' => 1,
+                'icon' => 'check-square',
+                'order' => 1,
+            ]);
+        }
+
         $superAdminExists = $this->db->table('roles')
             ->where('name', 'Super Admin')
             ->countAllResults() > 0;
@@ -110,11 +124,9 @@ class PermissionSeeder extends Seeder
 
             $roleId = $this->db->insertID();
 
-            // Get all modules and permissions
             $modules = $this->db->table('modules')->get()->getResultArray();
             $permissions = $this->db->table('permissions')->get()->getResultArray();
 
-            // Assign all permissions to all modules for Super Admin
             foreach ($modules as $module) {
                 foreach ($permissions as $permission) {
                     $this->db->table('role_module_permissions')->insert([

@@ -92,6 +92,17 @@ $routes->group('api', ['namespace' => 'App\\Controllers\\Api'], function($routes
     $routes->get('admin/album-credentials/(:num)', 'AlbumAuthController::listCredentials/$1');
     $routes->delete('admin/album-credentials/(:num)', 'AlbumAuthController::deleteCredential/$1');
     $routes->patch('admin/album-credentials/(:num)/status', 'AlbumAuthController::toggleCredentialStatus/$1');
+    
+    $routes->get('tasks', 'TaskController::index');
+    $routes->post('tasks', 'TaskController::create');
+    $routes->put('tasks/(:num)', 'TaskController::update/$1');
+    $routes->delete('tasks/(:num)', 'TaskController::delete/$1');
+    
+    $routes->get('admin/packages', 'PackageController::adminIndex');
+    $routes->post('admin/packages', 'PackageController::create');
+    $routes->put('admin/packages/(:num)', 'PackageController::update/$1');
+    $routes->patch('admin/packages/(:num)/status', 'PackageController::toggleStatus/$1');
+    $routes->delete('admin/packages/(:num)', 'PackageController::delete/$1');
 });
 
 // ========================================
@@ -107,6 +118,8 @@ $routes->group('api', ['namespace' => 'App\\Controllers\\Api'], function($routes
     $routes->get('albums/(:num)/images', 'Albums::images/$1');
     $routes->post('albums/(:num)/authenticate', 'AlbumAuthController::authenticate/$1');
     $routes->get('albums/(:num)/verify-token', 'AlbumAuthController::verifyToken/$1');
+    
+    $routes->get('packages', 'PackageController::index');
 });
 
 $routes->get('/', 'Home::index');
