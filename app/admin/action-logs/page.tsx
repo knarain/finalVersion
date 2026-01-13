@@ -4,8 +4,17 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { format } from 'date-fns'
 
+interface ActionLog {
+  id: number
+  action_name: string
+  admin_username: string
+  action_date: string
+  ip_address: string
+  description: string
+}
+
 export default function ActionLogsPage() {
-  const [logs, setLogs] = useState([])
+  const [logs, setLogs] = useState<ActionLog[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [page, setPage] = useState(1)
@@ -43,7 +52,7 @@ export default function ActionLogsPage() {
       setLogs(res.data.results || [])
       setTotalPages(res.data.results.pagination?.total_pages || 1)
       setTotal(res.data.results.pagination?.total_items || 0)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to fetch logs:', err)
       setError(err.response?.data?.message || 'Failed to load action logs. Please try again.')
       setLogs([])
@@ -52,12 +61,12 @@ export default function ActionLogsPage() {
     }
   }
 
-  const handleSearchChange = (value) => {
+  const handleSearchChange = (value: string) => {
     setSearch(value)
     setPage(1)
   }
 
-  const getActionBadgeColor = (actionName) => {
+  const getActionBadgeColor = (actionName: string) => {
     if (actionName.includes('Created')) return 'bg-green-900 text-green-200'
     if (actionName.includes('Updated')) return 'bg-blue-900 text-blue-200'
     if (actionName.includes('Deleted')) return 'bg-red-900 text-red-200'

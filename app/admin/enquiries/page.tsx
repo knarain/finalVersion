@@ -46,7 +46,7 @@ export default function EnquiriesPage() {
       // Backend returns data in res.data.results
       const data = res.data.results || []
       // Remove duplicates by ID
-      const uniqueEnquiries = Array.from(new Map(data.map((e: Enquiry) => [e.id, e])).values())
+      const uniqueEnquiries = Array.from(new Map(data.map((e: Enquiry) => [e.id, e])).values()) as Enquiry[]
       setEnquiries(uniqueEnquiries)
     } catch (err: any) {
       console.error('Fetch error:', err)

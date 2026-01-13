@@ -318,7 +318,7 @@ export default function ListAlbums() {
                     <hr className="border-gray-700 my-1" />
 
                     <button
-                      onClick={() => handleDeleteAlbum(album.id)}
+                      onClick={() => setDeleteConfirmId(album.id)}
                       className="w-full text-left px-4 py-2 hover:bg-red-900/20 transition-colors flex items-center gap-2 text-red-400 hover:text-red-300"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

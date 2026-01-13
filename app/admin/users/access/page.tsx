@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Save } from 'lucide-react'
 
@@ -142,7 +142,7 @@ export default function AccessPrivileges() {
   const getSubmodules = (parentId: number) => modules.filter(m => m.parent_id === parentId)
 
   const renderRows = () => {
-    const rows: JSX.Element[] = []
+    const rows: React.ReactElement[] = []
     
     parentModules.forEach((module, idx) => {
       const submodules = getSubmodules(module.id)

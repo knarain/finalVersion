@@ -52,7 +52,7 @@ export function AlbumCredentialsManager({ albumId }: Props) {
       setLoading(true)
       setError('')
       const token = getToken()
-      const data = await albumCredentialsService.listCredentials(albumId, token || undefined)
+      const data = await albumCredentialsService.listCredentials(albumId)
       setCredentials(Array.isArray(data) ? data : [])
     } catch (err: any) {
       setError(err)
@@ -71,7 +71,7 @@ export function AlbumCredentialsManager({ albumId }: Props) {
         album_id: albumId,
         email: data.email,
         password: data.password,
-      }, token || undefined)
+      })
       setSuccess('Credential added successfully!')
       reset()
       setShowForm(false)
@@ -88,7 +88,7 @@ export function AlbumCredentialsManager({ albumId }: Props) {
       setError('')
       setSuccess('')
       const token = getToken()
-      await albumCredentialsService.deleteCredential(credentialId, token || undefined)
+      await albumCredentialsService.deleteCredential(credentialId)
       setSuccess('Credential deleted successfully!')
       setDeleteConfirmId(null)
       await fetchCredentials()
@@ -110,7 +110,7 @@ export function AlbumCredentialsManager({ albumId }: Props) {
       ))
       
       const token = getToken()
-      await albumCredentialsService.toggleCredentialStatus(credentialId, newStatus, token || undefined)
+      await albumCredentialsService.toggleCredentialStatus(credentialId, newStatus)
       setSuccess(`Credential ${newStatus ? 'activated' : 'deactivated'} successfully!`)
     } catch (err: any) {
       setCredentials(credentials.map(c => 

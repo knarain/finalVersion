@@ -1,1 +1,111 @@
-import { useState, useEffect } from 'react';\n\ninterface Permission {\n  id: number;\n  name: string;\n}\n\ninterface SubModule {\n  id: number;\n  name: string;\n  is_sub_module: boolean;\n  permissions: number[];\n  icon?: string;\n  url?: string;\n}\n\ninterface ModuleInfo {\n  id: number;\n  name: string;\n  is_sub_module: boolean;\n  permissions: number[];\n  icon?: string;\n  url?: string;\n}\n\ninterface RolePermission {\n  role_id: string;\n  module_info: ModuleInfo;\n  sub_module_info: SubModule[];\n}\n\ninterface UsePermissionsReturn {\n  permissions: RolePermission[];\n  loading: boolean;\n  error: string | null;\n  hasPermission: (moduleId: number, permissionId: number) => boolean;\n  refetch: () => void;\n}\n\nexport const usePermissions = (roleId: string): UsePermissionsReturn => {\n  const [permissions, setPermissions] = useState<RolePermission[]>([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<string | null>(null);\n\n  const fetchPermissions = async () => {\n    if (!roleId) return;\n    \n    try {\n      setLoading(true);\n      setError(null);\n      \n      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/permissions/menu/${roleId}`);\n      \n      if (!response.ok) {\n        throw new Error(`HTTP error! status: ${response.status}`);\n      }\n      \n      const data = await response.json();\n      \n      if (data.success) {\n        setPermissions(data.data || []);\n      } else {\n        throw new Error(data.message || 'Failed to fetch permissions');\n      }\n    } catch (err) {\n      setError(err instanceof Error ? err.message : 'An error occurred');\n      console.error('Error fetching permissions:', err);\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  const hasPermission = (moduleId: number, permissionId: number): boolean => {\n    for (const rolePermission of permissions) {\n      // Check main module\n      if (rolePermission.module_info.id === moduleId) {\n        return rolePermission.module_info.permissions.includes(permissionId);\n      }\n      \n      // Check sub-modules\n      for (const subModule of rolePermission.sub_module_info) {\n        if (subModule.id === moduleId) {\n          return subModule.permissions.includes(permissionId);\n        }\n      }\n    }\n    return false;\n  };\n\n  useEffect(() => {\n    fetchPermissions();\n  }, [roleId]);\n\n  return {\n    permissions,\n    loading,\n    error,\n    hasPermission,\n    refetch: fetchPermissions\n  };\n};\n\n// Permission constants\nexport const PERMISSIONS = {\n  READ: 1,\n  CREATE: 2,\n  UPDATE: 3,\n  DELETE: 4\n} as const;\n\nexport type PermissionType = typeof PERMISSIONS[keyof typeof PERMISSIONS];
+import { useState, useEffect } from 'react'
+
+interface Permission {
+  id: number
+  name: string
+}
+
+interface SubModule {
+  id: number
+  name: string
+  is_sub_module: boolean
+  permissions: number[]
+  icon?: string
+  url?: string
+}
+
+interface ModuleInfo {
+  id: number
+  name: string
+  is_sub_module: boolean
+  permissions: number[]
+  icon?: string
+  url?: string
+}
+
+interface RolePermission {
+  role_id: string
+  module_info: ModuleInfo
+  sub_module_info: SubModule[]
+}
+
+interface UsePermissionsReturn {
+  permissions: RolePermission[]
+  loading: boolean
+  error: string | null
+  hasPermission: (moduleId: number, permissionId: number) => boolean
+  refetch: () => void
+}
+
+export const usePermissions = (roleId: string): UsePermissionsReturn => {
+  const [permissions, setPermissions] = useState<RolePermission[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchPermissions = async () => {
+    if (!roleId) return
+    
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/permissions/menu/${roleId}`)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setPermissions(data.data || [])
+      } else {
+        throw new Error(data.message || 'Failed to fetch permissions')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      console.error('Error fetching permissions:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const hasPermission = (moduleId: number, permissionId: number): boolean => {
+    for (const rolePermission of permissions) {
+      // Check main module
+      if (rolePermission.module_info.id === moduleId) {
+        return rolePermission.module_info.permissions.includes(permissionId)
+      }
+      
+      // Check sub-modules
+      for (const subModule of rolePermission.sub_module_info) {
+        if (subModule.id === moduleId) {
+          return subModule.permissions.includes(permissionId)
+        }
+      }
+    }
+    return false
+  }
+
+  useEffect(() => {
+    fetchPermissions()
+  }, [roleId])
+
+  return {
+    permissions,
+    loading,
+    error,
+    hasPermission,
+    refetch: fetchPermissions
+  }
+}
+
+// Permission constants
+export const PERMISSIONS = {
+  READ: 1,
+  CREATE: 2,
+  UPDATE: 3,
+  DELETE: 4
+} as const
+
+export type PermissionType = typeof PERMISSIONS[keyof typeof PERMISSIONS]

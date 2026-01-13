@@ -4,28 +4,15 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronDown, Menu, X } from 'lucide-react'
-import { getMenuStructure } from '@/lib/permission-service'
+import { getMenuStructure, MenuModule } from '@/lib/permission-service'
 
 interface Module {
-  role_id: string
-  module_info: {
-    id: number
-    name: string
-    icon: string
-    url: string
-    permissions: number[]
-    is_sub_module: boolean
-  }
-  sub_module_info: SubModule[]
-}
-
-interface SubModule {
   id: number
   name: string
   icon: string
   url: string
   permissions: number[]
-  is_sub_module: boolean
+  sub_module_info?: MenuModule[]
 }
 
 const iconMap: Record<string, React.ComponentType<any>> = {
@@ -50,7 +37,7 @@ const getIcon = (iconName: string) => {
 export default function AdminSidebar() {
   const [isOpen, setIsOpen] = useState(true)
   const [expandedItems, setExpandedItems] = useState<number[]>([])
-  const [modules, setModules] = useState<Module[]>([])
+  const [modules, setModules] = useState<MenuModule[]>([])
   const [loading, setLoading] = useState(true)
   const pathname = usePathname()
 
@@ -126,11 +113,10 @@ export default function AdminSidebar() {
         </div>
 
         <nav className="p-4 space-y-2 flex-1 overflow-y-auto">
-          {modules.map((item, index) => {
-            const module = item.module_info
+          {modules.map((module, index) => {
             return (
               <div key={`module-${module.id}-${index}`}>
-                {item.sub_module_info && item.sub_module_info.length > 0 ? (
+                {module.sub_module_info && module.sub_module_info.length > 0 ? (
                   <>
                     <button
                       onClick={() => toggleSubMenu(module.id)}
@@ -154,7 +140,7 @@ export default function AdminSidebar() {
 
                     {expandedItems.includes(module.id) && (
                       <div className="pl-4 space-y-1 mt-1">
-                        {item.sub_module_info.map((subModule, subIndex) => (
+                        {module.sub_module_info.map((subModule, subIndex) => (
                           <Link
                             key={`submodule-${subModule.id}-${subIndex}`}
                             href={subModule.url}

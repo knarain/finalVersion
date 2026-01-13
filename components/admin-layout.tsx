@@ -1,1 +1,121 @@
-import React from 'react';\nimport { useRouter } from 'next/router';\nimport DynamicSidebar from '../components/dynamic-sidebar';\nimport PermissionGuard, { withPermission } from '../components/permission-guard';\nimport { PERMISSIONS } from '../lib/use-permissions';\n\ninterface AdminLayoutProps {\n  children: React.ReactNode;\n  roleId: string;\n}\n\nexport const AdminLayout: React.FC<AdminLayoutProps> = ({ children, roleId }) => {\n  const router = useRouter();\n\n  return (\n    <div className=\"flex h-screen bg-gray-100\">\n      {/* Sidebar */}\n      <div className=\"w-64 bg-white shadow-lg\">\n        <div className=\"p-4 border-b\">\n          <h1 className=\"text-xl font-bold text-gray-800\">Admin Panel</h1>\n        </div>\n        <DynamicSidebar roleId={roleId} currentPath={router.pathname} />\n      </div>\n\n      {/* Main Content */}\n      <div className=\"flex-1 flex flex-col overflow-hidden\">\n        {/* Header */}\n        <header className=\"bg-white shadow-sm border-b px-6 py-4\">\n          <div className=\"flex items-center justify-between\">\n            <h2 className=\"text-lg font-semibold text-gray-800\">\n              {getPageTitle(router.pathname)}\n            </h2>\n            <div className=\"flex items-center space-x-4\">\n              {/* Example: Show create button only if user has CREATE permission for current module */}\n              <PermissionGuard\n                roleId={roleId}\n                moduleId={getCurrentModuleId(router.pathname)}\n                permission={PERMISSIONS.CREATE}\n              >\n                <button className=\"bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700\">\n                  Create New\n                </button>\n              </PermissionGuard>\n            </div>\n          </div>\n        </header>\n\n        {/* Page Content */}\n        <main className=\"flex-1 overflow-auto p-6\">\n          {children}\n        </main>\n      </div>\n    </div>\n  );\n};\n\n// Example page component with permission protection\nconst CustomersPage: React.FC<{ roleId: string }> = ({ roleId }) => {\n  return (\n    <div className=\"space-y-6\">\n      <div className=\"bg-white rounded-lg shadow p-6\">\n        <h3 className=\"text-lg font-medium mb-4\">Customer Management</h3>\n        \n        {/* Show different content based on permissions */}\n        <PermissionGuard\n          roleId={roleId}\n          moduleId={2} // Customers module\n          permission={PERMISSIONS.READ}\n        >\n          <div className=\"mb-4\">\n            <p>Customer list will be displayed here...</p>\n          </div>\n        </PermissionGuard>\n\n        <div className=\"flex space-x-2\">\n          <PermissionGuard\n            roleId={roleId}\n            moduleId={2}\n            permission={PERMISSIONS.CREATE}\n          >\n            <button className=\"bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700\">\n              Add Customer\n            </button>\n          </PermissionGuard>\n\n          <PermissionGuard\n            roleId={roleId}\n            moduleId={2}\n            permission={PERMISSIONS.UPDATE}\n          >\n            <button className=\"bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700\">\n              Edit Customer\n            </button>\n          </PermissionGuard>\n\n          <PermissionGuard\n            roleId={roleId}\n            moduleId={2}\n            permission={PERMISSIONS.DELETE}\n          >\n            <button className=\"bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700\">\n              Delete Customer\n            </button>\n          </PermissionGuard>\n        </div>\n      </div>\n    </div>\n  );\n};\n\n// Protect the entire page with permission check\nconst ProtectedCustomersPage = withPermission(CustomersPage, 2, PERMISSIONS.READ);\n\n// Helper functions\nfunction getPageTitle(pathname: string): string {\n  const titles: Record<string, string> = {\n    '/customers': 'Customers',\n    '/customers/list': 'Customer List',\n    '/billing': 'Billing',\n    '/billing/info': 'Billing Information',\n    '/billing/payments': 'Payment Details',\n    '/billing/invoices': 'Invoices',\n    '/billing/create-invoice': 'Create Invoice',\n    '/reports': 'Reports',\n    '/reports/revenue': 'Revenue Reports',\n    '/reports/user-logs': 'User Logs',\n    '/reports/customer-logs': 'Customer Logs',\n    '/support': 'Support',\n    '/support/tickets': 'Manage Tickets',\n    '/support/create-ticket': 'Create Ticket',\n    '/support/categories': 'Ticket Categories',\n    '/support/create-category': 'Create Category',\n    '/support/replies': 'Predefined Replies',\n    '/users': 'User Management',\n    '/users/list': 'User List',\n    '/users/roles': 'User Roles',\n    '/users/privileges': 'Access Privileges',\n    '/settings': 'Settings',\n    '/settings/plans': 'Plans',\n    '/settings/promocodes': 'Promocodes'\n  };\n  return titles[pathname] || 'Dashboard';\n}\n\nfunction getCurrentModuleId(pathname: string): number {\n  const moduleMap: Record<string, number> = {\n    '/customers': 2,\n    '/customers/list': 3,\n    '/billing': 4,\n    '/billing/info': 5,\n    '/billing/payments': 6,\n    '/billing/invoices': 7,\n    '/billing/create-invoice': 8,\n    '/reports': 9,\n    '/reports/revenue': 10,\n    '/reports/user-logs': 11,\n    '/reports/customer-logs': 25,\n    '/support': 13,\n    '/support/tickets': 21,\n    '/support/create-ticket': 22,\n    '/support/categories': 23,\n    '/support/create-category': 24,\n    '/support/replies': 26,\n    '/users': 14,\n    '/users/list': 15,\n    '/users/roles': 16,\n    '/users/privileges': 17,\n    '/settings': 18,\n    '/settings/plans': 19,\n    '/settings/promocodes': 20\n  };\n  return moduleMap[pathname] || 1;\n}\n\nexport { ProtectedCustomersPage };\nexport default AdminLayout;
+import React from 'react'
+import { useRouter } from 'next/router'
+import DynamicSidebar from '../components/dynamic-sidebar'
+import PermissionGuard from '../components/permission-guard'
+import { PERMISSIONS } from '../lib/use-permissions'
+
+interface AdminLayoutProps {
+  children: React.ReactNode
+  roleId: string
+}
+
+export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, roleId }) => {
+  const router = useRouter()
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-lg">
+        <div className="p-4 border-b">
+          <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
+        </div>
+        <DynamicSidebar roleId={roleId} currentPath={router.pathname} />
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b px-6 py-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-800">
+              {getPageTitle(router.pathname)}
+            </h2>
+            <div className="flex items-center space-x-4">
+              {/* Example: Show create button only if user has permission for current module */}
+              <PermissionGuard moduleId={getCurrentModuleId(router.pathname)}>
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                  Create New
+                </button>
+              </PermissionGuard>
+            </div>
+          </div>
+        </header>
+
+        {/* Page Content */}
+        <main className="flex-1 overflow-auto p-6">
+          {children}
+        </main>
+      </div>
+    </div>
+  )
+}
+
+// Example page component with permission protection
+const AlbumsPage: React.FC<{ roleId: string }> = ({ roleId }) => {
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-medium mb-4">Album Management</h3>
+        
+        {/* Show different content based on permissions */}
+        <PermissionGuard moduleId={2}>
+          <div className="mb-4">
+            <p>Album list will be displayed here...</p>
+          </div>
+        </PermissionGuard>
+
+        <div className="flex space-x-2">
+          <PermissionGuard moduleId={2}>
+            <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+              Add Album
+            </button>
+          </PermissionGuard>
+
+          <PermissionGuard moduleId={2}>
+            <button className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
+              Edit Album
+            </button>
+          </PermissionGuard>
+
+          <PermissionGuard moduleId={2}>
+            <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+              Delete Album
+            </button>
+          </PermissionGuard>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Helper functions
+function getPageTitle(pathname: string): string {
+  const titles: Record<string, string> = {
+    '/admin': 'Dashboard',
+    '/admin/albums': 'Albums',
+    '/admin/albums/add': 'Add Album',
+    '/admin/enquiries': 'Enquiries',
+    '/admin/users': 'Users',
+    '/admin/users/roles': 'User Roles',
+    '/admin/users/access': 'Access Privileges',
+    '/admin/action-logs': 'Action Logs'
+  }
+  return titles[pathname] || 'Dashboard'
+}
+
+function getCurrentModuleId(pathname: string): number {
+  const moduleMap: Record<string, number> = {
+    '/admin': 1,
+    '/admin/albums': 2,
+    '/admin/albums/add': 2,
+    '/admin/enquiries': 3,
+    '/admin/users': 4,
+    '/admin/users/roles': 4,
+    '/admin/users/access': 4,
+    '/admin/action-logs': 5
+  }
+  return moduleMap[pathname] || 1
+}
+
+export { AlbumsPage }
+export default AdminLayout
