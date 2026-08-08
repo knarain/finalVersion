@@ -1,20 +1,18 @@
-import AddImages from './AddImages'
-import { generateStaticParams as staticParams } from './generateStaticParams'
+import AddImages from "./AddImages";
+import { generateStaticParams } from "./generateStaticParams";
 
-// ✅ Re-export generateStaticParams
-export { staticParams as generateStaticParams }
+export { generateStaticParams };
 
-// ✅ Correct typing for params
-export default function AddImagesPage({
+export default async function AddImagesPage({
   params,
 }: {
-  params: Promise<{ albumId: string }>; // Adjusted to match the expected Promise type
+  params: Promise<{ albumId: string }>;
 }) {
+  const { albumId } = await params;
+
   return (
-    <>
-      {params.then(({ albumId }) => (
-        <AddImages albumId={albumId} />
-      ))}
-    </>
+    <main className="min-h-screen p-6">
+      <AddImages albumId={albumId} />
+    </main>
   );
 }
